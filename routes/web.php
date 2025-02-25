@@ -11,6 +11,7 @@ use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\SaleController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,24 +67,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('banks/{id_bank}', [BankController::class, 'destroy'])->name('banks.destroy');
 
     Route::resource('clients', ClientController::class);
-
-    // Rota para exibir todos os clientes
-    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
-
-    // Rota para exibir o formulário de criação de um novo cliente
-    Route::get('clients/create', [ClientController::class, 'create'])->name('clients.create');
-
-    // Rota para armazenar um novo cliente
     Route::post('clients', [ClientController::class, 'store'])->name('clients.store');
 
-    // Rota para exibir o formulário de edição de um cliente
-    Route::get('clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
-
-    // Rota para atualizar o cliente
-    Route::put('clients/{id}', [ClientController::class, 'update'])->name('clients.update');
-
-    // Rota para excluir o cliente
-    Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
 
     Route::resource('categories', CategoryController::class);
 
@@ -91,7 +76,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
 
     // Rota para exibir o formulário de criação de uma nova categoria
-    Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
+    Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.index');
 
     // Rota para armazenar uma nova categoria
     Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
@@ -134,13 +119,22 @@ Route::group(['middleware' => 'auth'], function () {
     // Deletar usuário
     Route::delete('/user-management/{id}', [InfoUserController::class, 'destroy'])->name('user.delete');
 
+    Route::resource('sales', SaleController::class);
+    // Exibir todas as vendas
+    Route::get('sales', [SaleController::class, 'index'])->name('sales.index');
+    
+ // Adicionar Produto à Venda
+ Route::post('sales/{sale}/add-product', [SaleController::class, 'addProduct'])->name('sales.addProduct');
+    
+    // Rota para exibir o formulário de criação de uma venda
+    Route::get('sales/create', [SaleController::class, 'create'])->name('sales.index');
+
+    // Rota para armazenar uma nova venda
+    Route::post('sales', [SaleController::class, 'store'])->name('sales.store');
+
     Route::get('tables', function () {
         return view('tables');
     })->name('tables');
-
-    Route::get('virtual-reality', function () {
-        return view('virtual-reality');
-    })->name('virtual-reality');
 
     Route::get('static-sign-in', function () {
         return view('static-sign-in');

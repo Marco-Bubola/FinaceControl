@@ -10,13 +10,54 @@ use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    // Método para exibir todos os produtos
-    public function index()
-    {
-        $products = Product::all();  // Carregar categorias associadas
-        $categories = Category::all(); // Pegar todas as categorias para o modal
-        return view('products.index', compact('products', 'categories'));
+    public function index(Request $request)
+{
+    $products = Product::query();  // Inicializa a consulta para produtos
+
+    // Filtro de pesquisa por nome ou código
+    if ($request->has('search') && $request->search != '') {
+        $searchTerm = $request->search;
+        $products->where(function($q) use ($searchTerm) {
+            $q->where('name', 'like', '%' . $searchTerm . '%')
+              ->orWhere('product_code', 'like', '%' . $searchTerm . '%');  // Filtrando por nome ou código do produto
+        });
     }
+
+    // Filtro por categoria
+    if ($request->has('category') && $request->category != '') {
+        $products->where('category_id', $request->category);
+    }
+
+    // Filtro por data de criação, atualização ou outros
+    if ($request->has('filter') && $request->filter != '') {
+        if ($request->filter == 'created_at') {
+            $products->orderBy('created_at', 'desc');
+        } elseif ($request->filter == 'updated_at') {
+            $products->orderBy('updated_at', 'desc');
+        } elseif ($request->filter == 'name_asc') {
+            $products->orderBy('name', 'asc');
+        } elseif ($request->filter == 'name_desc') {
+            $products->orderBy('name', 'desc');
+        } elseif ($request->filter == 'price_asc') {
+            $products->orderBy('price', 'asc');
+        } elseif ($request->filter == 'price_desc') {
+            $products->orderBy('price', 'desc');
+        }
+    }
+
+    // Paginando os resultados
+    $products = $products->paginate(10);  // Ajuste o número de itens por página conforme necessário
+
+    // Carregar categorias para o filtro
+    $categories = Category::all();
+
+    // Passando os produtos e categorias para a view
+    return view('products.index', compact('products', 'categories'));
+}
+
+
+
+
     // Método para excluir um produto
     public function destroy($id)
     {
@@ -40,6 +81,7 @@ class ProductController extends Controller
             'name' => 'required|max:255',
             'description' => 'nullable|max:1000',
             'price' => 'required|numeric',
+            'price_sale' => 'required|numeric',
             'stock_quantity' => 'required|integer',
             'category_id' => 'required|exists:category,id_category',
             'product_code' => 'required|unique:products,product_code',
@@ -59,6 +101,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'price_sale' => $request->price_sale,
             'stock_quantity' => $request->stock_quantity,
             'category_id' => $request->category_id,
             'user_id' => Auth::id(),
@@ -85,6 +128,7 @@ class ProductController extends Controller
             'name' => 'required|max:255',
             'description' => 'nullable|max:1000',
             'price' => 'required|numeric',
+            'price_sale' => 'required|numeric',
             'stock_quantity' => 'required|integer',
             'category_id' => 'required|exists:category,id_category',
             'product_code' => 'required|unique:products,product_code,' . $id,
@@ -105,6 +149,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'price_sale' => $request->price_sale,
             'stock_quantity' => $request->stock_quantity,
             'category_id' => $request->category_id,
             'product_code' => $request->product_code,

@@ -13,14 +13,20 @@ class Product extends Model
         'name',
         'description',
         'price',
+        'price_sale',
         'stock_quantity',
         'category_id',
         'user_id',
         'product_code',
         'image',
         'status',
+        
     ];
-
+// Relacionamento com os itens de venda
+public function saleItems()
+{
+    return $this->hasMany(SaleItem::class);
+}
     // Relação com a categoria
     public function category()
     {

@@ -144,6 +144,18 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link {{ (Request::is('sales') ? 'active' : '') }}" href="{{ url('sales') }}">
+                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-fill" viewBox="0 0 16 16">
+                            <path d="M4 0a1 1 0 0 0-1 1v1h12V1a1 1 0 0 0-1-1H4zM0 4a1 1 0 0 1 1-1h1l1 6h8l1-6h1a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4zm3 7v1h2V6H3v5zm3 0v1h2V7H6v4zm3 0v1h2V8H9v3zm3 0v1h2V9h-2v2z" />
+                        </svg>
+                    </div>
+                    <span class="nav-link-text ms-1">Vendas</span>
+                </a>
+            </li>
+
+
+            <li class="nav-item">
                 <a class="nav-link {{ (Request::is('categories') ? 'active' : '') }}" href="{{ url('categories') }}">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tags" viewBox="0 0 16 16">
