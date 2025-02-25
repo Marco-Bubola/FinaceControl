@@ -1,12 +1,16 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BankController;
 use App\Http\Controllers\ChangePasswordController;
+use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,6 +45,80 @@ Route::group(['middleware' => 'auth'], function () {
         return view('profile/user-profile');
     })->name('user-profile');
 
+    Route::resource('banks', BankController::class);
+
+    // Rota para exibir todos os bancos
+    Route::get('banks', [BankController::class, 'index'])->name('banks.index');
+
+    // Rota para exibir o formulário de criação de um novo banco
+    Route::get('banks/create', [BankController::class, 'create'])->name('banks.create');
+
+    // Rota para armazenar um novo banco
+    Route::post('banks', [BankController::class, 'store'])->name('banks.store');
+
+    // Rota para exibir o formulário de edição de um banco
+    Route::get('banks/{id_bank}/edit', [BankController::class, 'edit'])->name('banks.edit');
+
+    // Rota para atualizar o banco
+    Route::put('banks/{id_bank}', [BankController::class, 'update'])->name('banks.update');
+
+    // Rota para excluir o banco
+    Route::delete('banks/{id_bank}', [BankController::class, 'destroy'])->name('banks.destroy');
+
+    Route::resource('clients', ClientController::class);
+
+    // Rota para exibir todos os clientes
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
+
+    // Rota para exibir o formulário de criação de um novo cliente
+    Route::get('clients/create', [ClientController::class, 'create'])->name('clients.create');
+
+    // Rota para armazenar um novo cliente
+    Route::post('clients', [ClientController::class, 'store'])->name('clients.store');
+
+    // Rota para exibir o formulário de edição de um cliente
+    Route::get('clients/{id}/edit', [ClientController::class, 'edit'])->name('clients.edit');
+
+    // Rota para atualizar o cliente
+    Route::put('clients/{id}', [ClientController::class, 'update'])->name('clients.update');
+
+    // Rota para excluir o cliente
+    Route::delete('clients/{id}', [ClientController::class, 'destroy'])->name('clients.destroy');
+
+    Route::resource('categories', CategoryController::class);
+
+    // Rota para exibir todas as categorias
+    Route::get('categories', [CategoryController::class, 'index'])->name('categories.index');
+
+    // Rota para exibir o formulário de criação de uma nova categoria
+    Route::get('categories/create', [CategoryController::class, 'create'])->name('categories.create');
+
+    // Rota para armazenar uma nova categoria
+    Route::post('categories', [CategoryController::class, 'store'])->name('categories.store');
+
+    // Rota para exibir o formulário de edição de uma categoria
+    Route::get('categories/{id_category}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
+
+    // Rota para atualizar a categoria
+    Route::put('categories/{id_category}', [CategoryController::class, 'update'])->name('categories.update');
+
+    // Rota para excluir a categoria
+    Route::delete('categories/{id_category}', [CategoryController::class, 'destroy'])->name('categories.destroy');
+
+    // Rota para exibir todos os produtos (index)
+    Route::get('products', [ProductController::class, 'index'])->name('products.index');
+
+    // Rota para armazenar um novo produto
+    Route::post('products', [ProductController::class, 'store'])->name('products.store');
+
+    // Rota para exibir o formulário de edição de um produto (isso pode ser feito no modal também)
+    Route::get('products/{id}/edit', [ProductController::class, 'edit'])->name('products.edit');
+
+    // Rota para atualizar o produto
+    Route::put('products/{id}', [ProductController::class, 'update'])->name('products.update');
+
+    // Rota para excluir um produto
+    Route::delete('products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
 
     // Editar perfil de usuário
     Route::get('/user-profile/{id}/edit', [InfoUserController::class, 'edit'])->name('user.edit');

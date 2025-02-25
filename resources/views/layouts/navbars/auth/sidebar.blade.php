@@ -122,8 +122,8 @@
             <li class="nav-item">
                 <a class="nav-link {{ (Request::is('products') ? 'active' : '') }}" href="{{ url('products') }}">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
-                            <path d="M8.186 1.113a.5.5 0 0 0-.372 0L1.846 3.5l2.404.961L10.404 2zm3.564 1.426L5.596 5 8 5.961 14.154 3.5zm3.25 1.7-6.5 2.6v7.922l6.5-2.6V4.24zM7.5 14.762V6.838L1 4.239v7.923zM7.443.184a1.5 1.5 0 0 1 1.114 0l7.129 2.852A.5.5 0 0 1 16 3.5v8.662a1 1 0 0 1-.629.928l-7.185 2.874a.5.5 0 0 1-.372 0L.63 13.09a1 1 0 0 1-.63-.928V3.5a.5.5 0 0 1 .314-.464z" />
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box2" viewBox="0 0 16 16">
+                            <path d="M2.95.4a1 1 0 0 1 .8-.4h8.5a1 1 0 0 1 .8.4l2.85 3.8a.5.5 0 0 1 .1.3V15a1 1 0 0 1-1 1H1a1 1 0 0 1-1-1V4.5a.5.5 0 0 1 .1-.3zM7.5 1H3.75L1.5 4h6zm1 0v3h6l-2.25-3zM15 5H1v10h14z" />
                         </svg>
 
                     </div>
@@ -143,9 +143,20 @@
                     <span class="nav-link-text ms-1">Clientes</span>
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link {{ (Request::is('categories') ? 'active' : '') }}" href="{{ url('categories') }}">
+                    <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tags" viewBox="0 0 16 16">
+                            <path d="M6 0a1 1 0 0 1 1 1v3.381l3.585-1.79a1 1 0 1 1 .83 1.79L7 6.536V10a1 1 0 0 1-.707.948L4 11.455v1.434l2.293-.787A1 1 0 0 1 7 12V9.536l4.585 2.295a1 1 0 1 1-.83 1.79L7 8.383V4.617l3.585-1.79A1 1 0 0 1 11 3.383l2.292-.787a1 1 0 0 1 1.268 1.268L10.382 5.618 6 0z" />
+                        </svg>
+                    </div>
+                    <span class="nav-link-text ms-1">Categorias</span>
+                </a>
+            </li>
 
         </ul>
     </div>
+
     <div class="sidenav-footer mx-3 ">
         <div class="card card-background shadow-none card-background-mask-secondary" id="sidenavCard">
             <div class="full-background" style="background-image: url('../assets/img/curved-images/white-curved.jpeg')"></div>
