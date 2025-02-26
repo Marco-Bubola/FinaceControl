@@ -1,7 +1,7 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container mt-4">
+<div class="container-fluid py-4">
     <!-- Exibir erros de validação -->
     @if ($errors->any())
     <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -23,119 +23,43 @@
         <div id="success-timer" class="alert-timer">30s</div>
     </div>
     @endif
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Função para iniciar o timer e ocultar a mensagem após 30 segundos
-            function startTimer(messageId, timerId) {
-                let timerValue = 30;
-                const timerElement = document.getElementById(timerId);
-                const messageElement = document.getElementById(messageId);
-
-                // Atualiza o temporizador a cada segundo
-                const interval = setInterval(function() {
-                    if (timerValue > 0) {
-                        timerElement.innerHTML = `${timerValue--}s`;
-                    } else {
-                        clearInterval(interval);
-                        // Fecha a mensagem após 30 segundos e recarrega a página
-                        messageElement.classList.remove('show');
-                        messageElement.classList.add('fade');
-                        location.reload(); // Recarregar a página após 30 segundos
-                    }
-                }, 1000); // Atualiza a cada segundo
-            }
-
-            // Iniciar o timer para a mensagem de erro (se existir)
-            const errorMessage = document.getElementById('error-message');
-            if (errorMessage) {
-                startTimer('error-message', 'error-timer');
-            }
-
-            // Iniciar o timer para a mensagem de sucesso (se existir)
-            const successMessage = document.getElementById('success-message');
-            if (successMessage) {
-                startTimer('success-message', 'success-timer');
-            }
-
-            // Configuração para mostrar que a página voltou ao estado original
-            const closeButton = document.querySelectorAll('.btn-close');
-            closeButton.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Resetando o timer de 30 segundos e voltando a página ao estado original
-                    document.getElementById('error-message')?.classList.remove('show');
-                    document.getElementById('success-message')?.classList.remove('show');
-                });
-            });
-        });
-
-        // Função para fechar o alerta ao clicar no "X"
-        function closeAlert(messageId) {
-            document.getElementById(messageId).classList.remove('show');
-            document.getElementById(messageId).classList.add('fade');
-        }
-    </script>
-
-    <style>
-        .alert-timer {
-            position: absolute;
-            top: 10px;
-            right: 40px;
-            background-color: #ff9800;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-        .alert-dismissible .btn-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            color: #fff;
-            background: transparent;
-            border: none;
-        }
-    </style>
-
-
-
 
     <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Filtros e Pesquisa -->
         <div class="row w-100">
+
             <!-- Coluna de Filtro (Meio) -->
             <div class="col-md-4 mb-3">
-                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
+                <form action="{{ route('clients.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <select name="filter" class="form-control w-100" onchange="this.form.submit()">
                         <option value="">Filtrar</option>
                         <option value="created_at" {{ request('filter') == 'created_at' ? 'selected' : '' }}>Últimos Adicionados</option>
                         <option value="updated_at" {{ request('filter') == 'updated_at' ? 'selected' : '' }}>Últimos Atualizados</option>
                         <option value="name_asc" {{ request('filter') == 'name_asc' ? 'selected' : '' }}>Nome A-Z</option>
                         <option value="name_desc" {{ request('filter') == 'name_desc' ? 'selected' : '' }}>Nome Z-A</option>
-                        <option value="price_asc" {{ request('filter') == 'price_asc' ? 'selected' : '' }}>Preço A-Z</option>
-                        <option value="price_desc" {{ request('filter') == 'price_desc' ? 'selected' : '' }}>Preço Z-A</option>
                     </select>
                 </form>
             </div>
 
             <!-- Coluna de Pesquisa (Esquerda) -->
             <div class="col-md-4 mb-3">
-                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
+                <form action="{{ route('clients.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <div class="input-group w-100">
-                        <input type="text" name="search" class="form-control w-65 h-25" placeholder="Pesquisar por nome ou código" value="{{ request('search') }}">
+                        <input type="text" name="search" class="form-control w-65  h-25 " placeholder="Pesquisar por nome" value="{{ request('search') }}">
                         <button class="btn btn-primary h-20" type="submit">Pesquisar</button>
                     </div>
                 </form>
             </div>
 
-            <!-- Coluna de Adicionar Produto e Upload (Direita) -->
+            <!-- Coluna de Adicionar Cliente (Direita) -->
             <div class="col-md-4 mb-3 text-end">
-                <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddProduct">Adicionar Produto</a>
-                <!-- Botão de Upload -->
-                <a href="#" class="btn bg-gradient-secondary btn-sm mb-0 ms-2" data-bs-toggle="modal" data-bs-target="#modalUploadProduct">Fazer Upload</a>
+                <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddClient">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                    </svg>
+                    Cliente
+                </a>
             </div>
         </div>
     </div>
@@ -145,7 +69,7 @@
     <!-- Tabela de clientes -->
     <div class="row mt-4">
         @foreach($clients as $client)
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card position-relative">
                 <!-- Informações do Cliente -->
                 <div class="card-body">
@@ -350,5 +274,81 @@
 </div>
 @endforeach
 
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
+        function startTimer(messageId, timerId) {
+            let timerValue = 30;
+            const timerElement = document.getElementById(timerId);
+            const messageElement = document.getElementById(messageId);
+
+            // Atualiza o temporizador a cada segundo
+            const interval = setInterval(function() {
+                if (timerValue > 0) {
+                    timerElement.innerHTML = `${timerValue--}s`;
+                } else {
+                    clearInterval(interval);
+                    // Fecha a mensagem após 30 segundos e recarrega a página
+                    messageElement.classList.remove('show');
+                    messageElement.classList.add('fade');
+                    location.reload(); // Recarregar a página após 30 segundos
+                }
+            }, 1000); // Atualiza a cada segundo
+        }
+
+        // Iniciar o timer para a mensagem de erro (se existir)
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            startTimer('error-message', 'error-timer');
+        }
+
+        // Iniciar o timer para a mensagem de sucesso (se existir)
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            startTimer('success-message', 'success-timer');
+        }
+
+        // Configuração para mostrar que a página voltou ao estado original
+        const closeButton = document.querySelectorAll('.btn-close');
+        closeButton.forEach(button => {
+            button.addEventListener('click', function() {
+                // Resetando o timer de 30 segundos e voltando a página ao estado original
+                document.getElementById('error-message')?.classList.remove('show');
+                document.getElementById('success-message')?.classList.remove('show');
+            });
+        });
+    });
+
+    // Função para fechar o alerta ao clicar no "X"
+    function closeAlert(messageId) {
+        document.getElementById(messageId).classList.remove('show');
+        document.getElementById(messageId).classList.add('fade');
+    }
+</script>
+
+<style>
+    .alert-timer {
+        position: absolute;
+        top: 10px;
+        right: 40px;
+        background-color: #ff9800;
+        color: white;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .alert-dismissible .btn-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        color: #fff;
+        background: transparent;
+        border: none;
+    }
+</style>
 
 @endsection

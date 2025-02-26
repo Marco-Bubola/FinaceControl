@@ -1,7 +1,7 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container mt-4">
+<div class="container-fluid py-4">
     <!-- Exibir erros de validação -->
     @if ($errors->any())
     <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert">
@@ -19,86 +19,14 @@
     @if (session('success'))
     <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
         {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeAlert('success-message')"></button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeAlert('success-message')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
+            </svg></button>
         <div id="success-timer" class="alert-timer">30s</div>
     </div>
     @endif
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            // Função para iniciar o timer e ocultar a mensagem após 30 segundos
-            function startTimer(messageId, timerId) {
-                let timerValue = 30;
-                const timerElement = document.getElementById(timerId);
-                const messageElement = document.getElementById(messageId);
 
-                // Atualiza o temporizador a cada segundo
-                const interval = setInterval(function() {
-                    if (timerValue > 0) {
-                        timerElement.innerHTML = `${timerValue--}s`;
-                    } else {
-                        clearInterval(interval);
-                        // Fecha a mensagem após 30 segundos e recarrega a página
-                        messageElement.classList.remove('show');
-                        messageElement.classList.add('fade');
-                        location.reload(); // Recarregar a página após 30 segundos
-                    }
-                }, 1000); // Atualiza a cada segundo
-            }
-
-            // Iniciar o timer para a mensagem de erro (se existir)
-            const errorMessage = document.getElementById('error-message');
-            if (errorMessage) {
-                startTimer('error-message', 'error-timer');
-            }
-
-            // Iniciar o timer para a mensagem de sucesso (se existir)
-            const successMessage = document.getElementById('success-message');
-            if (successMessage) {
-                startTimer('success-message', 'success-timer');
-            }
-
-            // Configuração para mostrar que a página voltou ao estado original
-            const closeButton = document.querySelectorAll('.btn-close');
-            closeButton.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Resetando o timer de 30 segundos e voltando a página ao estado original
-                    document.getElementById('error-message')?.classList.remove('show');
-                    document.getElementById('success-message')?.classList.remove('show');
-                });
-            });
-        });
-
-        // Função para fechar o alerta ao clicar no "X"
-        function closeAlert(messageId) {
-            document.getElementById(messageId).classList.remove('show');
-            document.getElementById(messageId).classList.add('fade');
-        }
-    </script>
-
-    <style>
-        .alert-timer {
-            position: absolute;
-            top: 10px;
-            right: 40px;
-            background-color: #ff9800;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-top: 5px;
-        }
-
-        .alert-dismissible .btn-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            color: #fff;
-            background: transparent;
-            border: none;
-        }
-    </style>
 
     <!-- Filtro e Pesquisa -->
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -127,49 +55,35 @@
                     </div>
                 </form>
             </div>
-
-            <!-- Filtro de Categoria (Direita) -->
-            <div class="col-md-4 mb-3">
-                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
-                    <select name="category" class="form-control w-100" onchange="this.form.submit()">
-                        <option value="">Filtrar por Categoria</option>
-                        @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
-                        @endforeach
-                    </select>
-                </form>
-            </div>
-
             <!-- Botões de Adicionar Produto e Upload -->
             <div class="col-md-4 text-end">
-                <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddProduct">Adicionar Produto</a>
-                <a href="#" class="btn bg-gradient-secondary btn-sm mb-0 ms-2" data-bs-toggle="modal" data-bs-target="#modalUploadProduct">Fazer Upload</a>
+                <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddProduct">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
+                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+                    </svg>
+                    Produto</a>
+                <a href="#" class="btn bg-gradient-secondary btn-sm mb-0 ms-2" data-bs-toggle="modal" data-bs-target="#modalUploadProduct">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                        <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707z" />
+                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                    </svg>
+                    upload</a>
             </div>
         </div>
     </div>
-
-
-
     <!-- Tabela de produtos ou outras exibições -->
     <div class="row mt-4">
-
         @foreach($products as $product)
-        <div class="col-md-3">
+        <div class="col-md-2">
             <div class="card position-relative">
-                <!-- Exibição da Imagem do Produto -->
                 <img src="{{ asset('storage/products/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-
-                <!-- Botões de Editar e Excluir -->
                 <div class="position-absolute top-0 end-0 p-2">
-                    <!-- Botão de Editar (Pincel) -->
                     <a href="javascript:void(0)" class="btn btn-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
-                        <!-- Ícone de edição (pincel) -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                         </svg>
                     </a>
-
-                    <!-- Botão de Excluir (Lixeira) -->
                     <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
                         @csrf
                         @method('DELETE')
@@ -181,20 +95,12 @@
                         </button>
                     </form>
                 </div>
-
-
                 <div class="card-body">
-                    <!-- Nome do Produto (Centralizado e Primeira Letra Maiúscula) -->
                     <h5 class="card-title text-center">{{ ucwords($product->name) }}</h5>
-
-                    <!-- Descrição do Produto (Centralizada e Primeira Letra Maiúscula) -->
                     <p class="card-text text-center text-truncate" style="max-width: 250px;">{{ ucwords($product->description) }}</p>
-
-                    <!-- Informações Adicionais (Agora em 2 Linhas) -->
                     <div class="row">
                         <div class="col-6">
                             <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
-
                             <p><strong>Venda:</strong> R$ {{ number_format($product->price_sale, 2, ',', '.') }}</p>
                             <p><strong>Qtd:</strong> {{ $product->stock_quantity }}</p>
                         </div>
@@ -215,12 +121,9 @@
                 </div>
             </div>
         </div>
-
         @endforeach
     </div>
 </div>
-
-
 <!-- Modal de Adicionar Produto -->
 <div class="modal fade" id="modalAddProduct" tabindex="-1" aria-labelledby="modalAddProductLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl"> <!-- Modal Ampliado -->
@@ -234,11 +137,8 @@
                     <!-- Formulário de Criação de Produto -->
                     <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
-
                         <div class="row">
-                            <!-- Coluna da Esquerda com os Detalhes do Produto -->
                             <div class="col-md-8 text-center">
-                                <!-- Linha 1: Nome do Produto e Código do Produto -->
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -253,8 +153,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Linha 2: Preço e Quantidade -->
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -268,15 +166,7 @@
                                             <input type="number" name="price_sale" id="price_sale" class="form-control" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="stock_quantity" class="col-form-label text-center">Quantidade em Estoque</label>
-                                            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" required>
-                                        </div>
-                                    </div>
                                 </div>
-
-                                <!-- Linha 3: Categoria e Status -->
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -294,6 +184,13 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <label for="stock_quantity" class="col-form-label text-center">Quantidade em Estoque</label>
+                                            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <!--
+                                    <div class="col-md-6">
+                                        <div class="form-group">
                                             <label for="status" class="col-form-label text-center">Status</label>
                                             <select name="status" id="status" class="form-control" required>
                                                 <option value="active">Ativo</option>
@@ -301,24 +198,17 @@
                                             </select>
                                         </div>
                                     </div>
+                                    -->
                                 </div>
                             </div>
-
-                            <!-- Coluna da Direita com a Foto -->
                             <div class="col-md-4 text-center">
                                 <div class="position-relative">
-                                    <!-- Foto do Produto (Apenas o Campo de Upload) -->
-                                    <img src="{{ asset('storage/products/default.jpg') }}" id="productImage" class="img-fluid mb-3" alt="Imagem do Produto" style="width: 150px; height: 150px; object-fit: cover;">
-
-                                    <!-- Área para selecionar imagem -->
+                                    <img src="{{ asset('storage/products/product-placeholder.png') }}" id="productImage" class="img-fluid mb-3" alt="Imagem do Produto" style="width: 150px; height: 150px; object-fit: cover;">
                                     <input type="file" name="image" id="image" class="form-control" style="display: none;" onchange="previewImage(event)">
-
-                                    <!-- Clickable Area to Change Image -->
                                     <label for="image" style="cursor: pointer; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">
-                                        Clique para trocar a imagem
+                                        trocar a imagem
                                     </label>
                                 </div>
-
                                 <div class="position-relative">
                                     <div class="form-group">
                                         <label for="description" class="col-form-label">Descrição</label>
@@ -327,8 +217,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Centralizar o botão de Adicionar Produto -->
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 <button type="submit" class="btn btn-primary">Adicionar Produto</button>
@@ -367,7 +255,7 @@
                         @method('PUT')
 
                         <div class="row">
-                            <!-- Detalhes do Produto (A mesma estrutura que você já usou) -->
+
                             <div class="col-md-8 text-center">
                                 <!-- Nome, Código do Produto, Preço e Quantidade -->
                                 <div class="row mb-3">
@@ -399,12 +287,7 @@
                                             <input type="number" name="price_sale" id="price_sale" class="form-control" value="{{ $product->price_sale }}" required>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="stock_quantity" class="col-form-label text-center">Quantidade em Estoque</label>
-                                            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" value="{{ $product->stock_quantity }}" required>
-                                        </div>
-                                    </div>
+
                                 </div>
 
                                 <!-- Categoria e Status -->
@@ -421,23 +304,28 @@
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
+                                            <label for="stock_quantity" class="col-form-label text-center">Quantidade em Estoque</label>
+                                            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" value="{{ $product->stock_quantity }}" required>
+                                        </div>
+                                    </div>
+                                    <!-- Categoria e Status
+                                    <div class="col-md-6">
+                                        <div class="form-group">
                                             <label for="status" class="col-form-label  text-center">Status</label>
                                             <select name="status" id="status" class="form-control" required>
                                                 <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>Ativo</option>
                                                 <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>Inativo</option>
                                             </select>
                                         </div>
-                                    </div>
+                                    </div> -->
                                 </div>
                             </div>
-
-                            <!-- Foto -->
                             <div class="col-md-4 text-center">
                                 <div class="position-relative">
                                     <img src="{{ asset('storage/products/'.$product->image) }}" id="productImage" class="img-fluid mb-3" alt="{{ $product->name }}" style="width: 150px; height: 150px; object-fit: cover;">
                                     <input type="file" name="image" id="image" class="form-control" style="display: none;" onchange="previewImage(event)">
                                     <label for="image" style="cursor: pointer; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">
-                                        Clique para trocar a imagem
+                                        trocar a imagem
                                     </label>
                                 </div>
                                 <div class="position-relative">
@@ -458,8 +346,81 @@
         </div>
     </div>
 </div>
-</div>
-
 @endforeach
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
+        function startTimer(messageId, timerId) {
+            let timerValue = 30;
+            const timerElement = document.getElementById(timerId);
+            const messageElement = document.getElementById(messageId);
 
+            // Atualiza o temporizador a cada segundo
+            const interval = setInterval(function() {
+                if (timerValue > 0) {
+                    timerElement.innerHTML = `${timerValue--}s`;
+                } else {
+                    clearInterval(interval);
+                    // Fecha a mensagem após 30 segundos e recarrega a página
+                    messageElement.classList.remove('show');
+                    messageElement.classList.add('fade');
+                    location.reload(); // Recarregar a página após 30 segundos
+                }
+            }, 1000); // Atualiza a cada segundo
+        }
+
+        // Iniciar o timer para a mensagem de erro (se existir)
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            startTimer('error-message', 'error-timer');
+        }
+
+        // Iniciar o timer para a mensagem de sucesso (se existir)
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            startTimer('success-message', 'success-timer');
+        }
+
+        // Configuração para mostrar que a página voltou ao estado original
+        const closeButton = document.querySelectorAll('.btn-close');
+        closeButton.forEach(button => {
+            button.addEventListener('click', function() {
+                // Resetando o timer de 30 segundos e voltando a página ao estado original
+                document.getElementById('error-message')?.classList.remove('show');
+                document.getElementById('success-message')?.classList.remove('show');
+            });
+        });
+    });
+
+    // Função para fechar o alerta ao clicar no "X"
+    function closeAlert(messageId) {
+        document.getElementById(messageId).classList.remove('show');
+        document.getElementById(messageId).classList.add('fade');
+    }
+</script>
+
+<style>
+    .alert-timer {
+        position: absolute;
+        top: 10px;
+        right: 40px;
+        background-color: #ff9800;
+        color: white;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .alert-dismissible .btn-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        color: #fff;
+        background: transparent;
+        border: none;
+    }
+</style>
 @endsection

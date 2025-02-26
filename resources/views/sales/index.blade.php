@@ -1,18 +1,16 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container mt-4">
-    <h4>Vendas Realizadas</h4>
-
+<div class="container-fluid py-4">
     <!-- Botão para abrir o Modal de Adicionar Venda -->
     <div class="d-flex justify-content-end">
         <button class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddSale">Adicionar Venda</button>
     </div>
 
     <!-- Exibir todas as vendas -->
-    <div class="row mt-4">
+    <div class="row mt-2">
         @foreach($sales as $sale)
-        <div class="col-md-6 mb-4">
+        <div class="col-md-4 mb-4">
             <div class="card">
                 <div class="card-header">
                     <!-- Exibir o nome do cliente, telefone, editar, excluir e adicionar produto -->
@@ -27,10 +25,10 @@
                         <div class="col-md-2 text-center">
                             <!-- Status da venda -->
                             <p><strong>Status:</strong>
-                                <span class="badge 
+                                <span class="badge
             @if($sale->status == 'active') badge-success
             @elseif($sale->status == 'inactive') badge-secondary
-            @else badge-danger @endif 
+            @else badge-danger @endif
             text-dark">
                                     {{ ucfirst($sale->status) }}
                                 </span>
@@ -62,7 +60,6 @@
 
                                 <!-- Botão Adicionar Produto -->
                                 <button class="btn btn-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#modalAddProductToSale{{ $sale->id }}">
-                                    <!-- Ícone de adicionar produto -->
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
                                         <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
                                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
@@ -86,7 +83,7 @@
                                     <h6 class="card-title text-center">{{ $item->product->name }}</h6>
                                     <p class="card-text text-center">R$ {{ number_format($item->product->price, 2, ',', '.') }}</p>
                                     <p class="card-text text-center">R$ {{ number_format($item->product->price_sale, 2, ',', '.') }}</p>
-                                   
+
                                     <p class="card-text text-center">Qtd: {{ $item->quantity }}</p>
                                 </div>
                             </div>

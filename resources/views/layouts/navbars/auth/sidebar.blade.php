@@ -130,8 +130,6 @@
                     <span class="nav-link-text ms-1">Produtos</span>
                 </a>
             </li>
-
-
             <li class="nav-item">
                 <a class="nav-link {{ (Request::is('clients') ? 'active' : '') }}" href="{{ url('clients') }}">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
@@ -153,8 +151,6 @@
                     <span class="nav-link-text ms-1">Vendas</span>
                 </a>
             </li>
-
-
             <li class="nav-item">
                 <a class="nav-link {{ (Request::is('categories') ? 'active' : '') }}" href="{{ url('categories') }}">
                     <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
