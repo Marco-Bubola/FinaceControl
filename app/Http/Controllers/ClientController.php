@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Client;
+use App\Models\Product;
+use App\Models\Sale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -12,12 +14,12 @@ class ClientController extends Controller
     public function index(Request $request)
     {
         $clients = Client::query();
-    
+
         // Filtro de pesquisa por nome
         if ($request->has('search') && $request->search != '') {
             $clients->where('name', 'like', '%' . $request->search . '%');
         }
-    
+
         // Filtro por data de criação ou atualização
         if ($request->has('filter') && $request->filter != '') {
             if ($request->filter == 'created_at') {
@@ -30,13 +32,12 @@ class ClientController extends Controller
                 $clients->orderBy('name', 'desc');
             }
         }
-    
+
         // Paginando os resultados
         $clients = $clients->paginate(10); // Ajuste o número de itens por página conforme necessário
-    
+
         return view('clients.index', compact('clients'));
     }
-    
 
     // Método para exibir o formulário de criação de cliente
     public function create()

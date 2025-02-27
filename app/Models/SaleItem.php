@@ -14,6 +14,7 @@ class SaleItem extends Model
         'product_id',
         'quantity',
         'price',
+        'price_sale',
     ];
 
     // Relacionamento com a Venda
@@ -28,4 +29,3 @@ class SaleItem extends Model
         return $this->belongsTo(Product::class);
     }
 }
-

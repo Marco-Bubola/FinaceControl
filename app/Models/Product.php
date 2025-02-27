@@ -20,14 +20,13 @@ class Product extends Model
         'product_code',
         'image',
         'status',
-        
+
     ];
-// Relacionamento com os itens de venda
-public function saleItems()
-{
-    return $this->hasMany(SaleItem::class);
-}
-    // Relação com a categoria
+    // Relacionamento com os itens de venda
+    public function saleItems()
+    {
+        return $this->hasMany(SaleItem::class);
+    } // Relação com a categoria
     public function category()
     {
         return $this->belongsTo(Category::class, 'category_id', 'id_category');  // A chave estrangeira é 'category_id' e a chave primária da categoria é 'id_category'

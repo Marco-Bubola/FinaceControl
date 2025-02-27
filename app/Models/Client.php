@@ -19,7 +19,14 @@ class Client extends Model
         'phone',
         'address',
         'user_id',
+        'created_at',
+        'updated_at',
     ];
+    // No modelo Client
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);  // Um cliente pode ter várias vendas
+    }
 
     // Relacionamento com o usuário
     public function user()

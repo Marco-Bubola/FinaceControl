@@ -11,53 +11,52 @@ use Illuminate\Support\Facades\Storage;
 class ProductController extends Controller
 {
     public function index(Request $request)
-{
-    $products = Product::query();  // Inicializa a consulta para produtos
+    {
+        $userId = auth()->id();  // Ou Auth::id()
 
-    // Filtro de pesquisa por nome ou código
-    if ($request->has('search') && $request->search != '') {
-        $searchTerm = $request->search;
-        $products->where(function($q) use ($searchTerm) {
-            $q->where('name', 'like', '%' . $searchTerm . '%')
-              ->orWhere('product_code', 'like', '%' . $searchTerm . '%');  // Filtrando por nome ou código do produto
-        });
-    }
+        // Inicializa a consulta para produtos, filtrando pelo user_id
+        $products = Product::where('user_id', $userId);
 
-    // Filtro por categoria
-    if ($request->has('category') && $request->category != '') {
-        $products->where('category_id', $request->category);
-    }
-
-    // Filtro por data de criação, atualização ou outros
-    if ($request->has('filter') && $request->filter != '') {
-        if ($request->filter == 'created_at') {
-            $products->orderBy('created_at', 'desc');
-        } elseif ($request->filter == 'updated_at') {
-            $products->orderBy('updated_at', 'desc');
-        } elseif ($request->filter == 'name_asc') {
-            $products->orderBy('name', 'asc');
-        } elseif ($request->filter == 'name_desc') {
-            $products->orderBy('name', 'desc');
-        } elseif ($request->filter == 'price_asc') {
-            $products->orderBy('price', 'asc');
-        } elseif ($request->filter == 'price_desc') {
-            $products->orderBy('price', 'desc');
+        // Filtro de pesquisa por nome ou código
+        if ($request->has('search') && $request->search != '') {
+            $searchTerm = $request->search;
+            $products->where(function ($q) use ($searchTerm) {
+                $q->where('name', 'like', '%' . $searchTerm . '%')
+                    ->orWhere('product_code', 'like', '%' . $searchTerm . '%');  // Filtrando por nome ou código do produto
+            });
         }
+
+        // Filtro por categoria, mas apenas as categorias do usuário
+        if ($request->has('category') && $request->category != '') {
+            $products->where('category_id', $request->category);
+        }
+
+        // Filtro por data de criação, atualização ou outros
+        if ($request->has('filter') && $request->filter != '') {
+            if ($request->filter == 'created_at') {
+                $products->orderBy('created_at', 'desc');
+            } elseif ($request->filter == 'updated_at') {
+                $products->orderBy('updated_at', 'desc');
+            } elseif ($request->filter == 'name_asc') {
+                $products->orderBy('name', 'asc');
+            } elseif ($request->filter == 'name_desc') {
+                $products->orderBy('name', 'desc');
+            } elseif ($request->filter == 'price_asc') {
+                $products->orderBy('price', 'asc');
+            } elseif ($request->filter == 'price_desc') {
+                $products->orderBy('price', 'desc');
+            }
+        }
+
+        // Paginando os resultados
+        $products = $products->paginate(10);  // Ajuste o número de itens por página conforme necessário
+
+        // Carregar categorias para o filtro, apenas as do usuário logado
+        $categories = Category::where('user_id', $userId)->get();
+
+        // Passando os produtos e categorias para a view
+        return view('products.index', compact('products', 'categories'));
     }
-
-    // Paginando os resultados
-    $products = $products->paginate(10);  // Ajuste o número de itens por página conforme necessário
-
-    // Carregar categorias para o filtro
-    $categories = Category::all();
-
-    // Passando os produtos e categorias para a view
-    return view('products.index', compact('products', 'categories'));
-}
-
-
-
-
     // Método para excluir um produto
     public function destroy($id)
     {

@@ -12,6 +12,7 @@ use App\Http\Controllers\SessionsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\SaleController;
+use App\Models\Client;
 
 /*
 |--------------------------------------------------------------------------
@@ -70,6 +71,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('clients', [ClientController::class, 'store'])->name('clients.store');
 
 
+    // Rota para exibir todos os clientes
+    Route::get('clients', [ClientController::class, 'index'])->name('clients.index');
     Route::resource('categories', CategoryController::class);
 
     // Rota para exibir todas as categorias
@@ -118,24 +121,21 @@ Route::group(['middleware' => 'auth'], function () {
 
     // Deletar usuário
     Route::delete('/user-management/{id}', [InfoUserController::class, 'destroy'])->name('user.delete');
+    Route::post('/update-stock/{productId}', [SaleController::class, 'updateStock']);
+    // Em routes/web.php
+    Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 
     Route::resource('sales', SaleController::class);
-    // Exibir todas as vendas
-    Route::get('sales', [SaleController::class, 'index'])->name('sales.index');
-    
- // Adicionar Produto à Venda
- Route::post('sales/{sale}/add-product', [SaleController::class, 'addProduct'])->name('sales.addProduct');
-    
-    // Rota para exibir o formulário de criação de uma venda
-    Route::get('sales/create', [SaleController::class, 'create'])->name('sales.index');
-
-    // Rota para armazenar uma nova venda
-    Route::post('sales', [SaleController::class, 'store'])->name('sales.store');
-
+    // Definindo a rota para adicionar um produto à venda
+    Route::post('/sales/{sale}/addProduct', [SaleController::class, 'addProduct'])->name('sales.addProduct');
     Route::get('tables', function () {
         return view('tables');
     })->name('tables');
-
+    // Rota para buscar os dados de um cliente específico
+    Route::get('/client/{id}/data', function ($id) {
+        $client = Client::findOrFail($id);  // Tente encontrar o cliente com o ID fornecido
+        return response()->json($client);  // Retorna os dados do cliente como JSON
+    });
     Route::get('static-sign-in', function () {
         return view('static-sign-in');
     })->name('sign-in');
