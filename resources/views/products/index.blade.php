@@ -454,11 +454,10 @@
     /* Para a imagem, defina um tamanho fixo e ajuste o conteúdo */
     .card-img-top {
         width: 100%;
-        /* A largura da imagem ocupará 100% da largura do seu contêiner */
         height: 200px;
-        /* Altura fixa para as imagens, todas terão 200px de altura */
-
-        /* A imagem se ajusta ao contêiner sem distorcer, mas pode ser cortada */
+        /* Altura fixa para as imagens */
+        object-fit: cover;
+        /* Faz com que a imagem se ajuste ao tamanho sem distorcer */
     }
 
     /* Truncar o nome e a descrição com "..." e permitir que o nome completo seja mostrado em um tooltip */
