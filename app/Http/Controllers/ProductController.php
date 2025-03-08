@@ -72,7 +72,11 @@ class ProductController extends Controller
 
         return redirect()->route('products.index')->with('success', 'Produto excluído com sucesso!');
     }
-
+    public function show($id)
+    {
+        $product = Product::findOrFail($id); // Encontre o produto ou retorne 404
+        return view('products.index', compact('product')); // Retorne a view com os detalhes do produto
+    }
     // Método para armazenar um novo produto
     public function store(Request $request)
     {

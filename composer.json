@@ -12,7 +12,8 @@
         "guzzlehttp/guzzle": "^7.4",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.6"
+        "laravel/tinker": "^2.6",
+        "smalot/pdfparser": "^2.11"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^2.0",

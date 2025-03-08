@@ -63,23 +63,28 @@
                         <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                     </svg>
                     Produto</a>
+                <!-- index.blade.php ou onde o botão de upload está presente -->
                 <a href="#" class="btn bg-gradient-secondary btn-sm mb-0 ms-2" data-bs-toggle="modal" data-bs-target="#modalUploadProduct">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
                         <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707z" />
                         <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
                     </svg>
-                    upload</a>
+                    upload
+                </a>
+
             </div>
         </div>
     </div>
     <!-- Tabela de produtos ou outras exibições -->
     <div class="row mt-4">
         @foreach($products as $product)
-        <div class="col-md-2">
-            <div class="card position-relative">
+        <div class="col-md-2 mb-4"> <!-- Ajustado para `col-md-3` para garantir que todos os cards se alinhem bem -->
+            <div class="card position-relative h-100"> <!-- Usamos `h-100` para garantir que o card ocupe toda a altura disponível -->
                 <img src="{{ asset('storage/products/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}">
+
                 <div class="position-absolute top-0 end-0 p-2">
                     <a href="javascript:void(0)" class="btn btn-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
+                        <!-- Ícone de editar -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                         </svg>
@@ -95,9 +100,14 @@
                         </button>
                     </form>
                 </div>
-                <div class="card-body">
-                    <h5 class="card-title text-center">{{ ucwords($product->name) }}</h5>
+
+                <div class="card-body d-flex flex-column">
+                    <!-- O nome do produto com tooltip -->
+                    <h5 class="card-title text-center" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $product->name }}">
+                        {{ ucwords($product->name) }}
+                    </h5>
                     <p class="card-text text-center text-truncate" style="max-width: 250px;">{{ ucwords($product->description) }}</p>
+
                     <div class="row">
                         <div class="col-6">
                             <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
@@ -110,9 +120,9 @@
                             <!-- Status do Produto -->
                             <p><strong>Status:</strong>
                                 <span class="badge
-                                @if($product->status == 'active') badge-success
-                                @elseif($product->status == 'inactive') badge-secondary
-                                @else badge-danger @endif">
+                            @if($product->status == 'active') badge-success
+                            @elseif($product->status == 'inactive') badge-secondary
+                            @else badge-danger @endif">
                                     {{ ucfirst($product->status) }}
                                 </span>
                             </p>
@@ -123,7 +133,11 @@
         </div>
         @endforeach
     </div>
+
+
 </div>
+<!-- Incluir o modal -->
+@include('products.upload')
 <!-- Modal de Adicionar Produto -->
 <div class="modal fade" id="modalAddProduct" tabindex="-1" aria-labelledby="modalAddProductLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl"> <!-- Modal Ampliado -->
@@ -397,6 +411,14 @@
         document.getElementById(messageId).classList.remove('show');
         document.getElementById(messageId).classList.add('fade');
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Inicializar os tooltips do Bootstrap
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
 </script>
 
 <style>
@@ -421,6 +443,102 @@
         color: #fff;
         background: transparent;
         border: none;
+    }
+
+    /* Garantir que os cards tenham uma altura fixa e o conteúdo se ajuste adequadamente */
+    .card {
+        height: 450px;
+        /* Defina uma altura fixa para os cards */
+    }
+
+    /* Para a imagem, defina um tamanho fixo e ajuste o conteúdo */
+    .card-img-top {
+        width: 100%;
+        /* A largura da imagem ocupará 100% da largura do seu contêiner */
+        height: 200px;
+        /* Altura fixa para as imagens, todas terão 200px de altura */
+
+        /* A imagem se ajusta ao contêiner sem distorcer, mas pode ser cortada */
+    }
+
+    /* Truncar o nome e a descrição com "..." e permitir que o nome completo seja mostrado em um tooltip */
+    .card-title {
+        white-space: nowrap;
+        /* Não quebra a linha */
+        overflow: hidden;
+        /* Esconde o texto que ultrapassa */
+        text-overflow: ellipsis;
+        /* Adiciona "..." no final */
+        max-width: 250px;
+        /* Define o tamanho máximo para o nome */
+        text-align: center;
+        position: relative;
+    }
+
+    /* Tooltip para o nome completo do produto */
+    .card-title[data-bs-toggle="tooltip"]:hover::after {
+        content: attr(data-bs-original-title);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 5px;
+        background-color: rgba(0, 0, 0, 0.7);
+        color: white;
+        font-size: 12px;
+        border-radius: 3px;
+        width: 100%;
+        z-index: 10;
+    }
+
+    /* Garantir que o conteúdo da descrição também seja truncado corretamente */
+    .card-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 250px;
+        /* Ajuste de largura */
+    }
+
+    /* Para os campos de preço e quantidade, garantir que eles não ultrapassem o tamanho do card */
+    .card-body .row .col-6 {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        max-width: 100%;
+        /* Assegura que a largura seja ajustada */
+    }
+
+    /* Definir altura fixa para os inputs de preço, venda e quantidade */
+    .card-body input.form-control {
+        height: 38px;
+        /* Altura consistente para os inputs */
+        width: 100%;
+    }
+
+    /* Definir largura fixa para os botões e garantir que eles ocupem toda a largura do card */
+    .card-body button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1em;
+    }
+
+    /* Manter uma proporção de layout consistente dentro do card */
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        /* Assegura que o card se expanda para preencher o espaço */
+    }
+
+    /* Ajuste de altura das colunas para garantir que elas não se sobreponham */
+    .col-md-3 {
+        height: 100%;
+    }
+
+    /* Ajuste do card para que a altura total seja compatível */
+    .card-body .row {
+        margin-bottom: 10px;
     }
 </style>
 @endsection
