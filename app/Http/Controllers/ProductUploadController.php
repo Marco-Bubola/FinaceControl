@@ -19,9 +19,9 @@ class ProductUploadController extends Controller
             'products.*.price' => 'required|numeric',
             'products.*.price_sale' => 'required|numeric',
             'products.*.quantity' => 'required|integer',
-            'products.*.product_code' => 'required|string|max:255|unique:products,product_code',
+            'products.*.product_code' => 'required|string|max:255',
             'products.*.status' => 'required|in:active,inactive',
-            'products.*.image' => 'nullable|image|mimes:jpg,png,jpeg,gif|max:2048',
+            'products.*.image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
         ]);
 
         // Processar cada produto
@@ -37,19 +37,47 @@ class ProductUploadController extends Controller
             $imageName = $imageName ?? 'product-placeholder.png'; // Se a imagem não for fornecida, usa a imagem padrão.
 
             try {
-                // Salvar produto no banco de dados
-                Product::create([
-                    'name' => $product['name'],
-                    'description' => $product['description'] ?? null,
-                    'price' => $product['price'],
-                    'price_sale' => $product['price_sale'],
-                    'stock_quantity' => $product['quantity'],
-                    'product_code' => $product['product_code'],
-                    'status' => $product['status'],
-                    'image' => $imageName,
-                    'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
-                    'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
-                ]);
+                // Verificar se já existe um produto com o mesmo product_code e preço
+                $existingProduct = Product::where('product_code', $product['product_code'])
+                    ->where('price', $product['price'])
+                    ->where('price_sale', $product['price_sale'])
+                    ->first();
+
+                if ($existingProduct) {
+                    // Se o preço de venda for o mesmo, apenas atualiza a quantidade
+                    if ($existingProduct->price_sale == $product['price_sale']) {
+                        $existingProduct->stock_quantity += $product['quantity']; // Aumenta a quantidade
+                        $existingProduct->save(); // Salva as alterações
+                    } else {
+                        // Caso o preço de venda seja diferente, cria um novo produto com o mesmo código
+                        Product::create([
+                            'name' => $product['name'],
+                            'description' => $product['description'] ?? null,
+                            'price' => $product['price'],
+                            'price_sale' => $product['price_sale'],
+                            'stock_quantity' => $product['quantity'],
+                            'product_code' => $product['product_code'],
+                            'status' => $product['status'],
+                            'image' => $imageName,
+                            'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
+                            'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
+                        ]);
+                    }
+                } else {
+                    // Se o produto não existe, cria um novo produto
+                    Product::create([
+                        'name' => $product['name'],
+                        'description' => $product['description'] ?? null,
+                        'price' => $product['price'],
+                        'price_sale' => $product['price_sale'],
+                        'stock_quantity' => $product['quantity'],
+                        'product_code' => $product['product_code'],
+                        'status' => $product['status'],
+                        'image' => $imageName,
+                        'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
+                        'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
+                    ]);
+                }
             } catch (\Exception $e) {
                 // Captura erros e retorna para o formulário de upload com a mensagem de erro
                 return redirect()->route('products.index')->withErrors(['message' => 'Erro ao salvar os produtos: ' . $e->getMessage()]);
@@ -59,7 +87,6 @@ class ProductUploadController extends Controller
         // Redireciona para a lista de produtos após o sucesso
         return redirect()->route('products.index')->with('success', 'Produtos salvos com sucesso!');
     }
-
 
 
     // Método para mostrar o formulário de upload

@@ -120,9 +120,8 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <!-- Formulário de Criação de Cliente -->
-                    <form action="{{ route('clients.store') }}" method="POST">
+                    <form action="{{ route('clients.store') }}" method="POST" id="clientForm">
                         @csrf
-
                         <div class="row">
                             <!-- Coluna da Esquerda com os Detalhes do Cliente -->
                             <div class="col-md-12 text-center">
@@ -130,14 +129,14 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="name" class="col-form-label text-center">Nome do Cliente</label>
-                                            <input type="text" name="name" id="name" class="form-control" required>
+                                            <label for="name" class="col-form-label text-center">Nome do Cliente <span class="text-danger">*</span></label>
+                                            <input type="text" name="name" id="name" class="form-control" placeholder="Digite o nome do cliente" required>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="email" class="col-form-label text-center">Email</label>
-                                            <input type="email" name="email" id="email" class="form-control">
+                                            <label for="email" class="col-form-label text-center">Email <span class="text-muted">(Opcional)</span></label>
+                                            <input type="email" name="email" id="email" class="form-control" placeholder="Digite o email" pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
                                         </div>
                                     </div>
                                 </div>
@@ -146,14 +145,47 @@
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="phone" class="col-form-label text-center">Telefone</label>
-                                            <input type="text" name="phone" id="phone" class="form-control">
+                                            <label for="phone" class="col-form-label text-center">Telefone <span class="text-muted">(Opcional)</span></label>
+                                            <input type="text" name="phone" id="phone" class="form-control" placeholder="(XX) XXXXX-XXXX">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
-                                            <label for="address" class="col-form-label text-center">Endereço</label>
-                                            <textarea name="address" id="address" class="form-control"></textarea>
+                                            <label for="cep" class="col-form-label text-center">CEP <span class="text-muted">(Opcional)</span></label>
+                                            <input type="text" name="cep" id="cep" class="form-control" placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Linha 3: Endereço Completo (Aparece somente após digitar o CEP) -->
+                                <div id="addressFields" style="display: none;">
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="address" class="col-form-label text-center">Endereço <span class="text-muted">(Opcional)</span></label>
+                                                <input type="text" name="address" id="address" class="form-control" placeholder="Digite o endereço">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="city" class="col-form-label text-center">Cidade <span class="text-muted">(Opcional)</span></label>
+                                                <input type="text" name="city" id="city" class="form-control" placeholder="Digite a cidade">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="state" class="col-form-label text-center">Estado <span class="text-muted">(Opcional)</span></label>
+                                                <input type="text" name="state" id="state" class="form-control" placeholder="Digite o estado">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="district" class="col-form-label text-center">Bairro <span class="text-muted">(Opcional)</span></label>
+                                                <input type="text" name="district" id="district" class="form-control" placeholder="Digite o bairro">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -272,8 +304,61 @@
     </div>
 </div>
 @endforeach
-
 <script>
+    // Função para buscar o endereço pelo CEP utilizando a API dos Correios
+    function searchAddressByCep() {
+        var cep = document.getElementById('cep').value.replace(/\D/g, ''); // Remove caracteres não numéricos
+        if (cep.length === 8) { // Se o CEP tiver 8 dígitos
+            var url = `https://viacep.com.br/ws/${cep}/json/`; // API dos Correios
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.erro) {
+                        // Preenche os campos de endereço automaticamente
+                        document.getElementById('address').value = data.logradouro;
+                        document.getElementById('city').value = data.localidade;
+                        document.getElementById('state').value = data.uf;
+                        document.getElementById('district').value = data.bairro;
+
+                        // Exibe os campos de endereço após digitar o CEP
+                        document.getElementById('addressFields').style.display = 'block';
+                    } else {
+                        alert('CEP não encontrado!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao buscar o CEP:', error);
+                });
+        }
+    }
+
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const phoneInput = document.getElementById('phone');
+
+        // Máscara para o telefone, formatando enquanto o usuário digita
+        phoneInput.addEventListener('input', function(e) {
+            let phone = e.target.value.replace(/\D/g, ''); // Remove todos os caracteres não numéricos
+
+            // Aplica a máscara dinamicamente enquanto o usuário digita
+            if (phone.length <= 2) {
+                // Coloca os parênteses quando os dois primeiros números forem digitados
+                phone = phone.replace(/^(\d{2})$/, '($1)');
+            } else if (phone.length <= 7) {
+                // Quando tiver 3 a 7 números, coloca o espaço após os dois primeiros e o hífen
+                phone = phone.replace(/^(\d{2})(\d{1,5})$/, '($1) $2');
+            } else {
+                // Quando tiver mais de 7 números, coloca o hífen
+                phone = phone.replace(/^(\d{2})(\d{1,5})(\d{1,4})$/, '($1) $2-$3');
+            }
+
+            e.target.value = phone; // Aplica a máscara no input
+        });
+    });
+
+
     document.addEventListener("DOMContentLoaded", function() {
         // Função para iniciar o timer e ocultar a mensagem após 30 segundos
         function startTimer(messageId, timerId) {

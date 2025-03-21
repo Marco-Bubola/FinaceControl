@@ -6,7 +6,9 @@ use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\Client;
+use App\Models\SalePayment as ModelsSalePayment;
 use Illuminate\Http\Request;
+use SalePayment;
 
 class SaleController extends Controller
 {
@@ -46,18 +48,21 @@ class SaleController extends Controller
             }
         }
 
-        // Paginando os resultados
-        $sales = $sales->with(['client', 'saleItems.product'])->paginate(10);
+        // Controle do número de itens por página (valor padrão é 10)
+        $perPage = $request->input('per_page', 9);  // Pega o valor de 'per_page' ou usa 10 como padrão
+
+        // Paginando os resultados com a quantidade definida
+        $sales = $sales->with(['client', 'saleItems.product'])->paginate($perPage);
+
         $products = Product::where('user_id', $userId)->get(); // Filtra os produtos associados ao usuário
 
         // Carregar clientes associados ao usuário logado para o filtro
         $clients = Client::where('user_id', $userId)->get(); // Filtra os clientes associados ao usuário
 
-        // Passar vendas e clientes para a view
-        return view('sales.index', compact('sales', 'clients', 'products'));
+        // Passar vendas, clientes e produtos para a view
+        return view('sales.index', compact('sales', 'clients', 'products', 'perPage'));
     }
 
-    // Em ProductController.php// Em ProductController.php
 
     public function search(Request $request)
     {
@@ -82,49 +87,50 @@ class SaleController extends Controller
         $products = Product::all();
         return view('sales.index', compact('clients', 'products'));
     }
-
-    // Método para adicionar um produto a uma venda
     public function addProduct(Request $request, Sale $sale)
     {
-        // Validação dos dados recebidos
+        // Verifique o conteúdo do request
         $request->validate([
-            'product_id' => 'required|exists:products,id', // Produto deve existir
-            'quantity' => 'required|integer|min:1', // A quantidade deve ser um número positivo
+            'products' => 'required|array', // Produtos devem ser um array
+            'products.*.product_id' => 'required|exists:products,id', // Verificar se o produto existe
+            'products.*.quantity' => 'required|integer|min:1', // Quantidade deve ser um número positivo
+            'products.*.price_sale' => 'required|numeric|min:0', // Preço de venda deve ser válido
         ]);
 
-        // Obter o produto e verificar o estoque
-        $product = Product::find($request->product_id);
-        if ($product->stock_quantity < $request->quantity) {
-            // Se o estoque não for suficiente, retornar com erro
-            return redirect()->back()->withErrors(['quantity' => 'Quantidade insuficiente no estoque.']);
+        // Processar os produtos selecionados
+        foreach ($request->products as $productData) {
+            $product = Product::find($productData['product_id']);
+
+            // Verificar se o estoque é suficiente
+            if ($product->stock_quantity < $productData['quantity']) {
+                return redirect()->back()->withErrors(['quantity' => 'Quantidade insuficiente no estoque.']);
+            }
+
+            // Adicionar o item à venda
+            SaleItem::create([
+                'sale_id' => $sale->id,
+                'product_id' => $productData['product_id'],
+                'quantity' => $productData['quantity'],
+                'price' => $productData['price'], // Usando o preço original do produto
+                'price_sale' => $productData['price_sale'], // Usando o preço de venda
+            ]);
+
+            // Atualizar o estoque do produto
+            $product->stock_quantity -= $productData['quantity'];
+            $product->save();
         }
-
-        // Calcular o valor total do item (preço * quantidade)
-        $total_price_item = $product->price * $request->quantity;
-
-        // Adicionar o item à venda
-        SaleItem::create([
-            'sale_id' => $sale->id,
-            'product_id' => $request->product_id,
-            'quantity' => $request->quantity,
-            'price' => $product->price, // Preço unitário
-        ]);
 
         // Atualizar o preço total da venda
         $total_price = $sale->saleItems->sum(function ($item) {
-            return $item->quantity * $item->price; // Multiplicar a quantidade pelo preço unitário
+            return $item->quantity * $item->price_sale; // Calculando com o preço de venda
         });
 
-        // Atualizar o estoque do produto
-        $product->stock_quantity -= $request->quantity;
-        $product->save(); // Salvar a alteração no estoque
-
-        // Atualizar o preço total da venda
         $sale->update(['total_price' => $total_price]);
 
-        // Retornar para a página de vendas com uma mensagem de sucesso
-        return redirect()->route('sales.index')->with('success', 'Produto adicionado à venda!');
+        return redirect()->route('sales.show')->with('success', 'Produto(s) adicionado(s) à venda!');
     }
+
+
 
     public function store(Request $request)
     {
@@ -194,7 +200,93 @@ class SaleController extends Controller
             }
         }
 
-        return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
+        return redirect()->route('sales.show')->with('success', 'Venda registrada com sucesso!');
+    }
+    public function addPayment(Request $request, $saleId)
+    {
+        $sale = Sale::findOrFail($saleId);
+
+        // Validando que o valor pago, método de pagamento e a data são enviados corretamente
+        $validated = $request->validate([
+            'amount_paid' => 'required|array|min:1',
+            'amount_paid.*' => 'required|numeric|min:0.01', // Garantir que os valores sejam números positivos
+            'payment_method' => 'required|array|min:1',
+            'payment_method.*' => 'required|string', // O método de pagamento deve ser uma string
+            'payment_date' => 'required|array|min:1',
+            'payment_date.*' => 'required|date', // Validando a data
+        ]);
+
+        // Percorrer os pagamentos recebidos e salvar na tabela sale_payments
+        foreach ($request->input('amount_paid') as $key => $amountPaid) {
+            $paymentMethod = $request->input('payment_method')[$key];
+            $paymentDate = $request->input('payment_date')[$key]; // Adicionando a data de pagamento
+
+            // Criar o registro de pagamento com a data
+            ModelsSalePayment::create([
+                'sale_id' => $sale->id,
+                'amount_paid' => $amountPaid,
+                'payment_method' => $paymentMethod,
+                'payment_date' => $paymentDate, // Salvando a data do pagamento
+            ]);
+        }
+
+        // Atualizar o total pago na venda
+        $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
+        $sale->amount_paid = $totalPaid;
+        $sale->save();
+
+        // Redirecionar para a página de detalhes da venda específica
+        return redirect()->route('sales.show', $sale->id)->with('success', 'Pagamentos adicionados com sucesso!');
+    }
+    public function show($id)
+    {
+        // Encontre a venda com o ID fornecido
+        $sale = Sale::with('saleItems.product')->findOrFail($id);
+
+        // Retorne a view com os dados da venda
+        return view('sales.show', compact('sale'));
+    }
+
+
+    public function updatePayment(Request $request, $saleId, $paymentId)
+    {
+        $sale = Sale::findOrFail($saleId);
+        $payment = ModelsSalePayment::findOrFail($paymentId);
+
+        // Validando os dados de entrada
+        $validated = $request->validate([
+            'amount_paid' => 'required|numeric|min:0.01',
+            'payment_method' => 'required|string',
+            'payment_date' => 'required|date',
+        ]);
+
+        // Atualizando os dados do pagamento
+        $payment->amount_paid = $request->input('amount_paid');
+        $payment->payment_method = $request->input('payment_method');
+        $payment->payment_date = $request->input('payment_date');
+        $payment->save();
+
+        // Atualizando o total pago na venda
+        $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
+        $sale->amount_paid = $totalPaid;
+        $sale->save();
+
+        return redirect()->route('sales.show', $sale->id)->with('success', 'Pagamento atualizado com sucesso!');
+    }
+    public function deletePayment($saleId, $paymentId)
+    {
+        $sale = Sale::findOrFail($saleId);
+        $payment = ModelsSalePayment::findOrFail($paymentId);
+
+        // Excluindo o pagamento
+        $payment->delete();
+
+        // Atualizando o total pago na venda
+        $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
+        $sale->amount_paid = $totalPaid;
+        $sale->save();
+
+        return redirect()->route('sales.index', $sale->id)->with('success', 'Pagamento excluído com sucesso!');
     }
 
     public function updateStock(Request $request, $productId)
@@ -217,8 +309,6 @@ class SaleController extends Controller
 
         return view('sales.index', compact('sale', 'clients', 'products'));
     }
-
-    // Atualizar a venda
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -226,6 +316,7 @@ class SaleController extends Controller
             'products' => 'required|array', // Verifica se os produtos foram selecionados
             'products.*.product_id' => 'required|exists:products,id', // Verifica se o produto existe
             'products.*.quantity' => 'required|integer|min:1', // Verifica se a quantidade é válida
+            'products.*.price_sale' => 'required|numeric|min:0', // Verifica se o preço de venda é válido
         ]);
 
         $sale = Sale::findOrFail($id);
@@ -242,7 +333,7 @@ class SaleController extends Controller
         // Registrando novos itens da venda
         foreach ($request->products as $product) {
             $productModel = Product::find($product['product_id']);
-            $item_price = $productModel->price * $product['quantity']; // Preço total do item
+            $item_price = $product['price_sale'] * $product['quantity']; // Preço total do item, agora usando o price_sale do formulário
 
             // Atualiza o preço total
             $total_price += $item_price;
@@ -253,7 +344,7 @@ class SaleController extends Controller
                 'product_id' => $product['product_id'],
                 'quantity' => $product['quantity'],
                 'price' => $productModel->price, // Preço unitário do produto
-                'price_sale' => $productModel->price_sale,
+                'price_sale' => $product['price_sale'], // Usando o preço de venda atualizado
             ]);
         }
 

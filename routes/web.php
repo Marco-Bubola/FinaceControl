@@ -51,12 +51,25 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/products/upload', [ProductUploadController::class, 'showUploadForm'])->name('products.upload');
     Route::post('/products/upload', [ProductUploadController::class, 'upload'])->name('products.upload');
 
-    // Store route for handling uploaded products after confirmation
-    Route::post('/products/store', [ProductUploadController::class, 'store'])->name('products.store');
+    // Rota para criar produtos a partir do arquivo PDF
+    Route::post('/products/pdf/store', [ProductUploadController::class, 'store'])->name('products.pdf.store');
+
+    // Rota para criar produtos manualmente
+    Route::post('/products/manual/store', [ProductController::class, 'store'])->name('products.manual.store');
 
     // Routes for managing sales
     Route::resource('sales', SaleController::class);
     Route::post('/sales/{sale}/addProduct', [SaleController::class, 'addProduct'])->name('sales.addProduct');
+
+    Route::post('/sales/{sale}/add-payment', [SaleController::class, 'addPayment'])->name('sales.addPayment');
+    Route::put('/sales/{saleId}/payments/{paymentId}/update', [SaleController::class, 'updatePayment'])->name('sales.updatePayment');
+    Route::delete('/sales/{saleId}/payments/{paymentId}/delete', [SaleController::class, 'deletePayment'])->name('sales.deletePayment');
+    Route::get('/sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
+
+
+    Route::get('tables', function () {
+        return view('tables');
+    })->name('tables');
     Route::post('/update-stock/{productId}', [SaleController::class, 'updateStock']);
 
     // User Profile Update Routes
@@ -68,6 +81,16 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/user-management/create', [InfoUserController::class, 'create'])->name('user.create');
     Route::post('/user-management/create', [InfoUserController::class, 'store'])->name('user.store');
     Route::delete('/user-management/{id}', [InfoUserController::class, 'destroy'])->name('user.delete');
+    Route::get('static-sign-in', function () {
+        return view('static-sign-in');
+    })->name('sign-in');
+
+    Route::get('static-sign-up', function () {
+        return view('static-sign-up');
+    })->name('sign-up');
+    Route::get('/login', function () {
+        return view('dashboard');
+    })->name('sign-up');
 
     // Logout route
     Route::get('/logout', [SessionsController::class, 'destroy']);
@@ -105,3 +128,6 @@ Route::get('/client/{id}/data', function ($id) {
 // Route for searching products
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 Route::post('/products/update-all', [ProductController::class, 'updateAll'])->name('products.updateAll');
+Route::get('/login', function () {
+    return view('session/login-session');
+})->name('login');

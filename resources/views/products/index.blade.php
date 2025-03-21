@@ -31,8 +31,18 @@
     <!-- Filtro e Pesquisa -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div class="row w-100">
-            <!-- Coluna de Filtro (Meio) -->
+
+            <!-- Coluna de Pesquisa (Esquerda) -->
             <div class="col-md-4 mb-3">
+                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
+                    <div class="input-group w-100">
+                        <input type="text" name="search" class="form-control w-65 h-25" placeholder="Pesquisar por nome ou código" value="{{ request('search') }}">
+                        <button class="btn btn-primary h-20" type="submit">Pesquisar</button>
+                    </div>
+                </form>
+            </div>
+            <!-- Coluna de Filtro (Meio) -->
+            <div class="col-md-2 mb-3">
                 <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <select name="filter" class="form-control w-100" onchange="this.form.submit()">
                         <option value="">Filtrar</option>
@@ -45,16 +55,18 @@
                     </select>
                 </form>
             </div>
-
-            <!-- Coluna de Pesquisa (Esquerda) -->
-            <div class="col-md-4 mb-3">
+            <div class="col-md-2 mb-3">
                 <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
-                    <div class="input-group w-100">
-                        <input type="text" name="search" class="form-control w-65 h-25" placeholder="Pesquisar por nome ou código" value="{{ request('search') }}">
-                        <button class="btn btn-primary h-20" type="submit">Pesquisar</button>
-                    </div>
+                    <select name="per_page" class="form-control w-100" onchange="this.form.submit()">
+                        <option value="10" {{ request('per_page', 10) == '10' ? 'selected' : '' }}>10 itens</option>
+                        <option value="25" {{ request('per_page', 10) == '25' ? 'selected' : '' }}>25 itens</option>
+                        <option value="50" {{ request('per_page', 10) == '50' ? 'selected' : '' }}>50 itens</option>
+                        <option value="100" {{ request('per_page', 10) == '100' ? 'selected' : '' }}>100 itens</option>
+                    </select>
                 </form>
             </div>
+
+
             <!-- Botões de Adicionar Produto e Upload -->
             <div class="col-md-4 text-end">
                 <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddProduct">
@@ -89,16 +101,15 @@
                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
                         </svg>
                     </a>
-                    <form action="{{ route('products.destroy', $product->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-danger btn-sm p-1" title="Excluir">
-                            <!-- Ícone de lixeira -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                            </svg>
-                        </button>
-                    </form>
+                    <!-- Botão de Exclusão -->
+                    <button type="button" class="btn btn-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#modalDeleteProduct{{ $product->id }}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                        </svg>
+                    </button>
+
+
+
                 </div>
 
                 <div class="card-body d-flex flex-column">
@@ -133,9 +144,85 @@
         </div>
         @endforeach
     </div>
+    <div class="d-flex justify-content-center">
+        <ul class="pagination">
+            {{-- Link para a primeira página --}}
+            @if ($products->onFirstPage())
+            <li class="page-item disabled">
+                <span class="page-link">Primeira</span>
+            </li>
+            @else
+            <li class="page-item">
+                <a class="page-link" href="{{ $products->url(1) }}&per_page={{ request('per_page', 10) }}">Primeira</a>
+            </li>
+            @endif
 
+            {{-- Link para a página anterior --}}
+            @if ($products->onFirstPage())
+            <li class="page-item disabled">
+                <span class="page-link">Anterior</span>
+            </li>
+            @else
+            <li class="page-item">
+                <a class="page-link" href="{{ $products->previousPageUrl() }}&per_page={{ request('per_page', 10) }}">Anterior</a>
+            </li>
+            @endif
 
+            {{-- Páginas individuais --}}
+            @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
+            <li class="page-item {{ $page == $products->currentPage() ? 'active' : '' }}">
+                <a class="page-link" href="{{ $url }}&per_page={{ request('per_page', 10) }}">{{ $page }}</a>
+            </li>
+            @endforeach
+
+            {{-- Link para a próxima página --}}
+            @if ($products->hasMorePages())
+            <li class="page-item">
+                <a class="page-link" href="{{ $products->nextPageUrl() }}&per_page={{ request('per_page', 10) }}">Próxima</a>
+            </li>
+            @else
+            <li class="page-item disabled">
+                <span class="page-link">Próxima</span>
+            </li>
+            @endif
+
+            {{-- Link para a última página --}}
+            @if ($products->hasMorePages())
+            <li class="page-item">
+                <a class="page-link" href="{{ $products->url($products->lastPage()) }}&per_page={{ request('per_page', 10) }}">Última</a>
+            </li>
+            @else
+            <li class="page-item disabled">
+                <span class="page-link">Última</span>
+            </li>
+            @endif
+        </ul>
+    </div>
 </div>
+@foreach($products as $product)
+<!-- Modal de Confirmar Exclusão -->
+<div class="modal fade" id="modalDeleteProduct{{ $product->id }}" tabindex="-1" aria-labelledby="modalDeleteProductLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalDeleteProductLabel">Confirmar Exclusão</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Tem certeza de que deseja excluir este produto?</p>
+            </div>
+            <div class="modal-footer">
+                <form id="deleteForm-{{ $product->id }}" action="{{ route('products.destroy', $product->id) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                </form>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 <!-- Incluir o modal -->
 @include('products.upload')
 <!-- Modal de Adicionar Produto -->
@@ -149,7 +236,7 @@
             <div class="modal-body">
                 <div class="container-fluid">
                     <!-- Formulário de Criação de Produto -->
-                    <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data">
+                    <form action="{{ route('products.manual.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="col-md-8 text-center">
@@ -171,16 +258,24 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="price" class="col-form-label text-center">Preço</label>
-                                            <input type="number" name="price" id="price" class="form-control" required>
+                                            <input type="text" name="price" id="price" class="form-control" required oninput="convertCommaToDot(this)">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="price_sale" class="col-form-label text-center">Venda</label>
-                                            <input type="number" name="price_sale" id="price_sale" class="form-control" required>
+                                            <input type="text" name="price_sale" id="price_sale" class="form-control" required oninput="convertCommaToDot(this)">
                                         </div>
                                     </div>
                                 </div>
+
+                                <script>
+                                    function convertCommaToDot(input) {
+                                        // Substitui a vírgula por ponto enquanto o usuário digita
+                                        input.value = input.value.replace(',', '.');
+                                    }
+                                </script>
+
                                 <div class="row mb-3">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -292,16 +387,15 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="price" class="col-form-label text-center">Preço</label>
-                                            <input type="number" name="price" id="price" class="form-control" value="{{ $product->price }}" required>
+                                            <input type="text" name="price" id="price" class="form-control" value="{{ $product->price }}" required oninput="convertCommaToDot(this)">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label for="price_sale" class="col-form-label text-center">Venda</label>
-                                            <input type="number" name="price_sale" id="price_sale" class="form-control" value="{{ $product->price_sale }}" required>
+                                            <input type="text" name="price_sale" id="price_sale" class="form-control" value="{{ $product->price_sale }}" required oninput="convertCommaToDot(this)">
                                         </div>
                                     </div>
-
                                 </div>
 
                                 <!-- Categoria e Status -->
@@ -419,9 +513,113 @@
             return new bootstrap.Tooltip(tooltipTriggerEl)
         })
     });
+
+    function deleteProduct(button) {
+        // Captura o ID do produto do botão clicado
+        const productId = button.getAttribute('data-id');
+
+        // Captura o formulário de exclusão com base no ID
+        const form = document.getElementById(`deleteForm-${productId}`);
+
+        // Armazenar os parâmetros de paginação no localStorage antes da exclusão
+        const page = new URLSearchParams(window.location.search).get('page') || 1;
+        const perPage = new URLSearchParams(window.location.search).get('per_page') || 10;
+        localStorage.setItem('currentPage', page);
+        localStorage.setItem('perPage', perPage);
+
+        // Enviar o formulário via AJAX
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Produto excluído com sucesso, agora remova o produto da página
+                    removeProductFromPage(productId);
+                    // Atualiza a paginação com os parâmetros preservados
+                    updatePagination(data.page, data.per_page); // Mantém a paginação intacta
+                } else {
+                    alert('Erro ao excluir o produto!');
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+    }
+
+    // Função para remover o produto do DOM
+    function removeProductFromPage(productId) {
+        const productCard = document.getElementById(`product-card-${productId}`);
+        if (productCard) {
+            productCard.remove();
+        }
+    }
+
+    // Função para atualizar a paginação sem recarregar a página
+    function updatePagination(page, perPage) {
+        const paginationLinks = document.querySelectorAll('.pagination a');
+        paginationLinks.forEach(link => {
+            const href = new URL(link.href);
+            href.searchParams.set('page', page);
+            href.searchParams.set('per_page', perPage);
+            link.href = href.toString();
+        });
+    }
+
+    // Função para restaurar a paginação a partir do localStorage
+    function restorePaginationParams() {
+        // Recupera os valores do localStorage
+        const page = localStorage.getItem('currentPage') || 1; // Se não houver, página 1
+        const perPage = localStorage.getItem('perPage') || 10; // Se não houver, 10 por padrão
+
+        // Redireciona para a URL com os parâmetros corretos
+        const url = new URL(window.location);
+        url.searchParams.set('page', page);
+        url.searchParams.set('per_page', perPage);
+        window.location.href = url.toString();
+    }
+
+    // Verifica se há parâmetros no localStorage e aplica
+    if (localStorage.getItem('currentPage') && localStorage.getItem('perPage')) {
+        restorePaginationParams();
+    }
 </script>
 
 <style>
+    .pagination .page-item {
+        margin: 0 5px;
+        /* Adiciona espaçamento horizontal entre os botões */
+    }
+
+    .pagination .page-item .page-link {
+        min-width: 60px;
+        /* Garante que o texto fique dentro do círculo */
+        text-align: center;
+        /* Garante que o texto fique centralizado */
+        border-radius: 50%;
+        /* Forma circular */
+        padding: 6px 3px;
+        /* Ajuste no padding para um visual mais equilibrado */
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: #007bff;
+        border-color: #007bff;
+        color: white;
+    }
+
+    .pagination .page-item.disabled .page-link {
+        background-color: #e9ecef;
+        color: #6c757d;
+    }
+
+
     .alert-timer {
         position: absolute;
         top: 10px;
@@ -447,7 +645,7 @@
 
     /* Garantir que os cards tenham uma altura fixa e o conteúdo se ajuste adequadamente */
     .card {
-        height: 450px;
+        height: auto;
         /* Defina uma altura fixa para os cards */
     }
 

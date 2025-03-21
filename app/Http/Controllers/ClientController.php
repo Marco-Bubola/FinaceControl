@@ -13,30 +13,48 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
-        $clients = Client::query();
+        $userId = auth()->id();  // Obter o ID do usuário logado
+
+        // Inicializa a consulta para clientes, filtrando pelo user_id
+        $clients = Client::where('user_id', $userId);
 
         // Filtro de pesquisa por nome
         if ($request->has('search') && $request->search != '') {
-            $clients->where('name', 'like', '%' . $request->search . '%');
+            // Remove os pontos do termo de pesquisa para garantir que ele seja encontrado independentemente do formato
+            $searchTerm = str_replace('.', '', $request->search);
+
+            $clients->where(function ($q) use ($searchTerm) {
+                // Busca pelo nome do cliente, considerando o termo de pesquisa ajustado
+                $q->where('name', 'like', '%' . $searchTerm . '%');
+            });
         }
 
-        // Filtro por data de criação ou atualização
+        // Filtro por data de criação, atualização ou outros
         if ($request->has('filter') && $request->filter != '') {
-            if ($request->filter == 'created_at') {
-                $clients->orderBy('created_at', 'desc');
-            } elseif ($request->filter == 'updated_at') {
-                $clients->orderBy('updated_at', 'desc');
-            } elseif ($request->filter == 'name_asc') {
-                $clients->orderBy('name', 'asc');
-            } elseif ($request->filter == 'name_desc') {
-                $clients->orderBy('name', 'desc');
+            switch ($request->filter) {
+                case 'created_at':
+                    $clients->orderBy('created_at', 'desc');
+                    break;
+                case 'updated_at':
+                    $clients->orderBy('updated_at', 'desc');
+                    break;
+                case 'name_asc':
+                    $clients->orderBy('name', 'asc');
+                    break;
+                case 'name_desc':
+                    $clients->orderBy('name', 'desc');
+                    break;
             }
         }
 
-        // Paginando os resultados
-        $clients = $clients->paginate(10); // Ajuste o número de itens por página conforme necessário
+        // Controle do número de itens por página (valor padrão é 10)
+        $perPage = $request->input('per_page', 10);  // Pega o valor de 'per_page' ou usa 10 como padrão
 
-        return view('clients.index', compact('clients'));
+        // Paginando os resultados com a quantidade definida
+        $clients = $clients->paginate($perPage);
+
+        // Passando os clientes e parâmetros para a view
+        return view('clients.index', compact('clients', 'perPage'));
     }
 
     // Método para exibir o formulário de criação de cliente
