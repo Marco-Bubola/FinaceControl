@@ -127,7 +127,12 @@ class SaleController extends Controller
 
         $sale->update(['total_price' => $total_price]);
 
-        return redirect()->route('sales.show')->with('success', 'Produto(s) adicionado(s) à venda!');
+        // Verificar se veio da página index ou show
+        $redirectTo = $request->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Produto(s) adicionado(s) à venda!');
     }
 
 
@@ -200,7 +205,7 @@ class SaleController extends Controller
             }
         }
 
-        return redirect()->route('sales.show')->with('success', 'Venda registrada com sucesso!');
+        return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
     }
     public function addPayment(Request $request, $saleId)
     {
@@ -235,18 +240,20 @@ class SaleController extends Controller
         $sale->amount_paid = $totalPaid;
         $sale->save();
 
-        // Redirecionar para a página de detalhes da venda específica
-        return redirect()->route('sales.show', $sale->id)->with('success', 'Pagamentos adicionados com sucesso!');
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = $request->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Pagamentos adicionados com sucesso!');
     }
+
     public function show($id)
     {
-        // Encontre a venda com o ID fornecido
-        $sale = Sale::with('saleItems.product')->findOrFail($id);
-
-        // Retorne a view com os dados da venda
-        return view('sales.show', compact('sale'));
+        $sale = Sale::with(['saleItems.product', 'client', 'payments'])->findOrFail($id);
+        $products = Product::all(); // ou outra lógica para pegar os produtos
+        return view('sales.show', compact('sale', 'products'));
     }
-
 
     public function updatePayment(Request $request, $saleId, $paymentId)
     {
@@ -271,8 +278,14 @@ class SaleController extends Controller
         $sale->amount_paid = $totalPaid;
         $sale->save();
 
-        return redirect()->route('sales.show', $sale->id)->with('success', 'Pagamento atualizado com sucesso!');
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = $request->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Pagamento atualizado com sucesso!');
     }
+
     public function deletePayment($saleId, $paymentId)
     {
         $sale = Sale::findOrFail($saleId);
@@ -286,7 +299,12 @@ class SaleController extends Controller
         $sale->amount_paid = $totalPaid;
         $sale->save();
 
-        return redirect()->route('sales.index', $sale->id)->with('success', 'Pagamento excluído com sucesso!');
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = request()->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Pagamento excluído com sucesso!');
     }
 
     public function updateStock(Request $request, $productId)

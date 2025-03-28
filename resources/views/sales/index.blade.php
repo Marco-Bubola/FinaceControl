@@ -84,20 +84,22 @@
                     <!-- Exibir o nome do cliente, telefone, editar, excluir e adicionar produto -->
                     <div class="row align-items-center">
                         <div class="col-md-7">
-                            <!-- Nome do Cliente e Telefone -->
-                            <p class="mb-0"><strong>Nome:</strong> {{ ucwords($sale->client->name) }} |
-                                <strong>Telefone:</strong> {{ $sale->client->phone }}
-                            </p>
+                            <!-- Link para redirecionar apenas ao clicar no nome do cliente e telefone -->
+                            <a href="{{ route('sales.show', $sale->id) }}" class="text-decoration-none text-dark">
+                                <p class="mb-0"><strong>Nome:</strong> {{ ucwords($sale->client->name) }} |
+                                    <strong>Telefone:</strong> {{ $sale->client->phone }}
+                                </p>
+                            </a>
                         </div>
 
                         <div class="col-md-3 text-center">
                             <!-- Status da venda -->
                             <p class="mb-0"><strong>Status:</strong>
                                 <span class="badge
-                            @if($sale->status == 'active') badge-success
-                            @elseif($sale->status == 'inactive') badge-secondary
-                            @else badge-danger @endif
-                            text-dark">
+                @if($sale->status == 'active') badge-success
+                @elseif($sale->status == 'inactive') badge-secondary
+                @else badge-danger @endif
+                text-dark">
                                     {{ ucfirst($sale->status) }}
                                 </span>
                             </p>
@@ -132,6 +134,7 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="card-body">
@@ -281,6 +284,7 @@
     </div>
     @endif
 
+
     <div class="d-flex justify-content-center">
         <ul class="pagination">
             {{-- Link para a primeira página --}}
@@ -348,6 +352,8 @@
             </div>
             <form action="{{ route('sales.addPayment', $sale->id) }}" method="POST">
                 @csrf
+                <!-- Adicionando o campo oculto 'from' -->
+                <input type="hidden" name="from" value="index">
                 <div class="modal-body">
                     <div id="paymentFields">
                         <div class="payment-item mb-3">
@@ -395,6 +401,8 @@
             <form action="{{ route('sales.updatePayment', ['saleId' => $sale->id, 'paymentId' => $payment->id]) }}" method="POST">
                 @csrf
                 @method('PUT')
+                <!-- Adicionando o campo oculto 'from' -->
+                <input type="hidden" name="from" value="index">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label for="paymentAmount" class="form-label">Valor do Pagamento</label>
@@ -475,6 +483,7 @@
     </div>
 </div>
 @endforeach
+
 @foreach($sales as $sale)
 <!-- Modal de Adicionar Produto à Venda -->
 <div class="modal fade" id="modalAddProductToSale{{ $sale->id }}" tabindex="-1" aria-labelledby="modalAddProductToSaleLabel{{ $sale->id }}" aria-hidden="true">
@@ -488,7 +497,8 @@
                 <!-- Formulário para Adicionar Produto à Venda -->
                 <form action="{{ route('sales.addProduct', $sale->id) }}" method="POST" id="saleForm{{ $sale->id }}" enctype="multipart/form-data">
                     @csrf
-
+                    <!-- Adicionando o campo oculto 'from' -->
+                    <input type="hidden" name="from" value="index">
                     <!-- Barra de Pesquisa -->
                     <div class="d-flex mb-3">
                         <input type="text" class="form-control" id="productSearch{{ $sale->id }}" placeholder="Pesquise por nome ou código do produto..." />
@@ -741,8 +751,7 @@
                                     <p class="card-text text-center" id="price-display-{{ $item->product->id }}">R$ {{ number_format($item->product->price_sale, 2, ',', '.') }}</p>
 
                                     <!-- Campo de edição do preço de venda -->
-                                    <input type="number" name="products[{{ $item->product->id }}][price_sale]" value="{{ $item->product->price_sale }}" min="0" class="form-control mb-2 text-center" required>
-
+                                    <input type="number" name="products[{{ $item->product->id }}][price_sale]" value="{{ number_format($item->product->price_sale, 2, '.', '') }}" min="0" class="form-control mb-2 text-center" step="0.01" required>
                                     <!-- Campo de quantidade -->
                                     <p class="card-text text-center">Qtd: {{ $item->quantity }}</p>
                                     <input type="number" name="products[{{ $item->product->id }}][quantity]" min="1" class="form-control" value="{{ $item->quantity }}">
