@@ -748,10 +748,10 @@
                                     <h6 class="card-title text-center" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $item->product->name }}">
                                         {{ $item->product->name }}
                                     </h6>
-                                    <p class="card-text text-center" id="price-display-{{ $item->product->id }}">R$ {{ number_format($item->product->price_sale, 2, ',', '.') }}</p>
+                                    <p class="card-text text-center" id="price-display-{{ $item->product->id }}">R$ {{ number_format($item->price_sale, 2, ',', '.') }}</p>
 
                                     <!-- Campo de edição do preço de venda -->
-                                    <input type="number" name="products[{{ $item->product->id }}][price_sale]" value="{{ number_format($item->product->price_sale, 2, '.', '') }}" min="0" class="form-control mb-2 text-center" step="0.01" required>
+                                    <input type="number" name="products[{{ $item->product->id }}][price_sale]" value="{{ number_format($item->price_sale, 2, '.', '') }}" min="0" class="form-control mb-2 text-center" step="0.01" required>
                                     <!-- Campo de quantidade -->
                                     <p class="card-text text-center">Qtd: {{ $item->quantity }}</p>
                                     <input type="number" name="products[{{ $item->product->id }}][quantity]" min="1" class="form-control" value="{{ $item->quantity }}">

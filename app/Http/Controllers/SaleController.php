@@ -135,6 +135,31 @@ class SaleController extends Controller
         return redirect($redirectTo)->with('success', 'Produto(s) adicionado(s) à venda!');
     }
 
+    public function destroySaleItem($id)
+    {
+        // Localiza o item da venda a ser removido ou aborta se não existir
+        $saleItem = SaleItem::findOrFail($id);
+
+        // Atualiza o estoque do produto, somando de volta a quantidade removida
+        $product = Product::find($saleItem->product_id);
+        if ($product) {
+            $product->stock_quantity += $saleItem->quantity;
+            $product->save();
+        }
+
+        // Atualiza o preço total da venda subtraindo o valor deste item
+        $sale = Sale::find($saleItem->sale_id);
+        if ($sale) {
+            $sale->total_price -= $saleItem->price_sale * $saleItem->quantity;
+            $sale->save();
+        }
+
+        // Exclui o item da venda
+        $saleItem->delete();
+
+        // Redireciona de volta com uma mensagem de sucesso
+        return redirect()->back()->with('success', 'Produto removido da venda com sucesso!');
+    }
 
 
     public function store(Request $request)
@@ -252,7 +277,30 @@ class SaleController extends Controller
     {
         $sale = Sale::with(['saleItems.product', 'client', 'payments'])->findOrFail($id);
         $products = Product::all(); // ou outra lógica para pegar os produtos
+
         return view('sales.show', compact('sale', 'products'));
+    }
+    public function updateSaleItem(Request $request, Sale $sale, SaleItem $item)
+    {
+        // Validação dos dados
+        $data = $request->validate([
+            'price_sale' => 'required|numeric|min:0',
+            'quantity'   => 'required|integer|min:1',
+        ]);
+
+        // Atualiza o item da venda
+        $item->price_sale = $data['price_sale'];
+        $item->quantity = $data['quantity'];
+        $item->save();
+
+        // (Opcional) Atualize o total da venda se necessário
+        // Exemplo: recalcular o total a partir de todos os itens da venda
+        $sale->total_price = $sale->saleItems->sum(function ($saleItem) {
+            return $saleItem->price_sale * $saleItem->quantity;
+        });
+        $sale->save();
+
+        return redirect()->route('sales.show', $sale->id)->with('success', 'Produto da venda atualizado com sucesso!');
     }
 
     public function updatePayment(Request $request, $saleId, $paymentId)

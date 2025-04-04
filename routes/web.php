@@ -65,7 +65,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::put('/sales/{saleId}/payments/{paymentId}/update', [SaleController::class, 'updatePayment'])->name('sales.updatePayment');
     Route::delete('/sales/{saleId}/payments/{paymentId}/delete', [SaleController::class, 'deletePayment'])->name('sales.deletePayment');
     Route::get('/sales/{sale}', [SaleController::class, 'show'])->name('sales.show');
-
+    Route::delete('/sales/item/{id}', [SaleController::class, 'destroySaleItem'])->name('sales.item.destroy');
+    Route::put('/sales/{sale}/item/{item}', [SaleController::class, 'updateSaleItem'])->name('sales.item.update');
+    Route::put('/sales/{sale}', [SaleController::class, 'update'])->name('sales.update');
 
     Route::get('tables', function () {
         return view('tables');
