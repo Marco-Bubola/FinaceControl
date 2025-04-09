@@ -5,33 +5,38 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Bank extends Model
+class Invoice extends Model
 {
     use HasFactory;
 
     // Definindo a tabela associada ao model
-    protected $table = 'banks';
+    protected $table = 'invoice';
 
     // Definindo os campos que podem ser preenchidos
     protected $fillable = [
-        'name',
+        'id_bank',
         'description',
-        'start_date',
-        'end_date',
-        'registration_date',
+        'installments',
+        'value',
         'user_id',
+        'category_id',
     ];
 
-    // Definindo o relacionamento com o modelo Invoice
-    public function invoices()
+    // Relacionamento com o banco
+    public function bank()
     {
-        return $this->hasMany(Invoice::class, 'id_bank');
+        return $this->belongsTo(Bank::class, 'id_bank');
     }
+
     // Relacionamento com o usuário
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Outros relacionamentos podem ser definidos aqui, se necessário.
+    // Relacionamento com a categoria
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
 }

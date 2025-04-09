@@ -6,6 +6,7 @@ use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\ResetController;
 use App\Http\Controllers\SessionsController;
@@ -39,11 +40,21 @@ Route::group(['middleware' => 'auth'], function () {
         return view('profile/profile');
     })->name('profile');
 
+    Route::middleware(['auth'])->group(function () {
+        Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+        // Outras rotas, como 'store', 'edit', 'update', 'destroy', podem ser adicionadas aqui
+    });
+
+    // Rota para visualizar o cartão (irá redirecionar para as invoices)
+    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
+    Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');
+
     // Routes for managing user profiles
     Route::resource('banks', BankController::class);
     Route::resource('clients', ClientController::class);
     Route::resource('categories', CategoryController::class);
-
+    // Rota para listar os bancos
+    Route::get('/banks', [BankController::class, 'index'])->name('banks.index');
     // Routes for managing products (CRUD)
     Route::resource('products', ProductController::class);
 
