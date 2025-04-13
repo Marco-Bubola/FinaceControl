@@ -11,25 +11,52 @@ use App\Models\User;
 class BankController extends Controller
 {
     // Método para exibir todos os bancos
-    public function index()
+    public function index(Request $request)
     {
-        // Obtendo todos os bancos
-        $banks = Bank::all();
+        // Obtendo apenas os bancos do usuário logado
+        $banks = Bank::where('user_id', auth()->id())->get();
 
-        // Obtendo as transações do usuário logado, incluindo o banco e a categoria associada
+        // Obtendo o mês e o ano da requisição ou usando o mês e ano atual como padrão
+        $month = $request->input('month', now()->month);
+        $year = $request->input('year', now()->year);
+
+        // Validando os valores de mês e ano
+        if (!is_numeric($month) || $month < 1 || $month > 12) {
+            $month = now()->month;
+        }
+        if (!is_numeric($year) || $year < 1900 || $year > now()->year + 1) {
+            $year = now()->year;
+        }
+
+        // Obtendo as transações do usuário logado para o mês e ano selecionados
         $invoices = Invoice::where('user_id', auth()->id())
+            ->whereMonth('invoice_date', $month)
+            ->whereYear('invoice_date', $year)
             ->with(['bank', 'category'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('invoice_date', 'asc') // Ordem crescente
             ->get();
 
-        // Verificar se existem transações
-        $hasInvoices = $invoices->isEmpty();
+        // Calculando o valor total das transações do mês
+        $totalMonth = $invoices->sum('value');
 
-        // Retornando a view e passando as transações e o estado de ter ou não transações
-        return view('banks.index', compact('banks', 'invoices', 'hasInvoices'));
+        // Agrupar as transações por data (dia)
+        $groupedInvoices = $invoices->groupBy(function ($invoice) {
+            return \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d');
+        });
+
+        // Verificar se é uma requisição AJAX
+        if ($request->ajax()) {
+            return response()->json([
+                'groupedInvoices' => $groupedInvoices,
+                'month' => $month,
+                'year' => $year,
+                'totalMonth' => $totalMonth,
+            ]);
+        }
+
+        // Retornando a view com as transações agrupadas, os dados do mês/ano e o total
+        return view('banks.index', compact('banks', 'groupedInvoices', 'month', 'year', 'totalMonth'));
     }
-
-
 
     // Método para mostrar o formulário de criação
     public function create()
@@ -76,29 +103,29 @@ class BankController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'name' => 'required|max:255',
-            'description' => 'nullable|max:1000',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date',
+            'name' => 'required|string|max:255',
+            'description' => 'required|string|max:255',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date',
         ]);
 
         $bank = Bank::findOrFail($id);
-        $bank->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
-        ]);
+        $bank->update($request->all());
 
-        return redirect()->route('banks.index')->with('success', 'Banco atualizado com sucesso!');
+        return redirect()->route('banks.index')->with('success', 'Cartão atualizado com sucesso!');
     }
 
     // Método para deletar um banco
     public function destroy($id)
     {
         $bank = Bank::findOrFail($id);
+
+        // Excluir todas as faturas relacionadas ao banco
+        Invoice::where('id_bank', $bank->id_bank)->delete();
+
+        // Excluir o banco
         $bank->delete();
 
-        return redirect()->route('banks.index')->with('success', 'Banco deletado com sucesso!');
+        return redirect()->route('banks.index')->with('success', 'Cartão e suas faturas foram excluídos com sucesso.');
     }
 }

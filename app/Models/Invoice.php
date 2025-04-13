@@ -20,6 +20,7 @@ class Invoice extends Model
         'value',
         'user_id',
         'category_id',
+        'invoice_date',
     ];
 
     // Relacionamento com o banco
@@ -37,6 +38,6 @@ class Invoice extends Model
     // Relacionamento com a categoria
     public function category()
     {
-        return $this->belongsTo(Category::class, 'category_id');
+        return $this->belongsTo(Category::class, 'category_id', 'id_category');
     }
 }

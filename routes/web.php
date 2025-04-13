@@ -15,6 +15,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductUploadController;
 use App\Http\Controllers\SaleController;
 use App\Models\Client;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\UploadInvoiceController;
 
 /*
 |----------------------------------------------------------------------
@@ -41,12 +43,11 @@ Route::group(['middleware' => 'auth'], function () {
     })->name('profile');
 
     Route::middleware(['auth'])->group(function () {
-        Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
-        // Outras rotas, como 'store', 'edit', 'update', 'destroy', podem ser adicionadas aqui
+        // Rota para visualizar o cartão (irá redirecionar para as invoices)
+        Route::get('/invoices/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
     });
 
-    // Rota para visualizar o cartão (irá redirecionar para as invoices)
-    Route::get('/invoices', [InvoiceController::class, 'index'])->name('invoices.index');
     Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');
 
     // Routes for managing user profiles
@@ -55,6 +56,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('categories', CategoryController::class);
     // Rota para listar os bancos
     Route::get('/banks', [BankController::class, 'index'])->name('banks.index');
+    Route::put('/banks/{id}', [BankController::class, 'update'])->name('banks.update');
+    Route::delete('/banks/{id}', [BankController::class, 'destroy'])->name('banks.destroy');
     // Routes for managing products (CRUD)
     Route::resource('products', ProductController::class);
 
@@ -109,8 +112,18 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/logout', [SessionsController::class, 'destroy']);
     Route::get('/user-profile', [InfoUserController::class, 'create']);
     Route::post('/user-profile', [InfoUserController::class, 'store']);
+
+    // Routes for uploading and confirming invoices
+    // web.php
+    Route::post('/invoices/upload', [UploadInvoiceController::class, 'upload'])->name('invoices.upload');
+
+    Route::post('/invoices/confirm', [UploadInvoiceController::class, 'confirm'])->name('invoices.confirm');
 });
 
+Route::controller(EventController::class)->group(function () {
+    Route::get('full-calender', 'index');
+    Route::post('full-calender-ajax', 'ajax');
+});
 // Routes for guest (unauthenticated) users
 Route::group(['middleware' => 'guest'], function () {
     Route::get('/register', [RegisterController::class, 'create']);

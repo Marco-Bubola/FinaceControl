@@ -22,6 +22,9 @@ class Bank extends Model
         'user_id',
     ];
 
+    // Definindo a chave primária
+    protected $primaryKey = 'id_bank';
+
     // Definindo o relacionamento com o modelo Invoice
     public function invoices()
     {
