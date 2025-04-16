@@ -37,7 +37,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('billing', function () {
         return view('billing');
     })->name('billing');
-
+    Route::get('cashbook', function () {
+        return view('cashbook/index');
+    })->name('cashbook');
     Route::get('profile', function () {
         return view('profile/profile');
     })->name('profile');
@@ -46,6 +48,8 @@ Route::group(['middleware' => 'auth'], function () {
         // Rota para visualizar o cartão (irá redirecionar para as invoices)
         Route::get('/invoices/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
         Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
+        Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
+        Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
     });
 
     Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');

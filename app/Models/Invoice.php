@@ -11,7 +11,9 @@ class Invoice extends Model
 
     // Definindo a tabela associada ao model
     protected $table = 'invoice';
-
+// Se o nome da chave primária for diferente de 'id', defina a chave primária manualmente
+protected $primaryKey = 'id_invoice'; // ou o nome correto da sua chave primária
+    
     // Definindo os campos que podem ser preenchidos
     protected $fillable = [
         'id_bank',
