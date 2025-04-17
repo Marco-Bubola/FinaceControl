@@ -26,7 +26,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Dashboard</span>
+                    <span class="nav-link-text ms-1">Painel de Controle</span>
                 </a>
             </li>
             <li class="nav-item mt-2">
@@ -50,7 +50,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Profile</span>
+                    <span class="nav-link-text ms-1">Perfil</span>
                 </a>
             </li>
             @if (auth()->user() && auth()->user()->role_id == 1)
@@ -72,12 +72,12 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">User Management</span>
+                    <span class="nav-link-text ms-1">Gerenciamento de Usuários</span>
                 </a>
             </li>
             @endif
             <li class="nav-item mt-2">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Example pages</h6>
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Páginas de Exemplo</h6>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ (Request::is('tables') ? 'active' : '') }}" href="{{ url('tables') }}">
@@ -96,7 +96,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Tables</span>
+                    <span class="nav-link-text ms-1">Tabelas</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -116,7 +116,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">Tables</span>
+                    <span class="nav-link-text ms-1">Calendário Completo</span>
                 </a>
             </li>
             <li class="nav-item">
@@ -156,7 +156,7 @@
                             </g>
                         </svg>
                     </div>
-                    <span class="nav-link-text ms-1">cashbook</span>
+                    <span class="nav-link-text ms-1">Livro Caixa</span>
                 </a>
             </li>
             <li class="nav-item">

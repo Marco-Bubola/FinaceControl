@@ -2,260 +2,493 @@
 
 @section('content')
 
-<div class="container-fluid py-4">
-    <div class="row">
-        <div class="col-lg-8">
-            <div class="row">
-                <div class="col-xl-6">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header mx-4 p-3 text-center">
-                                    <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
-                                        <i class="fas fa-landmark opacity-10"></i>
-                                    </div>
-                                </div>
-                                <div class="card-body pt-0 p-3 text-center">
-                                    <h6 class="text-center mb-0">Salário</h6>
-                                    <span class="text-xs">Belong Interactive</span>
-                                    <hr class="horizontal dark my-3">
-                                    <h5 class="mb-0">+$2000</h5>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6 mt-md-0 mt-4">
-                            <div class="card">
-                                <div class="card-header mx-4 p-3 text-center">
-                                    <div class="icon icon-shape icon-lg bg-gradient-primary shadow text-center border-radius-lg">
-                                        <i class="fab fa-paypal opacity-10"></i>
-                                    </div>
-                                </div>
-                                <div class="card-body pt-0 p-3 text-center">
-                                    <h6 class="text-center mb-0">Paypal</h6>
-                                    <span class="text-xs">Pagamento Freelance</span>
-                                    <hr class="horizontal dark my-3">
-                                    <h5 class="mb-0">$455.00</h5>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+    <div class="container-fluid py-2">
+          <!-- Exibir erros de validação -->
+          @if ($errors->any())
+            <div id="error-message" class="alert alert-danger alert-dismissible fade show custom-error-message" role="alert">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+                    onclick="closeAlert('error-message')"></button>
+                <div id="error-timer" class="alert-timer">30s</div>
+            </div>
+        @endif
 
+        <!-- Exibir sucesso -->
+        @if (session('success'))
+            <div id="success-message" class="alert alert-success alert-dismissible fade show custom-success-message"
+                role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
+                    onclick="closeAlert('success-message')"></button>
+                <div id="success-timer" class="alert-timer">30s</div>
             </div>
-        </div>
-        <div class="col-lg-4">
-            <div class="card h-100">
-                <div class="card-header pb-0 p-3">
-                    <div class="row">
-                        <div class="col-6 d-flex align-items-center">
-                            <h6 class="mb-0">Faturas</h6>
-                        </div>
-                        <div class="col-6 text-end">
-                            <button class="btn btn-outline-primary btn-sm mb-0">Ver Todas</button>
+        @endif
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card h-100 mb-4">
+                    <div class="card-header pb-0">
+                        <div class="row">
+                            <div class="col-md-4 justify-content-center d-flex">
+                                <h6 class="mb-0">Suas Transações:</h6>
+                            </div>
+                            <div class="col-md-4 justify-content-center d-flex">
+                                <h6 class="mb-0"> <span id="month-name">{{ $monthName ?? '' }}</span></h6>
+                            </div>
+                            <div class="col-md-4 d-flex justify-content-end align-items-center">
+                                <button class="btn btn-primary me-2" onclick="loadMonth('previous')">Mês Anterior</button>
+                                <button class="btn btn-primary me-2" onclick="loadMonth('next')">Próximo Mês</button>
+                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTransactionModal">Adicionar Transação</button>
+                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#uploadCashbookModal">Upload de Transações</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="card-body p-3 pb-0">
-                    <ul class="list-group">
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="mb-1 text-dark font-weight-bold text-sm">1º de Março, 2020</h6>
-                                <span class="text-xs">#MS-415646</span>
+                    <div class="card-body pt-4 p-4">
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h6 class="text-sm">Receitas</h6>
+                                        <span class="text-success">+ R$ {{ number_format(abs($totals['income']), 2) }}</span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center text-sm">
-                                $180
-                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-pdf text-lg me-1"></i> PDF</button>
+                            <div class="col-md-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h6 class="text-sm">Despesas</h6>
+                                        <span class="text-danger">- R$
+                                            {{ number_format(abs($totals['expense']), 2) }}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="text-dark mb-1 font-weight-bold text-sm">10 de Fevereiro, 2021</h6>
-                                <span class="text-xs">#RV-126749</span>
+                            <div class="col-md-4">
+                                <div class="card text-center">
+                                    <div class="card-body">
+                                        <h6 class="text-sm">Saldo</h6>
+                                        <span
+                                            class="text-{{ $totals['balance'] >= 0 ? 'success' : 'danger' }} text-lg font-weight-bold">
+                                            {{ $totals['balance'] >= 0 ? '+' : '-' }} R$
+                                            {{ number_format(abs($totals['balance']), 2) }}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="d-flex align-items-center text-sm">
-                                $250
-                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-pdf text-lg me-1"></i> PDF</button>
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="text-dark mb-1 font-weight-bold text-sm">5 de Abril, 2020</h6>
-                                <span class="text-xs">#FB-212562</span>
-                            </div>
-                            <div class="d-flex align-items-center text-sm">
-                                $560
-                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-pdf text-lg me-1"></i> PDF</button>
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="text-dark mb-1 font-weight-bold text-sm">25 de Junho, 2019</h6>
-                                <span class="text-xs">#QW-103578</span>
-                            </div>
-                            <div class="d-flex align-items-center text-sm">
-                                $120
-                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-pdf text-lg me-1"></i> PDF</button>
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="text-dark mb-1 font-weight-bold text-sm">1º de Março, 2019</h6>
-                                <span class="text-xs">#AR-803481</span>
-                            </div>
-                            <div class="d-flex align-items-center text-sm">
-                                $300
-                                <button class="btn btn-link text-dark text-sm mb-0 px-0 ms-4"><i class="fas fa-file-pdf text-lg me-1"></i> PDF</button>
-                            </div>
-                        </li>
-                    </ul>
+                        </div>
+                        <div id="transactions-container">
+                            @if($transactions->isEmpty())
+                                <div class="text-center">
+                                    <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
+                                </div>
+                            @else
+                                <!-- Conteúdo do mês será carregado dinamicamente -->
+                            @endif
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-7 mt-4">
-            <div class="card">
-                <div class="card-header pb-0 px-3">
-                    <h6 class="mb-0">Informações de Faturamento</h6>
-                </div>
-                <div class="card-body pt-4 p-3">
-                    <ul class="list-group">
-                        <li class="list-group-item border-0 d-flex p-4 mb-2 bg-gray-100 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="mb-3 text-sm">Oliver Liam</h6>
-                                <span class="mb-2 text-xs">Nome da Empresa: <span class="text-dark font-weight-bold ms-sm-2">Viking Burrito</span></span>
-                                <span class="mb-2 text-xs">Endereço de Email: <span class="text-dark ms-sm-2 font-weight-bold">oliver@burrito.com</span></span>
-                                <span class="text-xs">Número de VAT: <span class="text-dark ms-sm-2 font-weight-bold">FRB1235476</span></span>
-                            </div>
-                            <div class="ms-auto text-end">
-                                <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="javascript:;"><i class="far fa-trash-alt me-2"></i>Excluir</a>
-                                <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Editar</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex p-4 mb-2 mt-3 bg-gray-100 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="mb-3 text-sm">Lucas Harper</h6>
-                                <span class="mb-2 text-xs">Nome da Empresa: <span class="text-dark font-weight-bold ms-sm-2">Stone Tech Zone</span></span>
-                                <span class="mb-2 text-xs">Endereço de Email: <span class="text-dark ms-sm-2 font-weight-bold">lucas@stone-tech.com</span></span>
-                                <span class="text-xs">Número de VAT: <span class="text-dark ms-sm-2 font-weight-bold">FRB1235476</span></span>
-                            </div>
-                            <div class="ms-auto text-end">
-                                <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="javascript:;"><i class="far fa-trash-alt me-2"></i>Excluir</a>
-                                <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Editar</a>
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex p-4 mb-2 mt-3 bg-gray-100 border-radius-lg">
-                            <div class="d-flex flex-column">
-                                <h6 class="mb-3 text-sm">Ethan James</h6>
-                                <span class="mb-2 text-xs">Nome da Empresa: <span class="text-dark font-weight-bold ms-sm-2">Fiber Notion</span></span>
-                                <span class="mb-2 text-xs">Endereço de Email: <span class="text-dark ms-sm-2 font-weight-bold">ethan@fiber.com</span></span>
-                                <span class="text-xs">Número de VAT: <span class="text-dark ms-sm-2 font-weight-bold">FRB1235476</span></span>
-                            </div>
-                            <div class="ms-auto text-end">
-                                <a class="btn btn-link text-danger text-gradient px-3 mb-0" href="javascript:;"><i class="far fa-trash-alt me-2"></i>Excluir</a>
-                                <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="fas fa-pencil-alt text-dark me-2" aria-hidden="true"></i>Editar</a>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-5 mt-4">
-            <div class="card h-100 mb-4">
-                <div class="card-header pb-0 px-3">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <h6 class="mb-0">Suas Transações</h6>
+
+    <script>
+        let currentMonth = "{{ $currentMonth }}";
+
+        function loadMonth(direction) {
+            const container = document.getElementById('transactions-container');
+            const monthNameElement = document.getElementById('month-name');
+            const incomeElement = document.querySelector('.text-success');
+            const expenseElement = document.querySelector('.text-danger');
+            const balanceElement = document.querySelector('.text-lg.font-weight-bold.text-success, .text-lg.font-weight-bold.text-danger');
+
+            fetch(`/cashbook/month/${direction}?currentMonth=${currentMonth}`)
+                .then(response => response.json())
+                .then(data => {
+                    currentMonth = data.currentMonth;
+                    monthNameElement.textContent = data.monthName; // Atualizar o nome do mês
+
+                    // Atualizar os valores de receitas, despesas e saldo
+                    incomeElement.textContent = `+ R$ ${data.totals.income.toFixed(2)}`; // Sem parseFloat para evitar erros de formatação
+                    expenseElement.textContent = `- R$ ${data.totals.expense.toFixed(2)}`; // Mesmo para despesas
+                    balanceElement.textContent = `${data.totals.balance >= 0 ? '+' : '-'} R$ ${Math.abs(data.totals.balance).toFixed(2)}`; // Saldo, mantendo o valor correto
+                    balanceElement.className = `text-lg font-weight-bold text-${data.totals.balance >= 0 ? 'success' : 'danger'}`;
+
+                    // Verificar se há transações para o mês selecionado
+                    if (data.transactionsByDay && Object.keys(data.transactionsByDay).length > 0) {
+                        container.innerHTML = `
+                    ${Object.keys(data.transactionsByDay).map(day => `
+                        <div class="mb-4">
+                            <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">${day}</h6>
+                            <ul class="list-group">
+                                ${data.transactionsByDay[day].map(transaction => `
+                                    <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-icon-only btn-rounded btn-outline-${transaction.type_id == 2 ? 'danger' : 'success'} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
+                                                <i class="fas fa-arrow-${transaction.type_id == 2 ? 'down' : 'up'}"></i>
+                                            </button>
+                                            <div class="d-flex flex-column">
+                                                <h6 class="mb-1 text-dark text-sm">${transaction.description}</h6>
+                                                <span class="text-xs">Data: ${transaction.time}</span>
+                                                <span class="text-xs">Categoria: ${transaction.category_name || 'N/A'}</span>
+                                                <span class="text-xs">Nota: ${transaction.note || 'Sem nota'}</span>
+                                                <span class="text-xs">Segmento: ${transaction.segment_name || 'Nenhum'}</span>
+                                            </div>
+                                        </div>
+                                        <div class="d-flex align-items-center text-${transaction.type_id == 2 ? 'danger' : 'success'} text-gradient text-sm font-weight-bold">
+                                            ${transaction.type_id == 2 ? '-' : '+'} $ ${Math.abs(transaction.value).toFixed(2)}
+                                        </div>
+                                        <div class="d-flex align-items-center">
+                                            <button class="btn btn-icon-only btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTransactionModal" onclick="loadEditModal(${transaction.id})">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-icon-only btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" onclick="loadDeleteModal(${transaction.id}, '${transaction.description}')">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </li>
+                                `).join('')}
+                            </ul>
                         </div>
-                        <div class="col-md-6 d-flex justify-content-end align-items-center">
-                            <i class="far fa-calendar-alt me-2"></i>
-                            <small>23 - 30 Março 2020</small>
+                    `).join('')}
+                `;
+                    } else {
+                        container.innerHTML = `
+                    <div class="text-center">
+                        <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
+                    </div>
+                `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar os dados do mês:', error);
+                });
+        }
+
+        // Carregar o mês atual ao carregar a página
+        document.addEventListener('DOMContentLoaded', () => {
+            loadMonth('current');
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const modal = document.getElementById('uploadCashbookModal');
+            console.log(modal); // Deve exibir o elemento do modal no console
+            if (!modal) {
+                console.error('O modal uploadCashbookModal não foi encontrado no DOM.');
+            }
+        });
+    </script>
+   @include('cashbook.uploadCashbook')
+    <!-- Modal -->
+    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="POST" action="{{ route('cashbook.store') }}" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addTransactionModalLabel">Adicionar Transação</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Progress Bar -->
+                        <div class="progress-container mb-4">
+                            <div class="progress">
+                                <div id="progress-bar" class="progress-bar" style="width: 50%;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2">
+                                <div class="step-circle active">1</div>
+                                <div class="step-circle">2</div>
+                            </div>
+                            <div class="d-flex justify-content-between text-center mt-1">
+                                <small>Informações Básicas</small>
+                                <small>Detalhes Adicionais</small>
+                            </div>
+                        </div>
+
+                        <!-- Step 1 -->
+                        <div id="step-1">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="value" class="form-label">Valor</label>
+                                    <input type="number" step="0.01" class="form-control" id="value" name="value" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="description" class="form-label">Descrição</label>
+                                    <input type="text" class="form-control" id="description" name="description">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="date" class="form-label">Data</label>
+                                    <input type="date" class="form-control" id="date" name="date" required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="is_pending" class="form-label">Pendente</label>
+                                    <select class="form-control" id="is_pending" name="is_pending" required>
+                                        <option value="0">Não</option>
+                                        <option value="1">Sim</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="category_id" class="form-label">Categoria</label>
+                                    <select class="form-control" id="category_id" name="category_id" required>
+                                        @foreach($categories as $category)
+                                            <option value="{{ $category->id_category }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="type_id" class="form-label">Tipo</label>
+                                    <select class="form-control" id="type_id" name="type_id" required>
+                                        @foreach($types as $type)
+                                            <option value="{{ $type->id_type }}">{{ $type->desc_type }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Step 2 -->
+                        <div id="step-2" class="d-none">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="note" class="form-label">Nota</label>
+                                    <textarea class="form-control" id="note" name="note"></textarea>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label for="segment_id" class="form-label">Segmento</label>
+                                    <select class="form-control" id="segment_id" name="segment_id">
+                                        <option value="">Nenhum</option>
+                                        @foreach($segments as $segment)
+                                            <option value="{{ $segment->id }}">{{ $segment->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 mb-3">
+                                    <label for="attachment" class="form-label">Anexo</label>
+                                    <input type="file" class="form-control" id="attachment" name="attachment">
+                                </div>
+                            </div>
                         </div>
                     </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="prev-step" onclick="toggleSteps('prev')"
+                            disabled>Voltar</button>
+                        <button type="button" class="btn btn-primary" id="next-step"
+                            onclick="toggleSteps('next')">Próximo</button>
+                        <button type="submit" class="btn btn-success d-none" id="save-button">Salvar</button>
+                    </div>
                 </div>
-                <div class="card-body pt-4 p-3">
-                    <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">Mais Recentes</h6>
-                    <ul class="list-group">
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-danger mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-down"></i></button>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">Netflix</h6>
-                                    <span class="text-xs">27 Março 2020, às 12:30 PM</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-danger text-gradient text-sm font-weight-bold">
-                                - $ 2,500
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">Apple</h6>
-                                    <span class="text-xs">27 Março 2020, às 04:30 AM</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                + $ 2,000
-                            </div>
-                        </li>
-                    </ul>
-                    <h6 class="text-uppercase text-body text-xs font-weight-bolder my-3">Ontem</h6>
-                    <ul class="list-group">
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">Stripe</h6>
-                                    <span class="text-xs">26 Março 2020, às 13:45 PM</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                + $ 750
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">HubSpot</h6>
-                                    <span class="text-xs">26 Março 2020, às 12:30 PM</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                + $ 1,000
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up"></i></button>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">Creative Tim</h6>
-                                    <span class="text-xs">26 Março 2020, às 08:30 AM</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                + $ 2,500
-                            </div>
-                        </li>
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                            <div class="d-flex align-items-center">
-                                <button class="btn btn-icon-only btn-rounded btn-outline-dark mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"><i class="fas fa-exclamation"></i></button>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">Webflow</h6>
-                                    <span class="text-xs">26 Março 2020, às 05:00 AM</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-dark text-sm font-weight-bold">
-                                Pendente
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
-</div>
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="POST" id="editTransactionForm" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editTransactionModalLabel">Editar Transação</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_value" class="form-label">Valor</label>
+                                <input type="number" step="0.01" class="form-control" id="edit_value" name="value" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_description" class="form-label">Descrição</label>
+                                <input type="text" class="form-control" id="edit_description" name="description">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_date" class="form-label">Data</label>
+                                <input type="date" class="form-control" id="edit_date" name="date" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_is_pending" class="form-label">Pendente</label>
+                                <select class="form-control" id="edit_is_pending" name="is_pending" required>
+                                    <option value="0">Não</option>
+                                    <option value="1">Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_category_id" class="form-label">Categoria</label>
+                                <select class="form-control" id="edit_category_id" name="category_id" required>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id_category }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_type_id" class="form-label">Tipo</label>
+                                <select class="form-control" id="edit_type_id" name="type_id" required>
+                                    @foreach($types as $type)
+                                        <option value="{{ $type->id_type }}">{{ $type->desc_type }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_note" class="form-label">Nota</label>
+                                <textarea class="form-control" id="edit_note" name="note"></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_segment_id" class="form-label">Segmento</label>
+                                <select class="form-control" id="edit_segment_id" name="segment_id">
+                                    <option value="">Nenhum</option>
+                                    @foreach($segments as $segment)
+                                        <option value="{{ $segment->id }}">{{ $segment->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="edit_attachment" class="form-label">Anexo</label>
+                                <input type="file" class="form-control" id="edit_attachment" name="attachment">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal fade" id="deleteTransactionModal" tabindex="-1" aria-labelledby="deleteTransactionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <form method="POST" id="deleteTransactionForm">
+                @csrf
+                @method('DELETE')
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteTransactionModalLabel">Excluir Transação</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza de que deseja excluir a transação <strong
+                                id="deleteTransactionDescription"></strong>?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-danger">Excluir</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+
+        function toggleSteps(direction) {
+            const step1 = document.getElementById('step-1');
+            const step2 = document.getElementById('step-2');
+            const prevButton = document.getElementById('prev-step');
+            const nextButton = document.getElementById('next-step');
+            const saveButton = document.getElementById('save-button');
+            const progressBar = document.getElementById('progress-bar');
+            const stepCircles = document.querySelectorAll('.step-circle');
+
+            if (direction === 'next' && currentStep === 1) {
+                step1.classList.add('d-none');
+                step2.classList.remove('d-none');
+                prevButton.disabled = false;
+                nextButton.classList.add('d-none');
+                saveButton.classList.remove('d-none');
+                progressBar.style.width = '100%';
+                stepCircles[1].classList.add('active');
+                currentStep++;
+            } else if (direction === 'prev' && currentStep === 2) {
+                step2.classList.add('d-none');
+                step1.classList.remove('d-none');
+                prevButton.disabled = true;
+                nextButton.classList.remove('d-none');
+                saveButton.classList.add('d-none');
+                progressBar.style.width = '50%';
+                stepCircles[1].classList.remove('active');
+                currentStep--;
+            }
+        }
+
+        function loadEditModal(id) {
+            fetch(`/cashbook/${id}/edit`)
+                .then(response => response.json())
+                .then(data => {
+                    const form = document.getElementById('editTransactionForm');
+                    form.action = `/cashbook/${id}`;
+                    document.getElementById('edit_value').value = data.cashbook.value;
+                    document.getElementById('edit_description').value = data.cashbook.description;
+                    document.getElementById('edit_date').value = data.cashbook.date;
+                    document.getElementById('edit_is_pending').value = data.cashbook.is_pending;
+                    document.getElementById('edit_category_id').value = data.cashbook.category_id;
+                    document.getElementById('edit_type_id').value = data.cashbook.type_id;
+                    document.getElementById('edit_note').value = data.cashbook.note;
+                    document.getElementById('edit_segment_id').value = data.cashbook.segment_id;
+                });
+        }
+
+        function loadDeleteModal(id, description) {
+            const form = document.getElementById('deleteTransactionForm');
+            form.action = `/cashbook/${id}`;
+            document.getElementById('deleteTransactionDescription').textContent = description;
+        }
+    </script>
+
+    <style>
+        .progress-container {
+            position: relative;
+        }
+
+        .progress {
+            height: 5px;
+            background-color: #e9ecef;
+        }
+
+        .progress-bar {
+            height: 5px;
+            background-color: #0d6efd;
+        }
+
+        .step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: #6c757d;
+        }
+
+        .step-circle.active {
+            background-color: #0d6efd;
+            color: #fff;
+        }
+    </style>
 
 @endsection

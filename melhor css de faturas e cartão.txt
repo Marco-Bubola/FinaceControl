@@ -1,0 +1,68 @@
+# Melhorias de Interface (CSS e Design)
+- Melhorar o CSS de faturas e cartão.
+- Melhorar o CSS de produtos.
+- Melhorar o CSS de cliente.
+- Melhorar o CSS de sales.
+- Adicionar opção de tema claro e escuro.
+- Criar um logo e favicon.
+- Tornar o design responsivo para dispositivos móveis e tablets.
+- Adicionar animações suaves para transições de páginas e botões.
+- Melhorar a tipografia (ex.: fontes, tamanhos e espaçamento).
+- Adicionar ícones para ações (ex.: editar, excluir, visualizar).
+# Funcionalidades de Produtos
+- Melhorar captação dos produtos no upload.
+- Adicionar, editar e excluir dinamicamente os produtos.
+- Pesquisar dinamicamente os produtos na index.
+- Adicionar filtros avançados para produtos (ex.: por categoria, preço, estoque).
+- Implementar funcionalidade de importação de produtos via planilha (CSV/Excel).
+- Adicionar suporte para imagens múltiplas por produto.
+
+# Funcionalidades de Clientes
+- Adicionar mais informações nos clientes.
+- Adicionar paginação em clientes.
+- Pesquisar dinamicamente os clientes na index.
+- Adicionar histórico de compras para cada cliente.
+- Implementar envio de e-mails automáticos para clientes (ex.: promoções, lembretes).
+
+# Funcionalidades de Vendas (Sales)
+- Adicionar, excluir e editar dinamicamente as sales.
+- Atualizar rotas para funções de editar, excluir e adicionar sales corretamente com a index e a show.
+- Adicionar botão de view das sales para irem para show.
+- Atualizar status automaticamente para "pending".
+- Em show, adicionar botão para dividir o total ou restante em até 12x.
+- No modal de sales:
+  - Corrigir exibição do nome correto dos clientes na seleção.
+  - Adicionar barra de rolagem na área de adicionar produto.
+- Adicionar relatórios detalhados de vendas (ex.: por período, por cliente, por produto).
+- Implementar funcionalidade de reembolso para vendas canceladas.
+
+# Novas Páginas
+- Criar página para categorias.
+- Criar página de metas.
+- Criar página para controle financeiro.
+- Criar página de configurações gerais (ex.: tema, idioma, notificações).
+- Criar página para relatórios (ex.: vendas, clientes, produtos).
+- Criar página de suporte/FAQ para ajudar os usuários.
+
+# Integrações e Login
+- Criar login com Google e, se possível, vincular contas existentes.
+- Alterar o perfil para exibir mais informações e vincular com Google e e-mail.
+- Adicionar integração com APIs de pagamento (ex.: PayPal, Stripe).
+- Implementar autenticação em duas etapas (2FA) para maior segurança.
+
+# Dashboard
+- Criar um dashboard com:
+  - Resumo financeiro.
+  - Gráficos de vendas, clientes e produtos.
+  - Metas atingidas e pendentes.
+  - Notificações recentes.
+  - Atalhos para ações rápidas (ex.: adicionar produto, criar venda).
+
+# Outras Melhorias
+- Adicionar pesquisa dinâmica para produtos, clientes e sales na index.
+- Adicionar funcionalidade de exportação de relatórios (PDF/Excel).
+- Implementar notificações para ações importantes (ex.: vendas pendentes, metas próximas de vencimento).
+- Melhorar acessibilidade (ex.: suporte a leitores de tela, navegação por teclado).
+- Adicionar suporte a múltiplos idiomas (ex.: português e inglês).
+- Implementar sistema de permissões para usuários (ex.: administrador, vendedor).
+- Adicionar logs de atividades para auditoria (ex.: quem editou ou excluiu registros).

@@ -145,8 +145,6 @@
         </div>
 
     </div>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-
     @include('invoice.uploadInvoice')
 
     <script>
@@ -273,8 +271,9 @@
                         // Atualiza o gráfico de categorias
                         updateCategoryChart(response.categories);
                     },
-                    error: function () {
-                        alert('Erro ao carregar os dados do mês.');
+                    error: function (xhr, status, error) {
+                        console.error('Erro na requisição AJAX:', xhr.responseText);
+                        alert('Erro ao carregar os dados do mês. Verifique os logs para mais detalhes.');
                     }
                 });
             }
@@ -360,6 +359,56 @@
             });
         });
 
+
+        document.addEventListener("DOMContentLoaded", function() {
+        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
+        function startTimer(messageId, timerId) {
+            let timerValue = 30;
+            const timerElement = document.getElementById(timerId);
+            const messageElement = document.getElementById(messageId);
+
+            // Atualiza o temporizador a cada segundo
+            const interval = setInterval(function() {
+                if (timerValue > 0) {
+                    timerElement.innerHTML = `${timerValue--}s`;
+                } else {
+                    clearInterval(interval);
+                    // Fecha a mensagem após 30 segundos e recarrega a página
+                    messageElement.classList.remove('show');
+                    messageElement.classList.add('fade');
+                    location.reload(); // Recarregar a página após 30 segundos
+                }
+            }, 1000); // Atualiza a cada segundo
+        }
+
+        // Iniciar o timer para a mensagem de erro (se existir)
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            startTimer('error-message', 'error-timer');
+        }
+
+        // Iniciar o timer para a mensagem de sucesso (se existir)
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            startTimer('success-message', 'success-timer');
+        }
+
+        // Configuração para mostrar que a página voltou ao estado original
+        const closeButton = document.querySelectorAll('.btn-close');
+        closeButton.forEach(button => {
+            button.addEventListener('click', function() {
+                // Resetando o timer de 30 segundos e voltando a página ao estado original
+                document.getElementById('error-message')?.classList.remove('show');
+                document.getElementById('success-message')?.classList.remove('show');
+            });
+        });
+    });
+
+    // Função para fechar o alerta ao clicar no "X"
+    function closeAlert(messageId) {
+        document.getElementById(messageId).classList.remove('show');
+        document.getElementById(messageId).classList.add('fade');
+    }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Modal para Adicionar Transferência -->

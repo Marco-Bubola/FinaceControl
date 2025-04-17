@@ -14,27 +14,28 @@ class InvoiceController extends Controller
     {
         $bank = Bank::findOrFail($request->bank_id);
         $categories = Category::all();
-    
+        $banks = Bank::all(); // Adicionado para listar todos os bancos
+
         // Obtém o mês atual da paginação (se não fornecido, usa o mês inicial do banco)
         $currentMonth = $request->query('month', \Carbon\Carbon::parse($bank->start_date)->format('Y-m-d'));
-    
+
         // Define o intervalo de datas para o mês atual com base no $bank->start_date
         $currentStartDate = \Carbon\Carbon::parse($currentMonth)
             ->setDay(\Carbon\Carbon::parse($bank->start_date)->day)
             ->startOfDay();
         $currentEndDate = $currentStartDate->copy()->addMonth()->subDay()->endOfDay(); // Termina no mesmo dia do próximo mês, menos um dia
-    
+
         // Filtra as faturas dentro do intervalo de datas
         $invoices = Invoice::where('id_bank', $bank->id_bank)
             ->whereBetween('invoice_date', [$currentStartDate, $currentEndDate])
             ->orderBy('invoice_date', 'asc') // Ordena por data
             ->get();
-    
+
         // Agrupa as faturas por mês com base no campo invoice_date
         $eventsGroupedByMonth = $invoices->groupBy(function ($invoice) {
             return \Carbon\Carbon::parse($invoice->invoice_date)->format('d'); // Agrupa por ano e mês
         });
-    
+
         // Para ser usado no FullCalendar (detalhes das faturas)
         $eventsDetailed = $invoices->map(function ($invoice) {
             return [
@@ -46,7 +47,7 @@ class InvoiceController extends Controller
                 'value' => $invoice->value,
             ];
         });
-    
+
         // Filtra as categorias com base nas transações do mês
         $categoriesWithTransactions = $categories->filter(function ($category) use ($invoices) {
             return $invoices->where('category_id', $category->id_category)->isNotEmpty();
@@ -60,27 +61,27 @@ class InvoiceController extends Controller
                 'value' => $categoryTotal,
             ];
         });
-    
+
         // Define os links de navegação para os meses anterior e próximo
         $previousMonth = $currentStartDate->copy()->subMonth()->format('Y-m-d');
         $nextMonth = $currentStartDate->copy()->addMonth()->format('Y-m-d');
-    
+
         // Nome do mês atual traduzido para português
         Carbon::setLocale('pt_BR');
         $currentMonthName = ucfirst($currentStartDate->translatedFormat('F Y'));
-    
+
         // Calcula o preço total do mês
         $totalInvoices = $invoices->sum('value');
-    
+
         // Obtém a maior fatura
         $highestInvoice = $invoices->sortByDesc('value')->first();
-    
+
         // Obtém a menor fatura
         $lowestInvoice = $invoices->sortBy('value')->first();
-    
+
         // Conta o total de transações no mês
         $totalTransactions = $invoices->count();
-    
+
         if ($request->ajax()) {
             try {
                 // Filtra as categorias com base nas transações do mês
@@ -100,7 +101,7 @@ class InvoiceController extends Controller
                 \Log::info('Dados de categorias enviados para o gráfico:', $categoriesData->toArray()); // Log para depuração
 
                 return response()->json([
-                    'transactionsHtml' => view('invoice.transactions', compact('eventsGroupedByMonth', 'categories'))->render(),
+                    'transactionsHtml' => view('invoice.transactions', compact('eventsGroupedByMonth', 'categories', 'banks'))->render(), // Incluído $banks
                     'eventsDetailed' => $eventsDetailed,
                     'totalInvoices' => $totalInvoices,
                     'highestInvoice' => $highestInvoice ? number_format($highestInvoice->value, 2) : '0,00',
@@ -119,9 +120,10 @@ class InvoiceController extends Controller
         }
 
         \Log::info('Dados de categorias enviados para a view:', $categoriesData->toArray()); // Log para depuração
-    
+
         return view('invoice.index', compact(
             'bank',
+            'banks', // Passando os bancos para a view
             'eventsDetailed', // Detalhes das faturas
             'eventsGroupedByMonth', // Agrupamento por mês
             'categoriesWithTransactions', // Apenas categorias com transações
@@ -139,7 +141,7 @@ class InvoiceController extends Controller
             'categoriesData' // Passando as categorias para a view
         ));
     }
-    
+
 
     public function store(Request $request)
     {
@@ -187,5 +189,32 @@ class InvoiceController extends Controller
             ->with('success', 'Transação excluída com sucesso!');
     }
 
-    // Outras funções, como 'store', 'edit', 'update', 'destroy', podem ser adicionadas conforme necessário.
+    public function copy(Request $request, $id)
+    {
+        $validated = $request->validate([
+            'id_bank' => 'required|exists:banks,id_bank',
+            'description' => 'required|string|max:255',
+            'value' => 'required|numeric',
+            'installments' => 'required|integer|min:1',
+            'category_id' => 'required|exists:category,id_category',
+            'invoice_date' => 'required|date',
+            'divisions' => 'required|integer|min:1', // Validação para o número de divisões
+        ]);
+
+        $originalInvoice = Invoice::findOrFail($id);
+
+        // Salva a nova fatura com o valor já dividido
+        Invoice::create([
+            'id_bank' => $validated['id_bank'],
+            'description' => $validated['description'],
+            'value' => $validated['value'], // Valor já dividido
+            'installments' => $validated['installments'],
+            'category_id' => $validated['category_id'],
+            'invoice_date' => $validated['invoice_date'],
+            'user_id' => $originalInvoice->user_id, // Mantém o mesmo usuário
+        ]);
+
+        return redirect()->route('invoices.index', ['bank_id' => $validated['id_bank']])
+            ->with('success', 'Transação copiada com sucesso!');
+    }
 }

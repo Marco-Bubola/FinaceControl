@@ -1,4 +1,3 @@
-
 @extends('layouts.user_type.auth')
 
 @section('content')
@@ -62,13 +61,13 @@
                         </g>
                       </g>
                     </svg>
-                    <span class="ms-1">Messages</span>
+                    <span class="ms-1">Mensagens</span>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a class="nav-link mb-0 px-0 py-1 " data-bs-toggle="tab" href="javascript:;" role="tab" aria-selected="false">
                     <svg class="text-dark" width="16px" height="16px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                      <title>settings</title>
+                      <title>Configurações</title>
                       <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
                         <g transform="translate(-2020.000000, -442.000000)" fill="#FFFFFF" fill-rule="nonzero">
                           <g transform="translate(1716.000000, 291.000000)">
@@ -83,7 +82,7 @@
                         </g>
                       </g>
                     </svg>
-                    <span class="ms-1">Settings</span>
+                    <span class="ms-1">Configurações</span>
                   </a>
                 </li>
               </ul>

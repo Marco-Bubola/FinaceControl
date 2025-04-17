@@ -17,6 +17,8 @@ use App\Http\Controllers\SaleController;
 use App\Models\Client;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\UploadInvoiceController;
+use App\Http\Controllers\CashbookController;
+use App\Http\Controllers\UploadCashbookController;
 
 /*
 |----------------------------------------------------------------------
@@ -46,10 +48,11 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::middleware(['auth'])->group(function () {
         // Rota para visualizar o cartão (irá redirecionar para as invoices)
-        Route::get('/invoices/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('/faturas/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
         Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
         Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
         Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
+        Route::post('/invoices/{id}/copy', [InvoiceController::class, 'copy'])->name('invoices.copy');
     });
 
     Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');
@@ -122,6 +125,12 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/invoices/upload', [UploadInvoiceController::class, 'upload'])->name('invoices.upload');
 
     Route::post('/invoices/confirm', [UploadInvoiceController::class, 'confirm'])->name('invoices.confirm');
+
+    Route::resource('cashbook', CashbookController::class)->except(['show']);
+    Route::get('/cashbook/month/{direction}', [CashbookController::class, 'getMonth']);
+
+    Route::post('/cashbook/upload', [UploadCashbookController::class, 'upload'])->name('cashbook.upload');
+    Route::post('/cashbook/confirm', [UploadCashbookController::class, 'confirm'])->name('cashbook.confirm');
 });
 
 Route::controller(EventController::class)->group(function () {

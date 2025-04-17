@@ -79,7 +79,8 @@ class UploadInvoiceController extends Controller
             ]);
         }
 
-        return redirect()->route('invoice.index')->with('success', 'Transações confirmadas com sucesso.');    }
+        return redirect()->route('invoice.index')->with('success', 'Transações confirmadas com sucesso.');
+    }
     protected function extractTransactionsFromCsv($csvPath)
     {
         $transactions = [];
@@ -93,228 +94,279 @@ class UploadInvoiceController extends Controller
                     'value' => isset($data[1]) ? floatval(str_replace(',', '.', str_replace('.', '', $data[1]))) : null,
                     'description' => $data[2] ?? null,
                     'installments' => $data[3] ?? '-',
-                    'category_id' =>  null,
+                    'category_id' => null,
                 ];
             }
             fclose($handle);
         }
         return $transactions;
     }
-// Método para extrair transações do PDF
-protected function extractTransactionsFromPdf($pdfPath)
-{
-    $transactions = [];
-    $pdf = new Parser();
-    $document = $pdf->parseFile($pdfPath);
-    $text = $document->getText();
+    // Método para extrair transações do PDF
+    protected function extractTransactionsFromPdf($pdfPath)
+    {
+        $transactions = [];
+        $pdf = new Parser();
+        $document = $pdf->parseFile($pdfPath);
+        $text = $document->getText();
 
-    // Log para verificar o texto extraído do PDF
-    Log::info('Texto extraído do PDF:', ['text' => $text]);
+        // Log para verificar o texto extraído do PDF
+        Log::info('Texto extraído do PDF:', ['text' => $text]);
 
-    // Verificar se o texto foi extraído corretamente
-    if (empty($text)) {
-        Log::error('Erro: Nenhum texto extraído do PDF.');
-        return $transactions;
-    }
+        // Verificar se o texto foi extraído corretamente
+        if (empty($text)) {
+            Log::error('Erro: Nenhum texto extraído do PDF.');
+            return $transactions;
+        }
 
-    // Explodir o texto em linhas
-    $lines = explode("\n", $text);
-    Log::info('Linhas extraídas do texto:', ['lines' => $lines]);
+        // Explodir o texto em linhas
+        $lines = explode("\n", $text);
+        Log::info('Linhas extraídas do texto:', ['lines' => $lines]);
 
-    $currentTransaction = [
-        'id_bank' => null,
-        'description' => '',
-        'installments' => '-',
-        'value' => null,
-        'category_id' => null,
-        'invoice_date' => null,
-        'user_id' => auth()->id(),
-    ];
+        $currentTransaction = [
+            'id_bank' => null,
+            'description' => '',
+            'installments' => '-',
+            'value' => null,
+            'category_id' => null,
+            'invoice_date' => null,
+            'user_id' => auth()->id(),
+        ];
 
-    // Mapeamento de meses em português para números
-    $monthMapping = [
-        'jan' => '01', 'fev' => '02', 'mar' => '03', 'abr' => '04', 'mai' => '05', 'jun' => '06',
-        'jul' => '07', 'ago' => '08', 'set' => '09', 'out' => '10', 'nov' => '11', 'dez' => '12',
-        'JAN' => '01', 'FEV' => '02', 'MAR' => '03', 'ABR' => '04', 'MAI' => '05', 'JUN' => '06',
-        'JUL' => '07', 'AGO' => '08', 'SET' => '09', 'OUT' => '10', 'NOV' => '11', 'DEZ' => '12',
-    ];
+        // Mapeamento de meses em português para números
+        $monthMapping = [
+            'jan' => '01',
+            'fev' => '02',
+            'mar' => '03',
+            'abr' => '04',
+            'mai' => '05',
+            'jun' => '06',
+            'jul' => '07',
+            'ago' => '08',
+            'set' => '09',
+            'out' => '10',
+            'nov' => '11',
+            'dez' => '12',
+            'JAN' => '01',
+            'FEV' => '02',
+            'MAR' => '03',
+            'ABR' => '04',
+            'MAI' => '05',
+            'JUN' => '06',
+            'JUL' => '07',
+            'AGO' => '08',
+            'SET' => '09',
+            'OUT' => '10',
+            'NOV' => '11',
+            'DEZ' => '12',
+        ];
 
-    $categoryMapping = [
-        'BOTICARIO' => '1019',
-        'Eudora' => '1019',
-        'NATURA' => '1019',
-        'COSMETIC' => '1019',
-        'BEER' => '1018',
-        'BURGER' => '1018',
-        'Bar' => '1018',
-        'RESTAURANTE' => '1018',
-        '1A99' => '1021',
-        'SUPERMERCADO' => '1021',
-        'ATACADAO' => '1021',
-        'ROFATTO' => '1021',
-        'PENHA' => '1021',
-        'mix' => '1021',
-        'DAVID BARBOZA' => '1021',
-        'PANDULANCHES' => '1021',
-        'CASARAO' => '1021',
-        'SUCOS' => '1021',
-        'PIZZARIA' => '1021',
-        'POSTO' => '1022',
-        'Posto' => '1022',
-        'Shell' => '1022',
-        'ARENA' => '1022',
-        'N. R.' => '1022',
-        'ITAPIRENSE' => '1022',
-        'PANORAMA' => '1022',
-        'PHARMA' => '1023',
-        'DROGARIA' => '1023',
-        'CLARO' => '1029',
-        'AUTO CENTER' => '1023',
-        'AIRBNB' => '1027',
-        'BYMA' => '1027',
-  
-        'MERCADOLIVRE' => '1024',
-        'SHOPEE' => '1024',
-        'Pagamentos' => '1025',
-        'MP*JOSE' => '1025',
-        'FABIOLUIZDAGNONI' => '1026',
-        'CLEUSA' => '1018',
-        'JOSE ROBERTO' => '1026',
-        'LUCIANO DE ANDRADE' => '1026',
-        'Mega Motos' => '1030',
-        'FACEBK' => '1031',
-        'SHOPIFY' => '1031',
-  
-        // Novas adições para garantir maior cobertura:
-        'Skyfit' => '1028',  // Se o nome aparecer em transações de supermercado
-        'Melimais' => '1025',       // Como pagamentos (baseado em "MP *Melimais")
-        'ANTONELLI' => '1021',
-        'Agro' => '1021',     // Agro pode ser relacionado a supermercados ou mercados
-        'Amazon Prime' => '1029', // Se for referente ao serviço de streaming
-        'Ton Central' => '1018',
-        'Bear' => '1018', // Pode ser uma referência a bares ou restaurantes
-        'Zeferinoltda' => '1023', // Farmácia (considerando o nome da empresa)
-        'Tabacaria' => '1018', // Categoria de farmácias ou tabacarias
-        'Spotify' => '1029',   // Pagamentos relacionados a serviços de streaming
-        'Cubatao' => '1021',   // Pode se referir a supermercado ou mercado
-        'Fabioluizdagnoni' => '1026', // Nome específico
-        'Supermercado' => '1021', // Generalização para supermercados
-        'Lojaehcases' => '1024',  // Considerando como uma loja online (Shopee)
-        'Melimais' => '1025', // Pode ser considerado pagamento
-        'Pg' => '1018',         // Pode se referir a restaurante ou bar (Ton Central Beer)
-        'Tabacaria Jb' => '1018',  // Farmácia ou loja de tabaco
-        'Supermercado Jardim P' => '1021', // Supermercado
-        'Auto Posto' => '1022', // Auto posto (N. R. e Arena)
-        'sem Parar' => '1025', // Pagamentos (serviços recorrentes)
-        'Pandulanches' => '1021',  // Supermercado ou alimentação
-      ];
+        $categoryMapping = [
+            'BOTICARIO' => '1019',
+            'Eudora' => '1019',
+            'NATURA' => '1019',
+            'COSMETIC' => '1019',
+            'BEER' => '1018',
+            'BURGER' => '1018',
+            'Bar' => '1018',
+            'RESTAURANTE' => '1018',
+            '1A99' => '1021',
+            'SUPERMERCADO' => '1021',
+            'ATACADAO' => '1021',
+            'ROFATTO' => '1021',
+            'PENHA' => '1021',
+            'mix' => '1021',
+            'DAVID BARBOZA' => '1021',
+            'PANDULANCHES' => '1021',
+            'CASARAO' => '1021',
+            'SUCOS' => '1021',
+            'PIZZARIA' => '1021',
+            'POSTO' => '1022',
+            'Posto' => '1022',
+            'Shell' => '1022',
+            'ARENA' => '1022',
+            'N. R.' => '1022',
+            'ITAPIRENSE' => '1022',
+            'PANORAMA' => '1022',
+            'PHARMA' => '1023',
+            'DROGARIA' => '1023',
+            'CLARO' => '1029',
+            'AUTO CENTER' => '1023',
+            'AIRBNB' => '1027',
+            'BYMA' => '1027',
 
-    // Função para determinar a categoria com base na descrição
-    $determineCategoryId = function ($description, $categoryMapping) {
-        Log::info("Determinando categoria para a descrição: ", ['description' => $description]);
+            'MERCADOLIVRE' => '1024',
+            'SHOPEE' => '1024',
+            'Pagamentos' => '1025',
+            'MP*JOSE' => '1025',
+            'FABIOLUIZDAGNONI' => '1026',
+            'CLEUSA' => '1018',
+            'JOSE ROBERTO' => '1026',
+            'LUCIANO DE ANDRADE' => '1026',
+            'Mega Motos' => '1030',
+            'FACEBK' => '1031',
+            'SHOPIFY' => '1031',
 
-        foreach ($categoryMapping as $keyword => $categoryId) {
-            if (stripos($description, $keyword) !== false) {
-                Log::info("Categoria encontrada: ", ['category_id' => $categoryId, 'keyword' => $keyword]);
-                return $categoryId;
+            // Novas adições para garantir maior cobertura:
+            'Skyfit' => '1028',  // Se o nome aparecer em transações de supermercado
+
+            'ANTONELLI' => '1021',
+            'Agro' => '1021',     // Agro pode ser relacionado a supermercados ou mercados
+            'Amazon Prime' => '1029', // Se for referente ao serviço de streaming
+            'Ton Central' => '1018',
+            'Bear' => '1018', // Pode ser uma referência a bares ou restaurantes
+            'Zeferinoltda' => '1023', // Farmácia (considerando o nome da empresa)
+            'Tabacaria' => '1018', // Categoria de farmácias ou tabacarias
+            'Spotify' => '1029',   // Pagamentos relacionados a serviços de streaming
+            'Cubatao' => '1021',   // Pode se referir a supermercado ou mercado
+            'Fabioluizdagnoni' => '1026', // Nome específico
+            'Supermercado' => '1021', // Generalização para supermercados
+            'Lojaehcases' => '1024',  // Considerando como uma loja online (Shopee)
+            'Melimais' => '1025', // Pode ser considerado pagamento
+            'Pg' => '1018',         // Pode se referir a restaurante ou bar (Ton Central Beer)
+            'Tabacaria Jb' => '1018',  // Farmácia ou loja de tabaco
+            'Supermercado Jardim P' => '1021', // Supermercado
+            'Auto Posto' => '1022', // Auto posto (N. R. e Arena)
+            'sem Parar' => '1025', // Pagamentos (serviços recorrentes)
+            'Pandulanches' => '1021',  // Supermercado ou alimentação
+        ];
+
+        // Função para determinar a categoria com base na descrição
+        $determineCategoryId = function ($description, $categoryMapping) {
+            Log::info("Determinando categoria para a descrição: ", ['description' => $description]);
+
+            foreach ($categoryMapping as $keyword => $categoryId) {
+                if (stripos($description, $keyword) !== false) {
+                    Log::info("Categoria encontrada: ", ['category_id' => $categoryId, 'keyword' => $keyword]);
+                    return $categoryId;
+                }
             }
-        }
 
-        Log::info("Categoria não encontrada, retornando default: ", ['default_category_id' => '1026']);
-        return '1026'; // Categoria padrão caso não encontre nenhuma correspondência
-    };
+            Log::info("Categoria não encontrada, retornando default: ", ['default_category_id' => '1026']);
+            return '1026'; // Categoria padrão caso não encontre nenhuma correspondência
+        };
 
-    // Processa cada linha do texto extraído do PDF
-    foreach ($lines as $line) {
-        $trimmedLine = trim($line);
+        // Processa cada linha do texto extraído do PDF
+        foreach ($lines as $line) {
+            $trimmedLine = trim($line);
 
-        // Log para verificar cada linha processada
-        Log::info('Processando linha:', ['line' => $trimmedLine]);
+            // Log para verificar cada linha processada
+            Log::info('Processando linha:', ['line' => $trimmedLine]);
 
-        if (empty($trimmedLine)) {
-            continue;
-        }
+            if (empty($trimmedLine)) {
+                continue;
+            }
 
-        // Verifica se a linha contém uma data no formato (1) 4 de out. 2024 ou (2) 06 SET
-        if (preg_match('/(\d{1,2})\sde\s([a-záàâãäéèêíóòôõöúç]{3})\.\s(\d{4})/', $trimmedLine, $dateMatches) || preg_match('/(\d{2})\s([A-Z]{3})/', $trimmedLine, $dateMatches)) {
-            $day = $dateMatches[1];
-            $month = strtolower($dateMatches[2]);
-            $year = isset($dateMatches[3]) ? $dateMatches[3] : date('Y'); // Assume o ano atual se não houver
+            // Verifica se a linha contém uma data no formato (1) 4 de out. 2024 ou (2) 06 SET
+            if (preg_match('/(\d{1,2})\sde\s([a-záàâãäéèêíóòôõöúç]{3})\.\s(\d{4})/', $trimmedLine, $dateMatches) || preg_match('/(\d{2})\s([A-Z]{3})/', $trimmedLine, $dateMatches)) {
+                $day = $dateMatches[1];
+                $month = strtolower($dateMatches[2]);
+                $year = isset($dateMatches[3]) ? $dateMatches[3] : date('Y'); // Assume o ano atual se não houver
 
-            if (isset($monthMapping[$month])) {
-                $currentTransaction['invoice_date'] = $year . '-' . $monthMapping[$month] . '-' . $day;
+                if (isset($monthMapping[$month])) {
+                    $currentTransaction['invoice_date'] = $year . '-' . $monthMapping[$month] . '-' . $day;
 
-                // Se já tivermos todos os dados necessários, salvamos a transação
-                if (!empty($currentTransaction['invoice_date']) && !empty($currentTransaction['value']) && !empty($currentTransaction['description'])) {
-                    $currentTransaction['category_id'] = $determineCategoryId($currentTransaction['description'], $categoryMapping);
-                    $transactions[] = $currentTransaction;
+                    // Se já tivermos todos os dados necessários, salvamos a transação
+                    if (!empty($currentTransaction['invoice_date']) && !empty($currentTransaction['value']) && !empty($currentTransaction['description'])) {
+                        $currentTransaction['category_id'] = $determineCategoryId($currentTransaction['description'], $categoryMapping);
+                        $transactions[] = $currentTransaction;
+                    }
+
+                    // Reseta a transação atual
+                    $currentTransaction = [
+                        'id_bank' => null,
+                        'description' => '',
+                        'installments' => '-',
+                        'value' => null,
+                        'category_id' => null,
+                        'invoice_date' => $currentTransaction['invoice_date'],
+                        'user_id' => auth()->id(),
+                    ];
+
+                    $trimmedLine = str_replace($dateMatches[0], '', $trimmedLine); // Remove a data processada
+                }
+            }
+
+            // Extrai o valor se a linha contiver "R$"
+            if (strpos($trimmedLine, 'R$') !== false) {
+                if (preg_match('/R\$\s*([-]?\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/', $trimmedLine, $valueMatches)) {
+                    $currentTransaction['value'] = str_replace(',', '.', str_replace('.', '', $valueMatches[1]));
+                    $currentTransaction['value'] = $currentTransaction['value'] !== null ? abs($currentTransaction['value']) : 0;
+                    $trimmedLine = str_replace($valueMatches[0], '', $trimmedLine); // Remove o valor processado
+                }
+            }
+
+            // Extrai as parcelas se a linha contiver "Parcela"
+            if (preg_match('/\(?\s*(\d+)\s*(?:de|\/)\s*(\d+)\s*\)?/', $trimmedLine, $parcelMatches)) {
+                $currentTransaction['installments'] = "{$parcelMatches[1]} de {$parcelMatches[2]}";
+                $trimmedLine = str_replace($parcelMatches[0], '', $trimmedLine); // Remove as parcelas processadas
+            }
+
+            // Adiciona a descrição de forma mais refinada
+            if (!empty($trimmedLine)) {
+                // Lista de palavras-chave que indicam que a linha não deve ser incluída na descrição
+                $excludedKeywords = ['fatura', 'Período', 'Olá', 'LIMITES', 'crédito', 'aplicativo', 'marco', 'juros', 'bloqueado', '0800', 'meses', 'IOF', 'ENCARGOS', 'PARCIAL', '2306', 'agendamento', 'rotativo', 'Descritivo', 'CARTÃO', 'Vencimento', 'Sempre', 'nem', 'podendo', 'simulações', 'São Paulo/SP', 'Válido', 'Parcelar', 'capitais', 'quiser', 'SAC', 'pagar', 'cabe', 'CNPJ', 'Ideal', 'rua', 'parcelamento', 'valido', 'ainda', 'termos', 'Disponível', 'R$', 'valor', 'total', 'desconto', 'Pagamento', 'saldo'];
+
+                // Verifica se a linha contém qualquer palavra-chave que deve excluir a linha inteira
+                $shouldExcludeLine = false;
+                foreach ($excludedKeywords as $keyword) {
+                    if (stripos($trimmedLine, $keyword) !== false) {
+                        Log::info('Excluindo linha da descrição devido à palavra-chave', ['line' => $trimmedLine, 'keyword' => $keyword]);
+                        $shouldExcludeLine = true;
+                        break; // Se encontrar qualquer palavra-chave, a linha será excluída
+                    }
                 }
 
-                // Reseta a transação atual
+                // Se a linha não for excluída, remove palavras específicas e adiciona à descrição
+                if (!$shouldExcludeLine) {
+                    // Lista de palavras e caracteres a serem removidos da linha (mesmo que não exclua a linha inteira)
+                    $removeKeywords = ['parcela', 'desconto', 'taxa', '-', '(', ')'];
+
+                    // Remove as palavras e caracteres específicos da linha
+                    foreach ($removeKeywords as $removeKeyword) {
+                        $trimmedLine = preg_replace('/' . preg_quote($removeKeyword, '/') . '/i', '', $trimmedLine);
+                    }
+
+                    // Remove espaços extras após a remoção das palavras
+                    $trimmedLine = preg_replace('/\s+/', ' ', $trimmedLine);
+                    $trimmedLine = trim($trimmedLine); // Remove espaços extras no começo e fim
+
+                    // Agora, adiciona a linha limpa à descrição
+                    $currentTransaction['description'] .= empty($currentTransaction['description']) ? $trimmedLine : ' ' . $trimmedLine;
+                }
+
+            }
+
+
+            // Se a transação tiver todos os dados, adiciona à lista
+            if (!empty($currentTransaction['invoice_date']) && !empty($currentTransaction['value']) && !empty($currentTransaction['description'])) {
+                $currentTransaction['category_id'] = $determineCategoryId($currentTransaction['description'], $categoryMapping);
+                $transactions[] = $currentTransaction;
+                // Reinicia a transação para a próxima
                 $currentTransaction = [
                     'id_bank' => null,
                     'description' => '',
                     'installments' => '-',
                     'value' => null,
                     'category_id' => null,
-                    'invoice_date' => $currentTransaction['invoice_date'],
+                    'invoice_date' => null,
                     'user_id' => auth()->id(),
                 ];
-
-                $trimmedLine = str_replace($dateMatches[0], '', $trimmedLine); // Remove a data processada
             }
         }
 
-        // Extrai o valor se a linha contiver "R$"
-        if (strpos($trimmedLine, 'R$') !== false) {
-            if (preg_match('/R\$\s*([-]?\d{1,3}(?:\.\d{3})*(?:,\d{2})?)/', $trimmedLine, $valueMatches)) {
-                $currentTransaction['value'] = str_replace(',', '.', str_replace('.', '', $valueMatches[1]));
-                $currentTransaction['value'] = abs($currentTransaction['value']);
-                $trimmedLine = str_replace($valueMatches[0], '', $trimmedLine); // Remove o valor processado
-            }
+        // Garante que todas as transações tenham os campos necessários
+        foreach ($transactions as &$transaction) {
+            $transaction['date'] = $transaction['invoice_date'] ?? ''; // Corrigir para "date"
+            $transaction['valor'] = $transaction['value'] ?? '';
+            $transaction['descricao'] = $transaction['description'] ?? '';
+            $transaction['parcelas'] = $transaction['installments'] ?? '-';
         }
 
-        // Extrai as parcelas se a linha contiver "Parcela"
-        if (preg_match('/\(?\s*(\d+)\s*(?:de|\/)\s*(\d+)\s*\)?/', $trimmedLine, $parcelMatches)) {
-            $currentTransaction['installments'] = "{$parcelMatches[1]} de {$parcelMatches[2]}";
-            $trimmedLine = str_replace($parcelMatches[0], '', $trimmedLine); // Remove as parcelas processadas
-        }
+        // Log para verificar as transações extraídas
+        Log::info('Transações extraídas do PDF:', $transactions);
 
-        // Adiciona a descrição
-        if (!empty($trimmedLine)) {
-            $currentTransaction['description'] .= empty($currentTransaction['description']) ? $trimmedLine : ' ' . $trimmedLine;
-        }
-
-        // Se a transação tiver todos os dados, adiciona à lista
-        if (!empty($currentTransaction['invoice_date']) && !empty($currentTransaction['value']) && !empty($currentTransaction['description'])) {
-            $currentTransaction['category_id'] = $determineCategoryId($currentTransaction['description'], $categoryMapping);
-            $transactions[] = $currentTransaction;
-            // Reinicia a transação para a próxima
-            $currentTransaction = [
-                'id_bank' => null,
-                'description' => '',
-                'installments' => '-',
-                'value' => null,
-                'category_id' => null,
-                'invoice_date' => null,
-                'user_id' => auth()->id(),
-            ];
-        }
+        return $transactions;
     }
 
-    // Garante que todas as transações tenham os campos necessários
-    foreach ($transactions as &$transaction) {
-        $transaction['date'] = $transaction['invoice_date'] ?? ''; // Corrigir para "date"
-        $transaction['valor'] = $transaction['value'] ?? '';
-        $transaction['descricao'] = $transaction['description'] ?? '';
-        $transaction['parcelas'] = $transaction['installments'] ?? '-';
-    }
 
-    // Log para verificar as transações extraídas
-    Log::info('Transações extraídas do PDF:', $transactions);
-
-    return $transactions;
-}
-
-  
 }
