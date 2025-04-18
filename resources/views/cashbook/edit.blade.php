@@ -1,0 +1,85 @@
+
+    <!-- Edit Modal -->
+    <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <form method="POST" id="editTransactionForm" enctype="multipart/form-data">
+                @csrf
+                @method('PUT')
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editTransactionModalLabel">Editar Transação</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_value" class="form-label">Valor</label>
+                                <input type="number" step="0.01" class="form-control" id="edit_value" name="value" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_description" class="form-label">Descrição</label>
+                                <input type="text" class="form-control" id="edit_description" name="description">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_date" class="form-label">Data</label>
+                                <input type="date" class="form-control" id="edit_date" name="date" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_is_pending" class="form-label">Pendente</label>
+                                <select class="form-control" id="edit_is_pending" name="is_pending" required>
+                                    <option value="0">Não</option>
+                                    <option value="1">Sim</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_category_id" class="form-label">Categoria</label>
+                                <select class="form-control" id="edit_category_id" name="category_id" required>
+                                    @foreach($categories as $category)
+                                        <option value="{{ $category->id_category }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_type_id" class="form-label">Tipo</label>
+                                <select class="form-control" id="edit_type_id" name="type_id" required>
+                                    @foreach($types as $type)
+                                        <option value="{{ $type->id_type }}">{{ $type->desc_type }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_note" class="form-label">Nota</label>
+                                <textarea class="form-control" id="edit_note" name="note"></textarea>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_segment_id" class="form-label">Segmento</label>
+                                <select class="form-control" id="edit_segment_id" name="segment_id">
+                                    <option value="">Nenhum</option>
+                                    @foreach($segments as $segment)
+                                        <option value="{{ $segment->id }}">{{ $segment->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 mb-3">
+                                <label for="edit_attachment" class="form-label">Anexo</label>
+                                <input type="file" class="form-control" id="edit_attachment" name="attachment">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>

@@ -27,18 +27,19 @@
                 <div id="success-timer" class="alert-timer">30s</div>
             </div>
         @endif
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card h-100 mb-4">
                     <div class="card-header pb-0">
                         <div class="row">
-                            <div class="col-md-4 justify-content-center d-flex">
+                            <div class="col-md-3 justify-content-center d-flex">
                                 <h6 class="mb-0">Suas Transações:</h6>
                             </div>
-                            <div class="col-md-4 justify-content-center d-flex">
+                            <div class="col-md-3 justify-content-center d-flex">
                                 <h6 class="mb-0"> <span id="month-name">{{ $monthName ?? '' }}</span></h6>
                             </div>
-                            <div class="col-md-4 d-flex justify-content-end align-items-center">
+                            <div class="col-md-6 d-flex justify-content-end align-items-center">
                                 <button class="btn btn-primary me-2" onclick="loadMonth('previous')">Mês Anterior</button>
                                 <button class="btn btn-primary me-2" onclick="loadMonth('next')">Próximo Mês</button>
                                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTransactionModal">Adicionar Transação</button>
@@ -93,7 +94,10 @@
             </div>
         </div>
     </div>
-
+    @include('cashbook.uploadCashbook')
+    @include('cashbook.create')
+    @include('cashbook.edit')
+    @include('cashbook.delete')
     <script>
         let currentMonth = "{{ $currentMonth }}";
 
@@ -179,228 +183,7 @@
                 console.error('O modal uploadCashbookModal não foi encontrado no DOM.');
             }
         });
-    </script>
-   @include('cashbook.uploadCashbook')
-    <!-- Modal -->
-    <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <form method="POST" action="{{ route('cashbook.store') }}" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="addTransactionModalLabel">Adicionar Transação</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Progress Bar -->
-                        <div class="progress-container mb-4">
-                            <div class="progress">
-                                <div id="progress-bar" class="progress-bar" style="width: 50%;"></div>
-                            </div>
-                            <div class="d-flex justify-content-between mt-2">
-                                <div class="step-circle active">1</div>
-                                <div class="step-circle">2</div>
-                            </div>
-                            <div class="d-flex justify-content-between text-center mt-1">
-                                <small>Informações Básicas</small>
-                                <small>Detalhes Adicionais</small>
-                            </div>
-                        </div>
 
-                        <!-- Step 1 -->
-                        <div id="step-1">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="value" class="form-label">Valor</label>
-                                    <input type="number" step="0.01" class="form-control" id="value" name="value" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="description" class="form-label">Descrição</label>
-                                    <input type="text" class="form-control" id="description" name="description">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="date" class="form-label">Data</label>
-                                    <input type="date" class="form-control" id="date" name="date" required>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="is_pending" class="form-label">Pendente</label>
-                                    <select class="form-control" id="is_pending" name="is_pending" required>
-                                        <option value="0">Não</option>
-                                        <option value="1">Sim</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="category_id" class="form-label">Categoria</label>
-                                    <select class="form-control" id="category_id" name="category_id" required>
-                                        @foreach($categories as $category)
-                                            <option value="{{ $category->id_category }}">{{ $category->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="type_id" class="form-label">Tipo</label>
-                                    <select class="form-control" id="type_id" name="type_id" required>
-                                        @foreach($types as $type)
-                                            <option value="{{ $type->id_type }}">{{ $type->desc_type }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Step 2 -->
-                        <div id="step-2" class="d-none">
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label for="note" class="form-label">Nota</label>
-                                    <textarea class="form-control" id="note" name="note"></textarea>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label for="segment_id" class="form-label">Segmento</label>
-                                    <select class="form-control" id="segment_id" name="segment_id">
-                                        <option value="">Nenhum</option>
-                                        @foreach($segments as $segment)
-                                            <option value="{{ $segment->id }}">{{ $segment->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12 mb-3">
-                                    <label for="attachment" class="form-label">Anexo</label>
-                                    <input type="file" class="form-control" id="attachment" name="attachment">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" id="prev-step" onclick="toggleSteps('prev')"
-                            disabled>Voltar</button>
-                        <button type="button" class="btn btn-primary" id="next-step"
-                            onclick="toggleSteps('next')">Próximo</button>
-                        <button type="submit" class="btn btn-success d-none" id="save-button">Salvar</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Modal -->
-    <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <form method="POST" id="editTransactionForm" enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editTransactionModalLabel">Editar Transação</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_value" class="form-label">Valor</label>
-                                <input type="number" step="0.01" class="form-control" id="edit_value" name="value" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_description" class="form-label">Descrição</label>
-                                <input type="text" class="form-control" id="edit_description" name="description">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_date" class="form-label">Data</label>
-                                <input type="date" class="form-control" id="edit_date" name="date" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_is_pending" class="form-label">Pendente</label>
-                                <select class="form-control" id="edit_is_pending" name="is_pending" required>
-                                    <option value="0">Não</option>
-                                    <option value="1">Sim</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_category_id" class="form-label">Categoria</label>
-                                <select class="form-control" id="edit_category_id" name="category_id" required>
-                                    @foreach($categories as $category)
-                                        <option value="{{ $category->id_category }}">{{ $category->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_type_id" class="form-label">Tipo</label>
-                                <select class="form-control" id="edit_type_id" name="type_id" required>
-                                    @foreach($types as $type)
-                                        <option value="{{ $type->id_type }}">{{ $type->desc_type }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_note" class="form-label">Nota</label>
-                                <textarea class="form-control" id="edit_note" name="note"></textarea>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="edit_segment_id" class="form-label">Segmento</label>
-                                <select class="form-control" id="edit_segment_id" name="segment_id">
-                                    <option value="">Nenhum</option>
-                                    @foreach($segments as $segment)
-                                        <option value="{{ $segment->id }}">{{ $segment->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="edit_attachment" class="form-label">Anexo</label>
-                                <input type="file" class="form-control" id="edit_attachment" name="attachment">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                        <button type="submit" class="btn btn-primary">Salvar Alterações</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Delete Modal -->
-    <div class="modal fade" id="deleteTransactionModal" tabindex="-1" aria-labelledby="deleteTransactionModalLabel"
-        aria-hidden="true">
-        <div class="modal-dialog">
-            <form method="POST" id="deleteTransactionForm">
-                @csrf
-                @method('DELETE')
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="deleteTransactionModalLabel">Excluir Transação</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Tem certeza de que deseja excluir a transação <strong
-                                id="deleteTransactionDescription"></strong>?</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Excluir</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
         let currentStep = 1;
 
         function toggleSteps(direction) {
@@ -455,9 +238,82 @@
             form.action = `/cashbook/${id}`;
             document.getElementById('deleteTransactionDescription').textContent = description;
         }
+
+        
+    document.addEventListener("DOMContentLoaded", function() {
+        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
+        function startTimer(messageId, timerId) {
+            let timerValue = 30;
+            const timerElement = document.getElementById(timerId);
+            const messageElement = document.getElementById(messageId);
+
+            // Atualiza o temporizador a cada segundo
+            const interval = setInterval(function() {
+                if (timerValue > 0) {
+                    timerElement.innerHTML = `${timerValue--}s`;
+                } else {
+                    clearInterval(interval);
+                    // Fecha a mensagem após 30 segundos e recarrega a página
+                    messageElement.classList.remove('show');
+                    messageElement.classList.add('fade');
+                    location.reload(); // Recarregar a página após 30 segundos
+                }
+            }, 1000); // Atualiza a cada segundo
+        }
+
+        // Iniciar o timer para a mensagem de erro (se existir)
+        const errorMessage = document.getElementById('error-message');
+        if (errorMessage) {
+            startTimer('error-message', 'error-timer');
+        }
+
+        // Iniciar o timer para a mensagem de sucesso (se existir)
+        const successMessage = document.getElementById('success-message');
+        if (successMessage) {
+            startTimer('success-message', 'success-timer');
+        }
+
+        // Configuração para mostrar que a página voltou ao estado original
+        const closeButton = document.querySelectorAll('.btn-close');
+        closeButton.forEach(button => {
+            button.addEventListener('click', function() {
+                // Resetando o timer de 30 segundos e voltando a página ao estado original
+                document.getElementById('error-message')?.classList.remove('show');
+                document.getElementById('success-message')?.classList.remove('show');
+            });
+        });
+    });
+
+    // Função para fechar o alerta ao clicar no "X"
+    function closeAlert(messageId) {
+        document.getElementById(messageId).classList.remove('show');
+        document.getElementById(messageId).classList.add('fade');
+    }
     </script>
 
     <style>
+        .alert-timer {
+        position: absolute;
+        top: 10px;
+        right: 40px;
+        background-color: #ff9800;
+        color: white;
+        padding: 5px 10px;
+        font-size: 12px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-top: 5px;
+    }
+
+    .alert-dismissible .btn-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        padding: 5px 10px;
+        color: #fff;
+        background: transparent;
+        border: none;
+    }
         .progress-container {
             position: relative;
         }
