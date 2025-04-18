@@ -2,30 +2,7 @@
 
 @section('content')
 <div class="container-fluid py-4">
-    <!-- Exibir erros de validação -->
-    @if ($errors->any())
-    <div id="error-message" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <ul>
-            @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeAlert('error-message')"></button>
-        <div id="error-timer" class="alert-timer">30s</div>
-    </div>
-    @endif
-
-    <!-- Exibir sucesso -->
-    @if (session('success'))
-    <div id="success-message" class="alert alert-success alert-dismissible fade show" role="alert">
-        {{ session('success') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" onclick="closeAlert('success-message')">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
-                <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z" />
-            </svg></button>
-        <div id="success-timer" class="alert-timer">30s</div>
-    </div>
-    @endif
+@include('message.alert')
 
 
     <!-- Filtro e Pesquisa -->
@@ -456,55 +433,7 @@
 </div>
 @endforeach
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
-        function startTimer(messageId, timerId) {
-            let timerValue = 30;
-            const timerElement = document.getElementById(timerId);
-            const messageElement = document.getElementById(messageId);
 
-            // Atualiza o temporizador a cada segundo
-            const interval = setInterval(function() {
-                if (timerValue > 0) {
-                    timerElement.innerHTML = `${timerValue--}s`;
-                } else {
-                    clearInterval(interval);
-                    // Fecha a mensagem após 30 segundos e recarrega a página
-                    messageElement.classList.remove('show');
-                    messageElement.classList.add('fade');
-                    location.reload(); // Recarregar a página após 30 segundos
-                }
-            }, 1000); // Atualiza a cada segundo
-        }
-
-        // Iniciar o timer para a mensagem de erro (se existir)
-        const errorMessage = document.getElementById('error-message');
-        if (errorMessage) {
-            startTimer('error-message', 'error-timer');
-        }
-
-        // Iniciar o timer para a mensagem de sucesso (se existir)
-        const successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            startTimer('success-message', 'success-timer');
-        }
-
-        // Configuração para mostrar que a página voltou ao estado original
-        const closeButton = document.querySelectorAll('.btn-close');
-        closeButton.forEach(button => {
-            button.addEventListener('click', function() {
-                // Resetando o timer de 30 segundos e voltando a página ao estado original
-                document.getElementById('error-message')?.classList.remove('show');
-                document.getElementById('success-message')?.classList.remove('show');
-            });
-        });
-    });
-
-    // Função para fechar o alerta ao clicar no "X"
-    function closeAlert(messageId) {
-        document.getElementById(messageId).classList.remove('show');
-        document.getElementById(messageId).classList.add('fade');
-    }
 
     document.addEventListener('DOMContentLoaded', function() {
         // Inicializar os tooltips do Bootstrap
@@ -619,29 +548,6 @@
         color: #6c757d;
     }
 
-
-    .alert-timer {
-        position: absolute;
-        top: 10px;
-        right: 40px;
-        background-color: #ff9800;
-        color: white;
-        padding: 5px 10px;
-        font-size: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-top: 5px;
-    }
-
-    .alert-dismissible .btn-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 5px 10px;
-        color: #fff;
-        background: transparent;
-        border: none;
-    }
 
     /* Garantir que os cards tenham uma altura fixa e o conteúdo se ajuste adequadamente */
     .card {

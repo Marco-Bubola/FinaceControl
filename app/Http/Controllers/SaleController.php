@@ -9,6 +9,8 @@ use App\Models\Client;
 use App\Models\SalePayment as ModelsSalePayment;
 use Illuminate\Http\Request;
 use SalePayment;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class SaleController extends Controller
 {
@@ -18,7 +20,7 @@ class SaleController extends Controller
         $userId = auth()->id();  // Ou Auth::id()
 
         // Inicializa a consulta para vendas, filtrando por user_id
-        $sales = Sale::where('user_id', $userId);
+        $sales = Sale::where('sales.user_id', $userId); // Adicionado o prefixo 'sales.' para evitar ambiguidade
 
         // Filtro de pesquisa por nome do cliente
         if ($request->has('search') && $request->search != '') {
@@ -37,14 +39,27 @@ class SaleController extends Controller
 
         // Filtro de ordenação por data ou outros campos
         if ($request->has('filter') && $request->filter != '') {
-            if ($request->filter == 'created_at') {
-                $sales->orderBy('created_at', 'desc');
-            } elseif ($request->filter == 'updated_at') {
-                $sales->orderBy('updated_at', 'desc');
-            } elseif ($request->filter == 'name_asc') {
-                $sales->orderBy('client.name', 'asc'); // Ordenar pelo nome do cliente A-Z
-            } elseif ($request->filter == 'name_desc') {
-                $sales->orderBy('client.name', 'desc'); // Ordenar pelo nome do cliente Z-A
+            switch ($request->filter) {
+                case 'created_at':
+                    $sales->orderBy('sales.created_at', 'desc'); // Adicionado o prefixo 'sales.'
+                    break;
+                case 'updated_at':
+                    $sales->orderBy('sales.updated_at', 'desc'); // Adicionado o prefixo 'sales.'
+                    break;
+                case 'name_asc':
+                    $sales->join('clients', 'sales.client_id', '=', 'clients.id')
+                          ->orderBy('clients.name', 'asc');
+                    break;
+                case 'name_desc':
+                    $sales->join('clients', 'sales.client_id', '=', 'clients.id')
+                          ->orderBy('clients.name', 'desc');
+                    break;
+                case 'price_asc':
+                    $sales->orderBy('sales.total_price', 'asc'); // Adicionado o prefixo 'sales.'
+                    break;
+                case 'price_desc':
+                    $sales->orderBy('sales.total_price', 'desc'); // Adicionado o prefixo 'sales.'
+                    break;
             }
         }
 
@@ -64,19 +79,6 @@ class SaleController extends Controller
     }
 
 
-    public function search(Request $request)
-    {
-        // Pegue a string da pesquisa
-        $searchTerm = $request->get('query');
-
-        // Encontre os produtos que correspondem ao termo de pesquisa
-        $products = Product::where('name', 'like', "%{$searchTerm}%")
-            ->orWhere('product_code', 'like', "%{$searchTerm}%")
-            ->get();
-
-        // Retorne os produtos encontrados como uma resposta JSON
-        return response()->json($products);
-    }
 
 
     // Exibir o formulário para adicionar uma nova venda
@@ -127,8 +129,8 @@ class SaleController extends Controller
 
         $sale->update(['total_price' => $total_price]);
 
-        // Verificar se veio da página index ou show
-        $redirectTo = $request->input('from') === 'show'
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = request()->input('from') === 'show'
             ? route('sales.show', $sale->id) // Redireciona para a página de show
             : route('sales.index'); // Redireciona para a página de index
 
@@ -157,8 +159,12 @@ class SaleController extends Controller
         // Exclui o item da venda
         $saleItem->delete();
 
-        // Redireciona de volta com uma mensagem de sucesso
-        return redirect()->back()->with('success', 'Produto removido da venda com sucesso!');
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = request()->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Produto removido da venda com sucesso!');
     }
 
 
@@ -266,7 +272,7 @@ class SaleController extends Controller
         $sale->save();
 
         // Verificar a origem da requisição para o redirecionamento
-        $redirectTo = $request->input('from') === 'show'
+        $redirectTo = request()->input('from') === 'show'
             ? route('sales.show', $sale->id) // Redireciona para a página de show
             : route('sales.index'); // Redireciona para a página de index
 
@@ -327,7 +333,7 @@ class SaleController extends Controller
         $sale->save();
 
         // Verificar a origem da requisição para o redirecionamento
-        $redirectTo = $request->input('from') === 'show'
+        $redirectTo = request()->input('from') === 'show'
             ? route('sales.show', $sale->id) // Redireciona para a página de show
             : route('sales.index'); // Redireciona para a página de index
 
@@ -417,7 +423,12 @@ class SaleController extends Controller
         // Atualizar o preço total da venda
         $sale->update(['total_price' => $total_price]);
 
-        return redirect()->route('sales.index')->with('success', 'Venda atualizada com sucesso!');
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = request()->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Venda atualizada com sucesso!');
     }
 
     // Excluir a venda
@@ -439,6 +450,43 @@ class SaleController extends Controller
         // Excluir a venda
         $sale->delete();
 
-        return redirect()->route('sales.index')->with('success', 'Venda excluída com sucesso!');
+        // Verificar a origem da requisição para o redirecionamento
+        $redirectTo = request()->input('from') === 'show'
+            ? route('sales.show', $sale->id) // Redireciona para a página de show
+            : route('sales.index'); // Redireciona para a página de index
+
+        return redirect($redirectTo)->with('success', 'Venda excluída com sucesso!');
+    }
+
+    public function getClientData($id)
+    {
+        $client = Client::findOrFail($id);
+
+        return response()->json([
+            'name' => $client->name,
+            'email' => $client->email,
+            'phone' => $client->phone,
+            'address' => $client->address,
+            'created_at' => $client->created_at->format('d/m/Y'),
+        ]);
+    }
+
+    public function export($id)
+    {
+        $sale = Sale::with(['client', 'payments', 'saleItems.product'])->findOrFail($id);
+
+        // Renderiza apenas a parte específica da view
+        $html = view('sales.partials.export', compact('sale'))->render();
+
+        // Configurações do DOMPDF
+        $options = new Options();
+        $options->set('defaultFont', 'Arial');
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Retorna o PDF para download
+        return $dompdf->stream("relatorio_venda_{$sale->client->name}.pdf");
     }
 }

@@ -3,30 +3,7 @@
 @section('content')
 
     <div class="container-fluid py-2">
-          <!-- Exibir erros de validação -->
-          @if ($errors->any())
-            <div id="error-message" class="alert alert-danger alert-dismissible fade show custom-error-message" role="alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                    onclick="closeAlert('error-message')"></button>
-                <div id="error-timer" class="alert-timer">30s</div>
-            </div>
-        @endif
-
-        <!-- Exibir sucesso -->
-        @if (session('success'))
-            <div id="success-message" class="alert alert-success alert-dismissible fade show custom-success-message"
-                role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                    onclick="closeAlert('success-message')"></button>
-                <div id="success-timer" class="alert-timer">30s</div>
-            </div>
-        @endif
+        @include('message.alert')
 
         <div class="row">
             <div class="col-md-12">
@@ -42,8 +19,10 @@
                             <div class="col-md-6 d-flex justify-content-end align-items-center">
                                 <button class="btn btn-primary me-2" onclick="loadMonth('previous')">Mês Anterior</button>
                                 <button class="btn btn-primary me-2" onclick="loadMonth('next')">Próximo Mês</button>
-                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addTransactionModal">Adicionar Transação</button>
-                                <button class="btn btn-info" data-bs-toggle="modal" data-bs-target="#uploadCashbookModal">Upload de Transações</button>
+                                <button class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#addTransactionModal">Adicionar Transação</button>
+                                <button class="btn btn-info" data-bs-toggle="modal"
+                                    data-bs-target="#uploadCashbookModal">Upload de Transações</button>
                             </div>
                         </div>
                     </div>
@@ -53,7 +32,8 @@
                                 <div class="card text-center">
                                     <div class="card-body">
                                         <h6 class="text-sm">Receitas</h6>
-                                        <span class="text-success">+ R$ {{ number_format(abs($totals['income']), 2) }}</span>
+                                        <span class="text-success">+ R$
+                                            {{ number_format(abs($totals['income']), 2) }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -123,47 +103,47 @@
                     // Verificar se há transações para o mês selecionado
                     if (data.transactionsByDay && Object.keys(data.transactionsByDay).length > 0) {
                         container.innerHTML = `
-                    ${Object.keys(data.transactionsByDay).map(day => `
-                        <div class="mb-4">
-                            <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">${day}</h6>
-                            <ul class="list-group">
-                                ${data.transactionsByDay[day].map(transaction => `
-                                    <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                                        <div class="d-flex align-items-center">
-                                            <button class="btn btn-icon-only btn-rounded btn-outline-${transaction.type_id == 2 ? 'danger' : 'success'} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
-                                                <i class="fas fa-arrow-${transaction.type_id == 2 ? 'down' : 'up'}"></i>
-                                            </button>
-                                            <div class="d-flex flex-column">
-                                                <h6 class="mb-1 text-dark text-sm">${transaction.description}</h6>
-                                                <span class="text-xs">Data: ${transaction.time}</span>
-                                                <span class="text-xs">Categoria: ${transaction.category_name || 'N/A'}</span>
-                                                <span class="text-xs">Nota: ${transaction.note || 'Sem nota'}</span>
-                                                <span class="text-xs">Segmento: ${transaction.segment_name || 'Nenhum'}</span>
+                        ${Object.keys(data.transactionsByDay).map(day => `
+                            <div class="mb-4">
+                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">${day}</h6>
+                                <ul class="list-group">
+                                    ${data.transactionsByDay[day].map(transaction => `
+                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                            <div class="d-flex align-items-center">
+                                                <button class="btn btn-icon-only btn-rounded btn-outline-${transaction.type_id == 2 ? 'danger' : 'success'} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
+                                                    <i class="fas fa-arrow-${transaction.type_id == 2 ? 'down' : 'up'}"></i>
+                                                </button>
+                                                <div class="d-flex flex-column">
+                                                    <h6 class="mb-1 text-dark text-sm">${transaction.description}</h6>
+                                                    <span class="text-xs">Data: ${transaction.time}</span>
+                                                    <span class="text-xs">Categoria: ${transaction.category_name || 'N/A'}</span>
+                                                    <span class="text-xs">Nota: ${transaction.note || 'Sem nota'}</span>
+                                                    <span class="text-xs">Segmento: ${transaction.segment_name || 'Nenhum'}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="d-flex align-items-center text-${transaction.type_id == 2 ? 'danger' : 'success'} text-gradient text-sm font-weight-bold">
-                                            ${transaction.type_id == 2 ? '-' : '+'} $ ${Math.abs(transaction.value).toFixed(2)}
-                                        </div>
-                                        <div class="d-flex align-items-center">
-                                            <button class="btn btn-icon-only btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTransactionModal" onclick="loadEditModal(${transaction.id})">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-                                            <button class="btn btn-icon-only btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" onclick="loadDeleteModal(${transaction.id}, '${transaction.description}')">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </div>
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
-                    `).join('')}
-                `;
+                                            <div class="d-flex align-items-center text-${transaction.type_id == 2 ? 'danger' : 'success'} text-gradient text-sm font-weight-bold">
+                                                ${transaction.type_id == 2 ? '-' : '+'} $ ${Math.abs(transaction.value).toFixed(2)}
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <button class="btn btn-icon-only btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTransactionModal" onclick="loadEditModal(${transaction.id})">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-icon-only btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" onclick="loadDeleteModal(${transaction.id}, '${transaction.description}')">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </li>
+                                    `).join('')}
+                                </ul>
+                            </div>
+                        `).join('')}
+                    `;
                     } else {
                         container.innerHTML = `
-                    <div class="text-center">
-                        <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
-                    </div>
-                `;
+                        <div class="text-center">
+                            <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
+                        </div>
+                    `;
                     }
                 })
                 .catch(error => {
@@ -238,82 +218,9 @@
             form.action = `/cashbook/${id}`;
             document.getElementById('deleteTransactionDescription').textContent = description;
         }
-
-        
-    document.addEventListener("DOMContentLoaded", function() {
-        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
-        function startTimer(messageId, timerId) {
-            let timerValue = 30;
-            const timerElement = document.getElementById(timerId);
-            const messageElement = document.getElementById(messageId);
-
-            // Atualiza o temporizador a cada segundo
-            const interval = setInterval(function() {
-                if (timerValue > 0) {
-                    timerElement.innerHTML = `${timerValue--}s`;
-                } else {
-                    clearInterval(interval);
-                    // Fecha a mensagem após 30 segundos e recarrega a página
-                    messageElement.classList.remove('show');
-                    messageElement.classList.add('fade');
-                    location.reload(); // Recarregar a página após 30 segundos
-                }
-            }, 1000); // Atualiza a cada segundo
-        }
-
-        // Iniciar o timer para a mensagem de erro (se existir)
-        const errorMessage = document.getElementById('error-message');
-        if (errorMessage) {
-            startTimer('error-message', 'error-timer');
-        }
-
-        // Iniciar o timer para a mensagem de sucesso (se existir)
-        const successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            startTimer('success-message', 'success-timer');
-        }
-
-        // Configuração para mostrar que a página voltou ao estado original
-        const closeButton = document.querySelectorAll('.btn-close');
-        closeButton.forEach(button => {
-            button.addEventListener('click', function() {
-                // Resetando o timer de 30 segundos e voltando a página ao estado original
-                document.getElementById('error-message')?.classList.remove('show');
-                document.getElementById('success-message')?.classList.remove('show');
-            });
-        });
-    });
-
-    // Função para fechar o alerta ao clicar no "X"
-    function closeAlert(messageId) {
-        document.getElementById(messageId).classList.remove('show');
-        document.getElementById(messageId).classList.add('fade');
-    }
     </script>
 
     <style>
-        .alert-timer {
-        position: absolute;
-        top: 10px;
-        right: 40px;
-        background-color: #ff9800;
-        color: white;
-        padding: 5px 10px;
-        font-size: 12px;
-        border-radius: 50%;
-        display: inline-block;
-        margin-top: 5px;
-    }
-
-    .alert-dismissible .btn-close {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        padding: 5px 10px;
-        color: #fff;
-        background: transparent;
-        border: none;
-    }
         .progress-container {
             position: relative;
         }

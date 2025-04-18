@@ -51,7 +51,7 @@ class ClientController extends Controller
         $perPage = $request->input('per_page', 10);  // Pega o valor de 'per_page' ou usa 10 como padrão
 
         // Paginando os resultados com a quantidade definida
-        $clients = $clients->paginate($perPage);
+        $clients = $clients->with('sales')->paginate($perPage); // Paginação com a quantidade definida
 
         // Passando os clientes e parâmetros para a view
         return view('clients.index', compact('clients', 'perPage'));
@@ -119,5 +119,12 @@ class ClientController extends Controller
         $client->delete();
 
         return redirect()->route('clients.index')->with('success', 'Cliente deletado com sucesso!');
+    }
+
+    // Retornar histórico de compras
+    public function getPurchaseHistory($id)
+    {
+        $client = Client::with('sales.saleItems.product')->findOrFail($id);
+        return view('sales.show', compact('client'));
     }
 }

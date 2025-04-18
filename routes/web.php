@@ -89,6 +89,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::delete('/sales/item/{id}', [SaleController::class, 'destroySaleItem'])->name('sales.item.destroy');
     Route::put('/sales/{sale}/item/{item}', [SaleController::class, 'updateSaleItem'])->name('sales.item.update');
     Route::put('/sales/{sale}', [SaleController::class, 'update'])->name('sales.update');
+    Route::get('/sales/{id}/export', [App\Http\Controllers\SaleController::class, 'export'])->name('sales.export');
 
     Route::get('tables', function () {
         return view('tables');
@@ -131,6 +132,8 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::post('/cashbook/upload', [UploadCashbookController::class, 'upload'])->name('cashbook.upload');
     Route::post('/cashbook/confirm', [UploadCashbookController::class, 'confirm'])->name('cashbook.confirm');
+
+    Route::get('/sales/search', [SaleController::class, 'search'])->name('sales.search');
 });
 
 Route::controller(EventController::class)->group(function () {
@@ -164,9 +167,13 @@ Route::get('/client/{id}/data', function ($id) {
     return response()->json($client);  // Return client data as JSON
 });
 
+Route::get('/client/{id}/data', [App\Http\Controllers\SaleController::class, 'getClientData']);
+
 // Route for searching products
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
 Route::post('/products/update-all', [ProductController::class, 'updateAll'])->name('products.updateAll');
 Route::get('/login', function () {
     return view('session/login-session');
 })->name('login');
+
+Route::get('/clients/{id}/history', [ClientController::class, 'getPurchaseHistory'])->name('clients.history');

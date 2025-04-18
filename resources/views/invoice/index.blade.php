@@ -2,31 +2,7 @@
 
 @section('content')
     <div class="container-fluid py-4 custom-invoice-container">
-        <!-- Exibir erros de validação -->
-        @if ($errors->any())
-            <div id="error-message" class="alert alert-danger alert-dismissible fade show custom-error-message" role="alert">
-                <ul>
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                    onclick="closeAlert('error-message')"></button>
-                <div id="error-timer" class="alert-timer">30s</div>
-            </div>
-        @endif
-
-        <!-- Exibir sucesso -->
-        @if (session('success'))
-            <div id="success-message" class="alert alert-success alert-dismissible fade show custom-success-message"
-                role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"
-                    onclick="closeAlert('success-message')"></button>
-                <div id="success-timer" class="alert-timer">30s</div>
-            </div>
-        @endif
-
+        @include('message.alert')
         <div class="row">
             <!-- Informações do Cartão -->
             <div class="col-md-7 custom-card-info">
@@ -183,21 +159,21 @@
 
                     // Adiciona detalhes ao título do evento com estrutura personalizada
                     const detalhesEvento = `
-                            <div class="detalhes-evento">
-                                <div class="titulo-evento" style="font-size: 16px; font-weight: bold; color: #343a40;">
-                                    ${event.title} <!-- Título do evento -->
+                                <div class="detalhes-evento">
+                                    <div class="titulo-evento" style="font-size: 16px; font-weight: bold; color: #343a40;">
+                                        ${event.title} <!-- Título do evento -->
+                                    </div>
+                                    <div class="categoria-evento" style="font-weight: bold; color: #007bff;">
+                                        Categoria: ${event.category}
+                                    </div>
+                                    <div class="parcelas-evento" style="font-size: 12px; color: #6c757d;">
+                                        Parcelas: ${event.installments}
+                                    </div>
+                                    <div class="valor-evento" style="font-size: 14px; font-weight: bold; color: ${event.value < 0 ? '#dc3545' : '#28a745'};">
+                                        Valor: ${event.value < 0 ? '-' : '+'} R$ ${Math.abs(event.value).toFixed(2)}
+                                    </div>
                                 </div>
-                                <div class="categoria-evento" style="font-weight: bold; color: #007bff;">
-                                    Categoria: ${event.category}
-                                </div>
-                                <div class="parcelas-evento" style="font-size: 12px; color: #6c757d;">
-                                    Parcelas: ${event.installments}
-                                </div>
-                                <div class="valor-evento" style="font-size: 14px; font-weight: bold; color: ${event.value < 0 ? '#dc3545' : '#28a745'};">
-                                    Valor: ${event.value < 0 ? '-' : '+'} R$ ${Math.abs(event.value).toFixed(2)}
-                                </div>
-                            </div>
-                            `;
+                                `;
 
                     // Substitui o conteúdo do título do evento
                     element.find('.fc-title').html(detalhesEvento);
@@ -358,59 +334,8 @@
                 updateMonthData(month);
             });
         });
-
-
-        document.addEventListener("DOMContentLoaded", function() {
-        // Função para iniciar o timer e ocultar a mensagem após 30 segundos
-        function startTimer(messageId, timerId) {
-            let timerValue = 30;
-            const timerElement = document.getElementById(timerId);
-            const messageElement = document.getElementById(messageId);
-
-            // Atualiza o temporizador a cada segundo
-            const interval = setInterval(function() {
-                if (timerValue > 0) {
-                    timerElement.innerHTML = `${timerValue--}s`;
-                } else {
-                    clearInterval(interval);
-                    // Fecha a mensagem após 30 segundos e recarrega a página
-                    messageElement.classList.remove('show');
-                    messageElement.classList.add('fade');
-                    location.reload(); // Recarregar a página após 30 segundos
-                }
-            }, 1000); // Atualiza a cada segundo
-        }
-
-        // Iniciar o timer para a mensagem de erro (se existir)
-        const errorMessage = document.getElementById('error-message');
-        if (errorMessage) {
-            startTimer('error-message', 'error-timer');
-        }
-
-        // Iniciar o timer para a mensagem de sucesso (se existir)
-        const successMessage = document.getElementById('success-message');
-        if (successMessage) {
-            startTimer('success-message', 'success-timer');
-        }
-
-        // Configuração para mostrar que a página voltou ao estado original
-        const closeButton = document.querySelectorAll('.btn-close');
-        closeButton.forEach(button => {
-            button.addEventListener('click', function() {
-                // Resetando o timer de 30 segundos e voltando a página ao estado original
-                document.getElementById('error-message')?.classList.remove('show');
-                document.getElementById('success-message')?.classList.remove('show');
-            });
-        });
-    });
-
-    // Função para fechar o alerta ao clicar no "X"
-    function closeAlert(messageId) {
-        document.getElementById(messageId).classList.remove('show');
-        document.getElementById(messageId).classList.add('fade');
-    }
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Modal para Adicionar Transferência -->
     <div class="modal fade" id="addTransactionModal" tabindex="-1" aria-labelledby="addTransactionModalLabel"
         aria-hidden="true">
@@ -494,30 +419,7 @@
             </div>
         </div>
     </div>
-    <style>
-        .alert-timer {
-            position: absolute;
-            top: 10px;
-            right: 40px;
-            background-color: #ff9800;
-            color: white;
-            padding: 5px 10px;
-            font-size: 12px;
-            border-radius: 50%;
-            display: inline-block;
-            margin-top: 5px;
-        }
 
-        .alert-dismissible .btn-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px 10px;
-            color: #fff;
-            background: transparent;
-            border: none;
-        }
-    </style>
 
     <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
 @endsection
