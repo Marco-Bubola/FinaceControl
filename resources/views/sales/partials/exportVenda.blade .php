@@ -156,42 +156,11 @@
                 <div class="card">
                     <div class="card-title">Informações do Cliente</div>
                     <p><strong>Nome:</strong> {{ $sale->client->name }}</p>
-                    <p><strong>Status:</strong>
-                        <span class="badge badge-{{ $sale->status == 'Paga' ? 'success' : 'danger' }}">
-                            {{ $sale->status }}
-                        </span>
-                    </p>
-                    <p><strong>Total Pago:</strong> R$ {{ number_format($sale->amount_paid, 2, ',', '.') }}</p>
                     <p><strong>Total da Venda:</strong> R$ {{ number_format($sale->total_price, 2, ',', '.') }}</p>
-                    <p><strong>Restante:</strong> R$
-                        {{ number_format($sale->total_price - $sale->amount_paid, 2, ',', '.') }}</p>
-                </div>
-            </div>
 
-            <div class="card-section">
-                <div class="card">
-                    <div class="card-title">Histórico de Pagamentos</div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Valor</th>
-                                <th>Método</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($sale->payments as $payment)
-                                <tr>
-                                    <td>{{ $payment->created_at->format('d/m/Y') }}</td>
-                                    <td>R$ {{ number_format($payment->amount_paid, 2, ',', '.') }}</td>
-                                    <td>{{ $payment->payment_method }}</td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </div>
+                    </div>
 
         <!-- Produtos da Venda -->
         <div class="section">

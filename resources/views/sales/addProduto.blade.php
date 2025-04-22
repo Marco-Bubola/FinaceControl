@@ -20,21 +20,21 @@
                         </div>
                     </div>
 
-                    <!-- Produtos Disponíveis -->
-                    <div class="row mb-4" id="productList{{ $sale->id }}">
+                    <!-- Produtos Disponíveis com rolagem -->
+                    <div class="row mb-4 product-list-wrapper" id="productList{{ $sale->id }}">
                         @foreach($products as $product)
                         @if($product->stock_quantity > 0)
                         <div class="col-md-3 mb-4 product-card" data-product-id="{{ $product->id }}" style="opacity: 0.5;">
-                            <div class="card product-item" style="cursor: pointer;">
+                            <div class="card product-item" style="cursor: pointer; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
                                 <!-- Checkbox sobre a imagem -->
                                 <div class="form-check form-switch" style="position: absolute; top: 10px; left: 10px; z-index: 10;">
                                     <input class="form-check-input product-checkbox" type="checkbox" role="switch" id="flexSwitchCheckDefault{{ $product->id }}" data-product-id="{{ $product->id }}" />
                                 </div>
 
-                                <img src="{{ asset('storage/products/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 150px; object-fit: cover;">
+                                <img src="{{ asset('storage/products/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}" style="height: 150px; object-fit: cover; border-radius: 8px;">
                                 <div class="card-body">
-                                    <h5 class="card-title text-center">{{ $product->name }}</h5>
-                                    <table class="table table-bordered table-sm">
+                                    <h5 class="card-title text-center" style="font-size: 1.1rem; font-weight: 600;">{{ $product->name }}</h5>
+                                    <table class="table table-bordered table-sm" style="font-size: 0.9rem;">
                                         <tr>
                                             <th>Código</th>
                                             <td>{{ $product->product_code }}</td>
@@ -88,6 +88,29 @@
         </div>
     </div>
 </div>
+
+<!-- CSS customizado para rolagem e estilo -->
+<style>
+    .product-list-wrapper {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+
+    .product-item {
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .product-item:hover {
+        transform: scale(1.05);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .product-card {
+        border-radius: 10px;
+        padding: 10px;
+    }
+</style>
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {

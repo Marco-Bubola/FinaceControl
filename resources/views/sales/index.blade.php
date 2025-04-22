@@ -106,32 +106,30 @@
                             <div class="card-header bg-primary text-white">
                                 <!-- Exibir o nome do cliente, telefone, editar, excluir e adicionar produto -->
                                 <div class="row align-items-center">
-                                <div class="col-md-7">
-    <!-- Link para redirecionar apenas ao clicar no nome do cliente e telefone -->
-    <a href="{{ route('sales.show', $sale->id) }}" class="text-decoration-none text-dark"
-       style="display: flex; align-items: center; gap: 10px;">
-        <!-- Ícones e texto formatado -->
-        <i class="bi bi-person-circle" style="font-size: 1.2rem; color: #007bff;"></i>
-        <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
-            <strong>Nome:</strong> {{ ucwords($sale->client->name) }}
-        </p>
-        <i class="bi bi-telephone" style="font-size: 1.2rem; color: #28a745;"></i>
-        <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
-            <strong>Telefone:</strong> {{ $sale->client->phone }}
-        </p>
-    </a>
-</div>
+                                    <div class="col-md-7">
+                                        <!-- Link para redirecionar apenas ao clicar no nome do cliente e telefone -->
+                                        <a href="{{ route('sales.show', $sale->id) }}" class="text-decoration-none text-dark"
+                                            style="display: flex; align-items: center; gap: 10px;">
+                                            <!-- Ícones e texto formatado -->
+                                            <i class="bi bi-person-circle" style="font-size: 1.2rem; color: #007bff;"></i>
+                                            <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
+                                                <strong>Nome:</strong> {{ ucwords($sale->client->name) }}
+                                            </p>
+                                            <i class="bi bi-telephone" style="font-size: 1.2rem; color: #28a745;"></i>
+                                            <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
+                                                <strong>Telefone:</strong> {{ $sale->client->phone }}
+                                            </p>
+                                        </a>
+                                    </div>
 
 
                                     <div class="col-md-5 text-end">
                                         <!-- Botões de Editar, Excluir e Adicionar Produto -->
                                         <div class="d-flex justify-content-end align-items-center gap-2">
-                                        <button class="btn btn-github p-2 w-100"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#paymentHistoryModal{{ $sale->id }}"
-                                                            title="historico de pagamento">
-                                                            <i class="bi bi-clock-history"></i>
-                                                        </button>
+                                            <button class="btn btn-github p-2 w-100" data-bs-toggle="modal"
+                                                data-bs-target="#paymentHistoryModal{{ $sale->id }}" title="historico de pagamento">
+                                                <i class="bi bi-clock-history"></i>
+                                            </button>
                                             <!-- Botão Exportar -->
                                             <a href="{{ route('sales.export', $sale->id) }}" class="btn btn-secondary p-2 w-100"
                                                 title="Exportar PDF">
@@ -241,47 +239,51 @@
                                             menos</button>
                                     </div>
                                 @endif
-                          <!-- Informações adicionais da venda -->
-<!-- Informações adicionais da venda -->
-<div class="row mt-4">
-    <div class="col-md-12">
-        <!-- Card único para informações adicionais -->
-        <div class="card p-4 shadow-lg rounded-lg border-0" style="background-color: #f8f9fa;">
-            <div class="row d-flex justify-content-between align-items-center">
-                <!-- Coluna com Total -->
-                <div class="col-md-4 d-flex flex-column align-items-start">
-                    <h6 class="text-primary text-center mb-3" style="font-weight: 600; font-size: 1.2rem;">
-                        <strong>Total:</strong> <br>
-                        <span class="text-dark">
-                            R$ {{ number_format($sale->total_price, 2, ',', '.') }}
-                        </span>
-                    </h6>
-                </div>
+                                <!-- Informações adicionais da venda -->
+                                <!-- Informações adicionais da venda -->
+                                <div class="row mt-4">
+                                    <div class="col-md-12">
+                                        <!-- Card único para informações adicionais -->
+                                        <div class="card p-4 shadow-lg rounded-lg border-0" style="background-color: #f8f9fa;">
+                                            <div class="row d-flex justify-content-between align-items-center">
+                                                <!-- Coluna com Total -->
+                                                <div class="col-md-4 d-flex flex-column align-items-start">
+                                                    <h6 class="text-primary text-center mb-3"
+                                                        style="font-weight: 600; font-size: 1.2rem;">
+                                                        <strong>Total:</strong> <br>
+                                                        <span class="text-dark">
+                                                            R$ {{ number_format($sale->total_price, 2, ',', '.') }}
+                                                        </span>
+                                                    </h6>
+                                                </div>
 
-                <!-- Coluna com Total Pago -->
-                <div class="col-md-4 d-flex flex-column align-items-center">
-                    <h6 class="text-muted text-center mb-3" style="font-weight: 500; font-size: 1rem;">
-                        <strong>Total Pago:</strong> <br>
-                        <span class="text-dark">
-                            R$ {{ number_format($sale->total_paid, 2, ',', '.') }}
-                        </span>
-                    </h6>
-                </div>
+                                                <!-- Coluna com Total Pago -->
+                                                <div class="col-md-4 d-flex flex-column align-items-center">
+                                                    <h6 class="text-muted text-center mb-3"
+                                                        style="font-weight: 500; font-size: 1rem;">
+                                                        <strong>Total Pago:</strong> <br>
+                                                        <span class="text-dark">
+                                                            R$ {{ number_format($sale->total_paid, 2, ',', '.') }}
+                                                        </span>
+                                                    </h6>
+                                                </div>
 
-                <!-- Coluna com Saldo Restante -->
-                <div class="col-md-4 d-flex flex-column align-items-end">
-                    <h6 class="text-muted text-center mb-3" style="font-weight: 500; font-size: 1rem;">
-                        <strong>Saldo Restante:</strong> <br>
+                                                <!-- Coluna com Saldo Restante -->
+                                                <div class="col-md-4 d-flex flex-column align-items-end">
+                                                    <h6 class="text-muted text-center mb-3"
+                                                        style="font-weight: 500; font-size: 1rem;">
+                                                        <strong>Saldo Restante:</strong> <br>
 
-                        <span class="badge bg-danger text-white" style="font-size: 1rem;">
-                            R$ {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
-                        </span>
-                    </h6>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+                                                        <span class="badge bg-danger text-white" style="font-size: 1rem;">
+                                                            R$
+                                                            {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
+                                                        </span>
+                                                    </h6>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
 
 
