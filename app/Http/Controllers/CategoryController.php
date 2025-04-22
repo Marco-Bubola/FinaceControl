@@ -13,7 +13,7 @@ class CategoryController extends Controller
     // Método para listar todas as categorias
     public function index()
     {
-        $categories = Category::with('bank', 'client')->get();
+        $categories = Category::where('is_active', 1)->get();
         return view('categories.index', compact('categories'));
     }
 
@@ -28,48 +28,31 @@ class CategoryController extends Controller
     // Método para armazenar uma nova categoria
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required|max:100',
-            'desc_category' => 'required|max:100',
-            'user_id' => 'required|exists:users,id',
-            'type' => 'required|in:product,transaction',
+        // Validação dos dados
+        $validatedData = $request->validate([
             'parent_id' => 'nullable|integer',
-            'hexcolor_category' => 'nullable|string',
-            'icone' => 'nullable|string',
+            'name' => 'required|string|max:100',
+            'desc_category' => 'nullable|string|max:100',
+            'hexcolor_category' => 'nullable|string|max:45',
+            'icone' => 'nullable|string|max:100',
             'descricao_detalhada' => 'nullable|string',
             'tipo' => 'nullable|in:gasto,receita,ambos',
             'limite_orcamento' => 'nullable|numeric',
             'compartilhavel' => 'nullable|boolean',
-            'tags' => 'nullable|string',
+            'tags' => 'nullable|string|max:255',
             'regras_auto_categorizacao' => 'nullable|json',
-            'id_bank' => 'nullable|exists:banks,id_bank',
-            'id_clients' => 'nullable|exists:clients,id',
+            'id_bank' => 'nullable|integer',
+            'id_clients' => 'nullable|integer',
+            'id_produtos_clientes' => 'nullable|integer',
             'historico_alteracoes' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'required|integer|in:0,1',
             'description' => 'nullable|string',
+            'user_id' => 'required|integer',
+            'type' => 'required|in:product,transaction', // Certifique-se de que o campo type é obrigatório
         ]);
 
-        Category::create([
-            'parent_id' => $request->parent_id,
-            'name' => $request->name,
-            'desc_category' => $request->desc_category,
-            'hexcolor_category' => $request->hexcolor_category,
-            'icone' => $request->icone,
-            'descricao_detalhada' => $request->descricao_detalhada,
-            'tipo' => $request->tipo,
-            'limite_orcamento' => $request->limite_orcamento,
-            'compartilhavel' => $request->compartilhavel,
-            'tags' => $request->tags,
-            'regras_auto_categorizacao' => $request->regras_auto_categorizacao,
-            'id_bank' => $request->id_bank,
-            'id_clients' => $request->id_clients,
-            'id_produtos_clientes' => $request->id_produtos_clientes,
-            'historico_alteracoes' => $request->historico_alteracoes,
-            'is_active' => $request->is_active ?? 1,
-            'description' => $request->description,
-            'user_id' => Auth::id(),
-            'type' => $request->type,
-        ]);
+        // Criação da categoria
+        Category::create($validatedData);
 
         return redirect()->route('categories.index')->with('success', 'Categoria criada com sucesso!');
     }
@@ -86,59 +69,43 @@ class CategoryController extends Controller
     // Método para atualizar uma categoria
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'name' => 'required|max:100',
-            'desc_category' => 'required|max:100',
-            'user_id' => 'required|exists:users,id',
-            'type' => 'required|in:product,transaction',
+        // Validação dos dados
+        $validatedData = $request->validate([
             'parent_id' => 'nullable|integer',
-            'hexcolor_category' => 'nullable|string',
-            'icone' => 'nullable|string',
+            'name' => 'required|string|max:100',
+            'desc_category' => 'nullable|string|max:100',
+            'hexcolor_category' => 'nullable|string|max:45',
+            'icone' => 'nullable|string|max:100',
             'descricao_detalhada' => 'nullable|string',
             'tipo' => 'nullable|in:gasto,receita,ambos',
             'limite_orcamento' => 'nullable|numeric',
             'compartilhavel' => 'nullable|boolean',
-            'tags' => 'nullable|string',
+            'tags' => 'nullable|string|max:255',
             'regras_auto_categorizacao' => 'nullable|json',
-            'id_bank' => 'nullable|exists:banks,id_bank',
-            'id_clients' => 'nullable|exists:clients,id',
+            'id_bank' => 'nullable|integer',
+            'id_clients' => 'nullable|integer',
+            'id_produtos_clientes' => 'nullable|integer',
             'historico_alteracoes' => 'nullable|string',
-            'is_active' => 'nullable|boolean',
+            'is_active' => 'required|integer|in:0,1',
             'description' => 'nullable|string',
+            'user_id' => 'required|integer',
+            'type' => 'required|in:product,transaction', // Certifique-se de que o campo type é obrigatório
         ]);
 
+        // Atualização da categoria
         $category = Category::findOrFail($id);
+        $category->update($validatedData);
 
-        $category->update([
-            'parent_id' => $request->parent_id,
-            'name' => $request->name,
-            'desc_category' => $request->desc_category,
-            'hexcolor_category' => $request->hexcolor_category,
-            'icone' => $request->icone,
-            'descricao_detalhada' => $request->descricao_detalhada,
-            'tipo' => $request->tipo,
-            'limite_orcamento' => $request->limite_orcamento,
-            'compartilhavel' => $request->compartilhavel,
-            'tags' => $request->tags,
-            'regras_auto_categorizacao' => $request->regras_auto_categorizacao,
-            'id_bank' => $request->id_bank,
-            'id_clients' => $request->id_clients,
-            'id_produtos_clientes' => $request->id_produtos_clientes,
-            'historico_alteracoes' => $request->historico_alteracoes,
-            'is_active' => $request->is_active ?? 1,
-            'description' => $request->description,
-            'user_id' => Auth::id(),
-            'type' => $request->type,
-        ]);
-
-        return redirect()->route('categories.index')->with('success', 'Categoria atualizada com sucesso!');
+        return redirect()->back()->with('success', 'Categoria atualizada com sucesso!');
     }
 
     // Método para excluir uma categoria
     public function destroy($id)
     {
-        $category = Category::findOrFail($id);
+        // Encontre e exclua a categoria usando a chave primária correta
+        $category = Category::findOrFail($id); // Certifique-se de que $id é id_category
         $category->delete();
-        return redirect()->route('categories.index')->with('success', 'Categoria excluída com sucesso!');
+
+        return redirect()->back()->with('success', 'Categoria excluída com sucesso!');
     }
 }

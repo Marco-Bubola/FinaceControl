@@ -54,7 +54,7 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         Route::post('/invoices/{id}/copy', [InvoiceController::class, 'copy'])->name('invoices.copy');
     });
-
+    Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');
 
     // Routes for managing user profiles
@@ -134,6 +134,8 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/cashbook/confirm', [UploadCashbookController::class, 'confirm'])->name('cashbook.confirm');
 
     Route::get('/sales/search', [SaleController::class, 'search'])->name('sales.search');
+
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
 });
 
 Route::controller(EventController::class)->group(function () {
@@ -177,3 +179,7 @@ Route::get('/login', function () {
 })->name('login');
 
 Route::get('/clients/{id}/history', [ClientController::class, 'getPurchaseHistory'])->name('clients.history');
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+});

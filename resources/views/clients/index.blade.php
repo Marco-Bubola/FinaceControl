@@ -9,34 +9,115 @@
             <div class="row w-100">
 
                 <!-- Coluna de Filtro (Meio) -->
-                <div class="col-md-4 mb-3">
-                    <form action="{{ route('clients.index') }}" method="GET" class="d-flex align-items-center w-100">
-                        <select name="filter" class="form-control w-100" onchange="this.form.submit()">
-                            <option value="">Filtrar</option>
-                            <option value="created_at" {{ request('filter') == 'created_at' ? 'selected' : '' }}>Últimos
-                                Adicionados</option>
-                            <option value="updated_at" {{ request('filter') == 'updated_at' ? 'selected' : '' }}>Últimos
-                                Atualizados</option>
-                            <option value="name_asc" {{ request('filter') == 'name_asc' ? 'selected' : '' }}>Nome A-Z</option>
-                            <option value="name_desc" {{ request('filter') == 'name_desc' ? 'selected' : '' }}>Nome Z-A
-                            </option>
-                        </select>
-                    </form>
+                <div class="col-md-3 mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle w-100" type="button" id="clientFilterMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Filtrar Clientes
+                        </button>
+                        <ul class="dropdown-menu w-100 p-4" aria-labelledby="clientFilterMenuButton">
+                            <!-- Filtro por Data -->
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('clients.index', ['filter' => 'created_at', 'per_page' => request('per_page')]) }}">
+                                    Últimos Adicionados
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('clients.index', ['filter' => 'updated_at', 'per_page' => request('per_page')]) }}">
+                                    Últimos Atualizados
+                                </a>
+                            </li>
+
+                            <!-- Filtro por Nome -->
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('clients.index', ['filter' => 'name_asc', 'per_page' => request('per_page')]) }}">
+                                    Nome A-Z
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('clients.index', ['filter' => 'name_desc', 'per_page' => request('per_page')]) }}">
+                                    Nome Z-A
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <!-- Filtro por Itens por Página -->
+                            <li>
+                                <form id="pagination-form" action="{{ route('clients.index') }}" method="GET"
+                                    class="d-flex align-items-center w-100">
+
+                                    <select name="per_page" id="per_page" class="form-control w-90"
+                                        onchange="this.form.submit()">
+                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>Itens por página:
+                                            10</option>
+                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>Itens por página:
+                                            20</option>
+                                        <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>Itens por página:
+                                            30</option>
+                                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>Itens por página:
+                                            50</option>
+                                    </select>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+
                 </div>
 
                 <!-- Coluna de Pesquisa (Esquerda) -->
-                <div class="col-md-4 mb-3">
+                <div class="col-md-3 mb-3">
                     <form action="{{ route('clients.index') }}" method="GET" class="d-flex align-items-center w-100">
                         <div class="input-group w-100">
-                            <input type="text" name="search" class="form-control w-65  h-25 "
-                                placeholder="Pesquisar por nome" value="{{ request('search') }}">
-                            <button class="btn btn-primary h-20" type="submit">Pesquisar</button>
+                            <input type="text" name="search" id="search-input" class="form-control"
+                                placeholder="Pesquisar por cliente" value="{{ request('search') }}">
                         </div>
                     </form>
                 </div>
+                <script>
+                    function setupDynamicSearch() {
+                        const searchInput = document.getElementById('search-input');
+                        if (!searchInput) return;
 
+                        let timeout = null;
+
+                        searchInput.addEventListener('input', function () {
+                            clearTimeout(timeout);
+                            timeout = setTimeout(() => {
+                                const query = this.value;
+                                const url = `{{ route('clients.index') }}?search=${encodeURIComponent(query)}`;
+
+                                fetch(url)
+                                    .then(response => {
+                                        if (!response.ok) {
+                                            throw new Error('Erro ao buscar dados');
+                                        }
+                                        return response.text();
+                                    })
+                                    .then(html => {
+                                        const parser = new DOMParser();
+                                        const doc = parser.parseFromString(html, 'text/html');
+                                        const newContent = doc.querySelector('.container-fluid.py-4');
+                                        if (newContent) {
+                                            document.querySelector('.container-fluid.py-4').innerHTML = newContent.innerHTML;
+                                            setupDynamicSearch(); // Reaplicar o evento após atualização do DOM
+                                        }
+                                    })
+                                    .catch(error => console.error('Erro ao buscar dados:', error));
+                            }, 100); // Adiciona um atraso para evitar requisições excessivas
+                        });
+                    }
+
+                    document.addEventListener('DOMContentLoaded', setupDynamicSearch);
+                </script>
                 <!-- Coluna de Adicionar Cliente (Direita) -->
-                <div class="col-md-4 mb-3 text-end">
+                <div class="col-md-3 mb-3 text-end">
                     <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal"
                         data-bs-target="#modalAddClient">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
@@ -49,19 +130,7 @@
                         Cliente</a>
                 </div>
 
-                <!-- Adicionar seleção de quantidade por página -->
-                <div class="col-md-4 mb-3">
-                    <form id="pagination-form" action="{{ route('clients.index') }}" method="GET"
-                        class="d-flex align-items-center w-100">
-                        <label for="per_page" class="me-2">Itens por página:</label>
-                        <select name="per_page" id="per_page" class="form-control w-50" onchange="this.form.submit()">
-                            <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                            <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                            <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>30</option>
-                            <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                        </select>
-                    </form>
-                </div>
+
             </div>
         </div>
 
@@ -69,21 +138,43 @@
         <div class="row mt-4" id="client-list">
             @foreach($clients as $client)
                 <div class="col-md-3 mb-4">
-                    <div class="card h-100" style="min-height: 400px;">
-                        <img src="{{ asset('storage/products/product-placeholder.png') }}" class="card-img-top" alt="Imagem do Cliente">
+                    <div class="card h-100"
+                        style="min-height: 450px; position: relative; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                        <img src="{{ asset('storage/products/product-placeholder.png') }}" class="card-img-top"
+                            alt="Imagem do Cliente" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
+                        <!-- Botões sobre a imagem -->
+                        <div style="position: absolute; top: 10px; right: 10px; display: flex; gap: 5px;">
+                            <button class="btn btn-primary " data-bs-toggle="modal"
+                                data-bs-target="#modalEditClient{{ $client->id }}" title="Editar">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-danger " data-bs-toggle="modal"
+                                data-bs-target="#modalDeleteClient{{ $client->id }}" title="Excluir">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                            <button class="btn btn-secondary " data-bs-toggle="modal"
+                                data-bs-target="#modalFullHistory{{ $client->id }}" title="Histórico Completo">
+                                <i class="bi bi-clock-history"></i>
+                            </button>
+                        </div>
+
                         <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-center">{{ ucwords($client->name) }}</h5>
+                            <h5 class="card-title text-center" style="font-size: 1.1rem; font-weight: 600; color: #333;">
+                                {{ ucwords($client->name) }}</h5>
                             <p><strong>Email:</strong> {{ $client->email ?? 'N/A' }}</p>
                             <p><strong>Telefone:</strong> {{ $client->phone ?? 'N/A' }}</p>
                             <p><strong>Endereço:</strong> {{ $client->address ?? 'N/A' }}</p>
 
                             <!-- Histórico de vendas pendentes -->
                             <div class="mt-3">
-                                <h6>Vendas Pendentes</h6>
+                                <h6 class="text-primary" style="font-weight: 600;">Vendas Pendentes</h6>
                                 <p><strong>Total Pendentes:</strong>
-                                    {{ $client->sales->where('status', '!=', 'Paga')->count() }}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ $client->sales->where('status', '!=', 'Paga')->count() }} Vendas
+                                    </span>
                                 </p>
-                                <table class="table table-bordered">
+
+                                <table class="table table-sm table-bordered table-hover">
                                     <thead>
                                         <tr>
                                             <th>Total</th>
@@ -96,11 +187,13 @@
                                             <tr>
                                                 <td>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</td>
                                                 <td>
-                                                    <span class="badge bg-danger">{{ $sale->status }}</span>
+                                                    <span class="badge bg-danger"
+                                                        style="font-size: 0.9rem;">{{ $sale->status }}</span>
                                                 </td>
                                                 <td>
-                                                    <a href="{{ route('sales.show', $sale->id) }}" class="btn btn-info btn-sm">
-                                                        Ver Detalhes
+                                                    <a href="{{ route('sales.show', $sale->id) }}" class="btn btn-info "
+                                                        title="Ver Detalhes">
+                                                        <i class="bi bi-eye"></i>
                                                     </a>
                                                 </td>
                                             </tr>
@@ -108,75 +201,46 @@
                                     </tbody>
                                 </table>
                             </div>
-
-                            <!-- Botões de ação -->
-                            <div class="mt-auto">
-                                <button class="btn btn-primary btn-sm w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#modalEditClient{{ $client->id }}">Editar</button>
-                                <button class="btn btn-danger btn-sm w-100 mb-2" data-bs-toggle="modal"
-                                    data-bs-target="#modalDeleteClient{{ $client->id }}">Excluir</button>
-                                <button class="btn btn-secondary btn-sm w-100" data-bs-toggle="modal"
-                                    data-bs-target="#modalFullHistory{{ $client->id }}">Histórico Completo</button>
-                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Modal de Histórico Completo -->
-                <div class="modal fade" id="modalFullHistory{{ $client->id }}" tabindex="-1" aria-labelledby="modalFullHistoryLabel{{ $client->id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalFullHistoryLabel{{ $client->id }}">Histórico Completo de Vendas - {{ $client->name }}</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <table class="table table-bordered">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Data</th>
-                                            <th>Total</th>
-                                            <th>Status</th>
-                                            <th>Ação</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($client->sales as $sale)
-                                            <tr>
-                                                <td>{{ $sale->id }}</td>
-                                                <td>{{ $sale->created_at->format('d/m/Y') }}</td>
-                                                <td>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</td>
-                                                <td>
-                                                    <span class="badge bg-{{ $sale->status == 'Paga' ? 'success' : 'danger' }}">
-                                                        {{ $sale->status }}
-                                                    </span>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('sales.show', $sale->id) }}" class="btn btn-info btn-sm">
-                                                        Ver Detalhes
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @include('clients.historico', ['client' => $client])
             @endforeach
         </div>
+
 
         <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
             {{ $clients->appends(request()->query())->links('pagination::bootstrap-5') }}
         </div>
     </div>
+    <style>
+        /* Personalizando a tabela */
+        .table th,
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+            font-size: 0.9rem;
+        }
 
+        /* Botões sobre a imagem */
+        .card-body button {
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+
+        /* Badges de status */
+        .badge {
+            font-size: 0.9rem;
+        }
+
+        /* Estilizando o nome do cliente */
+        .card-body h5 {
+            font-size: 1.1rem;
+            color: #333;
+            font-weight: 600;
+        }
+    </style>
     <!-- Inclusão dos modais -->
     @foreach($clients as $client)
         @include('clients.edit', ['client' => $client])
@@ -235,15 +299,6 @@
             });
         });
 
-        // Pesquisa dinâmica
-        document.querySelector('input[name="search"]').addEventListener('input', function () {
-            const searchTerm = this.value.toLowerCase();
-            const clients = document.querySelectorAll('#client-list .card');
-            clients.forEach(client => {
-                const name = client.querySelector('.card-title').textContent.toLowerCase();
-                client.style.display = name.includes(searchTerm) ? 'block' : 'none';
-            });
-        });
 
         // Adicionar cliente dinamicamente
         document.querySelector('#add-client-form').addEventListener('submit', function (e) {
@@ -280,5 +335,7 @@
                     });
             });
         });
+
+
     </script>
 @endsection

@@ -9,10 +9,10 @@ class Category extends Model
 {
     use HasFactory;
 
-    // Defina explicitamente o nome da tabela
-    protected $table = 'category';
+    protected $table = 'category'; // Nome da tabela
+    protected $primaryKey = 'id_category'; // Nome da chave primária
 
-    // Definindo os campos que podem ser preenchidos
+    // Campos que podem ser preenchidos
     protected $fillable = [
         'parent_id',
         'name',
@@ -35,7 +35,7 @@ class Category extends Model
         'type',
     ];
 
-    // Definindo os relacionamentos (Exemplo de banco e cliente)
+    // Relacionamentos
     public function bank()
     {
         return $this->belongsTo(Bank::class, 'id_bank');
@@ -45,6 +45,4 @@ class Category extends Model
     {
         return $this->belongsTo(Client::class, 'id_clients');
     }
-
-    // Se necessário, você pode adicionar outros métodos relacionados.
 }

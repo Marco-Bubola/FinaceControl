@@ -1,647 +1,665 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container-fluid py-4">
-@include('message.alert')
+    <div class="container-fluid py-4">
+        @include('message.alert')
 
+        <!-- Filtro e Pesquisa -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="row w-100">
 
-    <!-- Filtro e Pesquisa -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="row w-100">
+                <!-- Filtros e Itens por Página -->
+                <div class="col-md-3 mb-3">
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle w-100" type="button" id="filterMenuButton"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            Filtrar
+                        </button>
+                        <ul class="dropdown-menu w-100 p-4" aria-labelledby="filterMenuButton">
+                            <!-- Filtro por data -->
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('products.index', ['filter' => 'created_at', 'per_page' => request('per_page')]) }}">
+                                    Últimos Adicionados
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('products.index', ['filter' => 'updated_at', 'per_page' => request('per_page')]) }}">
+                                    Últimos Atualizados
+                                </a>
+                            </li>
 
-            <!-- Coluna de Pesquisa (Esquerda) -->
-            <div class="col-md-4 mb-3">
-                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
-                    <div class="input-group w-100">
-                        <input type="text" name="search" class="form-control w-65 h-25" placeholder="Pesquisar por nome ou código" value="{{ request('search') }}">
-                        <button class="btn btn-primary h-20" type="submit">Pesquisar</button>
+                            <!-- Filtro por nome -->
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('products.index', ['filter' => 'name_asc', 'per_page' => request('per_page')]) }}">
+                                    Nome A-Z
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('products.index', ['filter' => 'name_desc', 'per_page' => request('per_page')]) }}">
+                                    Nome Z-A
+                                </a>
+                            </li>
+
+                            <!-- Filtro por preço -->
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('products.index', ['filter' => 'price_asc', 'per_page' => request('per_page')]) }}">
+                                    Preço A-Z
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                    href="{{ route('products.index', ['filter' => 'price_desc', 'per_page' => request('per_page')]) }}">
+                                    Preço Z-A
+                                </a>
+                            </li>
+
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+
+                            <!-- Filtro por Categorias -->
+                            <li>
+                                <div class="dropdown-item">
+                                    <label for="categoryFilter" class="form-check-label">Filtrar por Categoria</label>
+                                    <div id="categoryFilter" class="category-filter">
+                                        @foreach ($categories as $category)
+                                            @if ($category->type === 'product')
+                                                <!-- Exibe apenas as categorias de tipo "product" -->
+                                                <div class="category-option">
+                                                    <input type="checkbox" class="form-check-input category-checkbox"
+                                                        id="category-{{ $category->id_category }}"
+                                                        value="{{ $category->id_category }}">
+                                                    <label class="form-check-label" for="category-{{ $category->id_category }}">
+                                                        {{ $category->name }}
+                                                    </label>
+                                                </div>
+                                            @endif
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </li>
+
+                            <!-- Filtro por Itens por Página -->
+                            <li>
+                                <div class="dropdown-item">
+                                    <label for="perPageSelect" class="form-check-label">Itens por Página</label>
+                                    <select name="per_page" id="perPageSelect" class="form-control w-100">
+                                        <option value="12" {{ request('per_page') == '12' ? 'selected' : '' }}>12 itens
+                                        </option>
+                                        <option value="24" {{ request('per_page') == '24' ? 'selected' : '' }}>24 itens
+                                        </option>
+                                        <option value="48" {{ request('per_page') == '48' ? 'selected' : '' }}>48 itens
+                                        </option>
+                                        <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>100 itens
+                                        </option>
+                                    </select>
+                                </div>
+                            </li>
+
+                            <!-- Botão de Aplicar -->
+                            <li>
+                                <div class="dropdown-item">
+                                    <button id="applyFilterBtn" class="btn btn-primary w-100">Aplicar Filtros</button>
+                                </div>
+                            </li>
+                        </ul>
                     </div>
-                </form>
-            </div>
-            <!-- Coluna de Filtro (Meio) -->
-            <div class="col-md-2 mb-3">
-                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
-                    <select name="filter" class="form-control w-100" onchange="this.form.submit()">
-                        <option value="">Filtrar</option>
-                        <option value="created_at" {{ request('filter') == 'created_at' ? 'selected' : '' }}>Últimos Adicionados</option>
-                        <option value="updated_at" {{ request('filter') == 'updated_at' ? 'selected' : '' }}>Últimos Atualizados</option>
-                        <option value="name_asc" {{ request('filter') == 'name_asc' ? 'selected' : '' }}>Nome A-Z</option>
-                        <option value="name_desc" {{ request('filter') == 'name_desc' ? 'selected' : '' }}>Nome Z-A</option>
-                        <option value="price_asc" {{ request('filter') == 'price_asc' ? 'selected' : '' }}>Preço A-Z</option>
-                        <option value="price_desc" {{ request('filter') == 'price_desc' ? 'selected' : '' }}>Preço Z-A</option>
-                    </select>
-                </form>
-            </div>
-            <div class="col-md-2 mb-3">
-                <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
-                    <select name="per_page" class="form-control w-100" onchange="this.form.submit()">
-                        <option value="10" {{ request('per_page', 10) == '10' ? 'selected' : '' }}>10 itens</option>
-                        <option value="25" {{ request('per_page', 10) == '25' ? 'selected' : '' }}>25 itens</option>
-                        <option value="50" {{ request('per_page', 10) == '50' ? 'selected' : '' }}>50 itens</option>
-                        <option value="100" {{ request('per_page', 10) == '100' ? 'selected' : '' }}>100 itens</option>
-                    </select>
-                </form>
-            </div>
+                </div>
 
-
-            <!-- Botões de Adicionar Produto e Upload -->
-            <div class="col-md-4 text-end">
-                <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal" data-bs-target="#modalAddProduct">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-plus-square" viewBox="0 0 16 16">
-                        <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                        <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-                    </svg>
-                    Produto</a>
-                <!-- index.blade.php ou onde o botão de upload está presente -->
-                <a href="#" class="btn bg-gradient-secondary btn-sm mb-0 ms-2" data-bs-toggle="modal" data-bs-target="#modalUploadProduct">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
-                        <path d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707z" />
-                        <path d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
-                    </svg>
-                    upload
-                </a>
-
-            </div>
-        </div>
-    </div>
-    <!-- Tabela de produtos ou outras exibições -->
-    <div class="row mt-4">
-        @foreach($products as $product)
-        <div class="col-md-2 mb-4"> <!-- Ajustado para `col-md-3` para garantir que todos os cards se alinhem bem -->
-            <div class="card position-relative h-100"> <!-- Usamos `h-100` para garantir que o card ocupe toda a altura disponível -->
-                <img src="{{ asset('storage/products/'.$product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-
-                <div class="position-absolute top-0 end-0 p-2">
-                    <a href="javascript:void(0)" class="btn btn-primary btn-sm p-1" data-bs-toggle="modal" data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
-                        <!-- Ícone de editar -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                <!-- Pesquisa Dinâmica -->
+                <div class="col-md-3 mb-3">
+                    <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
+                        <div class="input-group w-100">
+                            <input type="text" name="search" id="search-input" class="form-control"
+                                placeholder="Pesquisar por nome ou código" value="{{ request('search') }}">
+                            <input type="hidden" name="filter" value="{{ request('filter') }}"> <!-- Preserva o filtro -->
+                            <input type="hidden" name="per_page" value="{{ request('per_page') }}">
+                            <!-- Preserva o per_page -->
+                        </div>
+                    </form>
+                </div>
+                <!-- Botões de Adicionar Produto e Upload -->
+                <div class="col-md-6 mb-3 text-end">
+                    <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal"
+                        data-bs-target="#modalAddProduct">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+                            class="bi bi-plus-square" viewBox="0 0 16 16">
+                            <path
+                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+                            <path
+                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
                         </svg>
+                        Produto</a>
+                    <!-- index.blade.php ou onde o botão de upload está presente -->
+                    <a href="#" class="btn bg-gradient-secondary btn-sm mb-0 ms-2" data-bs-toggle="modal"
+                        data-bs-target="#modalUploadProduct">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
+                            <path
+                                d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707z" />
+                            <path
+                                d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2M9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5z" />
+                        </svg>
+                        upload
                     </a>
-                    <!-- Botão de Exclusão -->
-                    <button type="button" class="btn btn-danger btn-sm p-1" data-bs-toggle="modal" data-bs-target="#modalDeleteProduct{{ $product->id }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
-                            <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                        </svg>
-                    </button>
-
-
-
                 </div>
+            </div>
+        </div>
 
-                <div class="card-body d-flex flex-column">
-                    <!-- O nome do produto com tooltip -->
-                    <h5 class="card-title text-center" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ $product->name }}">
-                        {{ ucwords($product->name) }}
-                    </h5>
-                    <p class="card-text text-center text-truncate" style="max-width: 250px;">{{ ucwords($product->description) }}</p>
+        <!-- Tabela de Produtos -->
+        <div id="productsContainer" class="row mt-4">
+            @foreach($products as $product)
+                <div class="col-md-2 mb-4">
+                    <div class="card position-relative h-100">
+                        @if($product->stock_quantity == 0)
+                            <div class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1" style="z-index: 10;">
+                                Fora de Estoque
+                            </div>
+                        @endif
+                        <img src="{{ asset('storage/products/' . $product->image) }}" class="card-img-top h-100"
+                            alt="{{ $product->name }}">
 
-                    <div class="row">
-                        <div class="col-6">
-                            <p><strong>Preço:</strong> R$ {{ number_format($product->price, 2, ',', '.') }}</p>
-                            <p><strong>Venda:</strong> R$ {{ number_format($product->price_sale, 2, ',', '.') }}</p>
-                            <p><strong>Qtd:</strong> {{ $product->stock_quantity }}</p>
+                        <div class="position-absolute top-0 end-0 p-2">
+                            <a href="javascript:void(0)" class="btn btn-primary btn-sm p-1" data-bs-toggle="modal"
+                                data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
+                                <!-- Ícone de editar -->
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                    <path
+                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                </svg>
+                            </a>
+                            <!-- Botão de Exclusão -->
+                            <button type="button" class="btn btn-danger btn-sm p-1" data-bs-toggle="modal"
+                                data-bs-target="#modalDeleteProduct{{ $product->id }}">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-trash3" viewBox="0 0 16 16">
+                                    <path
+                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                </svg>
+                            </button>
                         </div>
-                        <div class="col-6">
-                            <p><strong>Categoria:</strong> {{ $product->category->name ?? 'N/A' }}</p>
-                            <p><strong>Código:</strong> {{ $product->product_code }}</p>
-                            <!-- Status do Produto -->
-                            <p><strong>Status:</strong>
-                                <span class="badge
-                            @if($product->status == 'active') badge-success
-                            @elseif($product->status == 'inactive') badge-secondary
-                            @else badge-danger @endif">
-                                    {{ ucfirst($product->status) }}
-                                </span>
+                        <div class="card-body d-flex flex-column">
+                            <!-- O nome do produto com tooltip -->
+                            <h5 class="card-title text-center" data-bs-toggle="tooltip" data-bs-placement="top"
+                                title="{{ $product->name }}" style="font-size: 1.2rem; font-weight: 600; color: #333;">
+                                {{ ucwords($product->name) }}
+                            </h5>
+
+                            <!-- Descrição com truncamento -->
+                            <p class="card-text text-center text-truncate" style="max-width: 250px; font-size: 0.9rem;">
+                                {{ ucwords($product->description) }}
                             </p>
+
+                            <!-- Informações detalhadas do produto -->
+                            <div class="row">
+                                <div class="col-6 text-center">
+                                    <!-- Preço Original e Preço com Desconto -->
+                                    <p><strong>Preço:</strong> <br> <span class="text-muted">R$
+                                            {{ number_format($product->price, 2, ',', '.') }}</span></p>
+                                    <p><strong>Venda:</strong><br> <span class="text-success">R$
+                                            {{ number_format($product->price_sale, 2, ',', '.') }}</span></p>
+                                    <p><strong>Qtd:</strong><br> <span
+                                            class="badge bg-info">{{ $product->stock_quantity }}</span></p>
+                                </div>
+
+                                <div class="col-6 text-center">
+                                    <!-- Categoria e Código do Produto -->
+                                    <p><strong>Categoria:</strong> <br>
+                                        <button
+                                            class="btn btn-icon-only btn-rounded mb-0 btn-sm d-flex align-items-center justify-content-center mx-auto"
+                                            style="background-color: {{ $product->category->hexcolor_category ?? '#000' }}; color: #fff; width: 50px; height: 50px;">
+                                            <i class="{{ $product->category->icone ?? 'bi bi-tag' }}"
+                                                style="font-size: 1.5rem;"></i>
+                                        </button>
+                                    </p>
+                                    <p><strong>Código:</strong><br> <span
+                                            class="badge bg-secondary">{{ $product->product_code }}</span></p>
+                                </div>
+                            </div>
+
+
                         </div>
+
                     </div>
                 </div>
-            </div>
-        </div>
-        @endforeach
-    </div>
-    <div class="d-flex justify-content-center">
-        <ul class="pagination">
-            {{-- Link para a primeira página --}}
-            @if ($products->onFirstPage())
-            <li class="page-item disabled">
-                <span class="page-link">Primeira</span>
-            </li>
-            @else
-            <li class="page-item">
-                <a class="page-link" href="{{ $products->url(1) }}&per_page={{ request('per_page', 10) }}">Primeira</a>
-            </li>
-            @endif
-
-            {{-- Link para a página anterior --}}
-            @if ($products->onFirstPage())
-            <li class="page-item disabled">
-                <span class="page-link">Anterior</span>
-            </li>
-            @else
-            <li class="page-item">
-                <a class="page-link" href="{{ $products->previousPageUrl() }}&per_page={{ request('per_page', 10) }}">Anterior</a>
-            </li>
-            @endif
-
-            {{-- Páginas individuais --}}
-            @foreach ($products->getUrlRange(1, $products->lastPage()) as $page => $url)
-            <li class="page-item {{ $page == $products->currentPage() ? 'active' : '' }}">
-                <a class="page-link" href="{{ $url }}&per_page={{ request('per_page', 10) }}">{{ $page }}</a>
-            </li>
             @endforeach
-
-            {{-- Link para a próxima página --}}
-            @if ($products->hasMorePages())
-            <li class="page-item">
-                <a class="page-link" href="{{ $products->nextPageUrl() }}&per_page={{ request('per_page', 10) }}">Próxima</a>
-            </li>
-            @else
-            <li class="page-item disabled">
-                <span class="page-link">Próxima</span>
-            </li>
-            @endif
-
-            {{-- Link para a última página --}}
-            @if ($products->hasMorePages())
-            <li class="page-item">
-                <a class="page-link" href="{{ $products->url($products->lastPage()) }}&per_page={{ request('per_page', 10) }}">Última</a>
-            </li>
-            @else
-            <li class="page-item disabled">
-                <span class="page-link">Última</span>
-            </li>
-            @endif
-        </ul>
-    </div>
-</div>
-@foreach($products as $product)
-<!-- Modal de Confirmar Exclusão -->
-<div class="modal fade" id="modalDeleteProduct{{ $product->id }}" tabindex="-1" aria-labelledby="modalDeleteProductLabel" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDeleteProductLabel">Confirmar Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <p>Tem certeza de que deseja excluir este produto?</p>
-            </div>
-            <div class="modal-footer">
-                <form id="deleteForm-{{ $product->id }}" action="{{ route('products.destroy', $product->id) }}" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Excluir</button>
-                </form>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            </div>
         </div>
-    </div>
-</div>
-@endforeach
-<!-- Incluir o modal -->
-@include('products.upload')
-<!-- Modal de Adicionar Produto -->
-<div class="modal fade" id="modalAddProduct" tabindex="-1" aria-labelledby="modalAddProductLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- Modal Ampliado -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalAddProductLabel">Adicionar Novo Produto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <!-- Formulário de Criação de Produto -->
-                    <form action="{{ route('products.manual.store') }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-8 text-center">
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="name" class="col-form-label text-center">Nome do Produto</label>
-                                            <input type="text" name="name" id="name" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="product_code" class="col-form-label text-center">Código do Produto</label>
-                                            <input type="text" name="product_code" id="product_code" class="form-control" required>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="price" class="col-form-label text-center">Preço</label>
-                                            <input type="text" name="price" id="price" class="form-control" required oninput="convertCommaToDot(this)">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="price_sale" class="col-form-label text-center">Venda</label>
-                                            <input type="text" name="price_sale" id="price_sale" class="form-control" required oninput="convertCommaToDot(this)">
-                                        </div>
-                                    </div>
-                                </div>
 
-                                <script>
-                                    function convertCommaToDot(input) {
-                                        // Substitui a vírgula por ponto enquanto o usuário digita
-                                        input.value = input.value.replace(',', '.');
-                                    }
-                                </script>
+        <!-- Paginação -->
+        <div class="d-flex justify-content-center mt-4">
+            <nav>
+                <ul class="pagination">
+                    <!-- Botão para a primeira página -->
+                    @if ($products->onFirstPage())
+                        <li class="page-item disabled"><span class="page-link">&laquo;&laquo;</span></li>
+                    @else
+                        <li class="page-item"><a class="page-link" href="{{ $products->url(1) }}">&laquo;&laquo;</a></li>
+                    @endif
 
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="category_id" class="col-form-label text-center">Categoria</label>
-                                            <select name="category_id" id="category_id" class="form-control" required>
-                                                @if($categories->isEmpty())
-                                                <option value="N/A" selected>N/A</option>
-                                                @else
-                                                @foreach($categories as $category)
-                                                <option value="{{ $category->id_category }}">{{ $category->name }}</option>
-                                                @endforeach
-                                                @endif
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="stock_quantity" class="col-form-label text-center">Quantidade em Estoque</label>
-                                            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" required>
-                                        </div>
-                                    </div>
-                                    <!--
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="status" class="col-form-label text-center">Status</label>
-                                            <select name="status" id="status" class="form-control" required>
-                                                <option value="active">Ativo</option>
-                                                <option value="inactive">Inativo</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    -->
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="position-relative">
-                                    <img src="{{ asset('storage/products/product-placeholder.png') }}" id="productImage" class="img-fluid mb-3" alt="Imagem do Produto" style="width: 150px; height: 150px; object-fit: cover;">
-                                    <input type="file" name="image" id="image" class="form-control" style="display: none;" onchange="previewImage(event)">
-                                    <label for="image" style="cursor: pointer; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">
-                                        trocar a imagem
-                                    </label>
-                                </div>
-                                <div class="position-relative">
-                                    <div class="form-group">
-                                        <label for="description" class="col-form-label">Descrição</label>
-                                        <textarea name="description" id="description" class="form-control" rows="3"></textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-12 text-center">
-                                <button type="submit" class="btn btn-primary">Adicionar Produto</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
+                    <!-- Botão para a página anterior -->
+                    @if ($products->onFirstPage())
+                        <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
+                    @else
+                        <li class="page-item"><a class="page-link" href="{{ $products->previousPageUrl() }}">&laquo;</a></li>
+                    @endif
+
+                    <!-- Página anterior -->
+                    @if ($products->currentPage() > 1)
+                        <li class="page-item"><a class="page-link"
+                                href="{{ $products->url($products->currentPage() - 1) }}">{{ $products->currentPage() - 1 }}</a>
+                        </li>
+                    @endif
+
+                    <!-- Página atual -->
+                    <li class="page-item active"><span class="page-link">{{ $products->currentPage() }}</span></li>
+
+                    <!-- Próxima página -->
+                    @if ($products->currentPage() < $products->lastPage())
+                        <li class="page-item"><a class="page-link"
+                                href="{{ $products->url($products->currentPage() + 1) }}">{{ $products->currentPage() + 1 }}</a>
+                        </li>
+                    @endif
+
+                    <!-- Botão para a próxima página -->
+                    @if ($products->hasMorePages())
+                        <li class="page-item"><a class="page-link" href="{{ $products->nextPageUrl() }}">&raquo;</a></li>
+                    @else
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    @endif
+
+                    <!-- Botão para a última página -->
+                    @if ($products->hasMorePages())
+                        <li class="page-item"><a class="page-link"
+                                href="{{ $products->url($products->lastPage()) }}">&raquo;&raquo;</a></li>
+                    @else
+                        <li class="page-item disabled"><span class="page-link">&raquo;&raquo;</span></li>
+                    @endif
+                </ul>
+            </nav>
         </div>
-    </div>
-</div>
+        <script>
+                        document.addEventListener('DOMContentLoaded', function () {
+                            // Botão de Aplicar Filtros
+                            document.getElementById('applyFilterBtn').addEventListener('click', function () {
+                                var selectedCategories = [];
 
-<script>
-    function previewImage(event) {
-        var reader = new FileReader();
-        reader.onload = function() {
-            var output = document.getElementById('productImage');
-            output.src = reader.result;
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    }
-</script>
-@foreach($products as $product)
-<!-- Modal de Edição de Produto -->
-<div class="modal fade" id="modalEditProduct{{ $product->id }}" tabindex="-1" aria-labelledby="modalEditProductLabel{{ $product->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalEditProductLabel{{ $product->id }}">Editar Produto</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="container-fluid">
-                    <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
-                        @csrf
-                        @method('PUT')
+                                // Obter todas as categorias selecionadas
+                                document.querySelectorAll('.category-checkbox:checked').forEach(function (checkbox) {
+                                    selectedCategories.push(checkbox.value);
+                                });
 
-                        <div class="row">
+                                // Criar a URL com os filtros aplicados
+                                var url = new URL(window.location.href);
+                                url.searchParams.set('category_id', selectedCategories.join(','));
 
-                            <div class="col-md-8 text-center">
-                                <!-- Nome, Código do Produto, Preço e Quantidade -->
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="name" class="col-form-label text-center">Nome do Produto</label>
-                                            <input type="text" name="name" id="name" class="form-control" value="{{ $product->name }}" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="product_code" class="col-form-label text-center">Código do Produto</label>
-                                            <input type="text" name="product_code" id="product_code" class="form-control" value="{{ $product->product_code }}" required>
-                                        </div>
-                                    </div>
-                                </div>
+                                // Atualizar a URL para aplicar os filtros
+                                window.location.href = url.href;
+                            });
 
-                                <!-- Preço e Quantidade -->
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="price" class="col-form-label text-center">Preço</label>
-                                            <input type="text" name="price" id="price" class="form-control" value="{{ $product->price }}" required oninput="convertCommaToDot(this)">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="price_sale" class="col-form-label text-center">Venda</label>
-                                            <input type="text" name="price_sale" id="price_sale" class="form-control" value="{{ $product->price_sale }}" required oninput="convertCommaToDot(this)">
-                                        </div>
-                                    </div>
-                                </div>
+                            // Filtragem de Itens por Página
+                            document.getElementById('perPageSelect').addEventListener('change', function () {
+                                var perPage = this.value;
+                                var url = new URL(window.location.href);
+                                url.searchParams.set('per_page', perPage);
+                                window.location.href = url.href;
+                            });
 
-                                <!-- Categoria e Status -->
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="category_id" class=" col-form-label text-center">Categoria</label>
-                                            <select name="category_id" id="category_id" class="form-control" required>
-                                                @foreach($categories as $category)
-                                                <option value="{{ $category->id_category }}" {{ $product->category_id == $category->id_category ? 'selected' : '' }}>{{ $category->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="stock_quantity" class="col-form-label text-center">Quantidade em Estoque</label>
-                                            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" value="{{ $product->stock_quantity }}" required>
-                                        </div>
-                                    </div>
-                                    <!-- Categoria e Status
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label for="status" class="col-form-label  text-center">Status</label>
-                                            <select name="status" id="status" class="form-control" required>
-                                                <option value="active" {{ $product->status == 'active' ? 'selected' : '' }}>Ativo</option>
-                                                <option value="inactive" {{ $product->status == 'inactive' ? 'selected' : '' }}>Inativo</option>
-                                            </select>
-                                        </div>
-                                    </div> -->
-                                </div>
-                            </div>
-                            <div class="col-md-4 text-center">
-                                <div class="position-relative">
-                                    <img src="{{ asset('storage/products/'.$product->image) }}" id="productImage" class="img-fluid mb-3" alt="{{ $product->name }}" style="width: 150px; height: 150px; object-fit: cover;">
-                                    <input type="file" name="image" id="image" class="form-control" style="display: none;" onchange="previewImage(event)">
-                                    <label for="image" style="cursor: pointer; position: absolute; top: 0; right: 0; bottom: 0; left: 0; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">
-                                        trocar a imagem
-                                    </label>
-                                </div>
-                                <div class="position-relative">
-                                    <div class="form-group">
-                                        <label for="description" class="col-form-label">Descrição</label>
-                                        <textarea name="description" id="description" class="form-control" rows="3">{{ $product->description }}</textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="text-center">
-                            <button type="submit" class="btn btn-primary">Atualizar Produto</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-@endforeach
-<script>
+                            // Animação ao selecionar/desmarcar categorias
+                            document.querySelectorAll('.category-checkbox').forEach(function (checkbox) {
+                                checkbox.addEventListener('change', function () {
+                                    this.closest('.category-option').classList.toggle('selected', this.checked);
+                                });
+                            });
+                        });
 
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inicializar os tooltips do Bootstrap
-        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-        var tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
-            return new bootstrap.Tooltip(tooltipTriggerEl)
-        })
-    });
+                    </script>
+        <script>
+            function setupDynamicSearch() {
+                const searchInput = document.getElementById('search-input');
+                if (!searchInput) return;
 
-    function deleteProduct(button) {
-        // Captura o ID do produto do botão clicado
-        const productId = button.getAttribute('data-id');
+                let timeout = null;
 
-        // Captura o formulário de exclusão com base no ID
-        const form = document.getElementById(`deleteForm-${productId}`);
+                searchInput.addEventListener('input', function () {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        const query = this.value;
+                        const url = `{{ route('products.index') }}?search=${encodeURIComponent(query)}`;
 
-        // Armazenar os parâmetros de paginação no localStorage antes da exclusão
-        const page = new URLSearchParams(window.location.search).get('page') || 1;
-        const perPage = new URLSearchParams(window.location.search).get('per_page') || 10;
-        localStorage.setItem('currentPage', page);
-        localStorage.setItem('perPage', perPage);
+                        fetch(url)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Erro ao buscar dados');
+                                }
+                                return response.text();
+                            })
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newContent = doc.querySelector('.container-fluid.py-4');
+                                if (newContent) {
+                                    document.querySelector('.container-fluid.py-4').innerHTML = newContent.innerHTML;
+                                    setupDynamicSearch(); // Reaplicar o evento após atualização do DOM
+                                }
+                            })
+                            .catch(error => console.error('Erro ao buscar dados:', error));
+                    }, 100); // Adiciona um atraso para evitar requisições excessivas
+                });
+            }
 
-        // Enviar o formulário via AJAX
-        const formData = new FormData(form);
+            document.addEventListener('DOMContentLoaded', setupDynamicSearch);
 
-        fetch(form.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            document.addEventListener('DOMContentLoaded', function () {
+                const searchInput = document.getElementById('searchInput');
+                const productsContainer = document.getElementById('productsContainer');
+
+                // Função para lidar com erros de resposta
+                function handleErrorResponse(response) {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! Status: ${response.status}`);
+                    }
+                    return response.json();
                 }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Produto excluído com sucesso, agora remova o produto da página
-                    removeProductFromPage(productId);
-                    // Atualiza a paginação com os parâmetros preservados
-                    updatePagination(data.page, data.per_page); // Mantém a paginação intacta
-                } else {
-                    alert('Erro ao excluir o produto!');
-                }
-            })
-            .catch(error => {
-                console.error('Erro:', error);
+
+                // Pesquisa dinâmica
+                searchInput.addEventListener('input', function () {
+                    const query = searchInput.value;
+                    fetch(`{{ route('products.index') }}?search=${query}&ajax=1`)
+                        .then(handleErrorResponse)
+                        .then(data => {
+                            if (data.html) {
+                                productsContainer.innerHTML = data.html; // Insere apenas o HTML da tabela
+                            } else {
+                                console.error('Erro: Resposta inválida do servidor.');
+                            }
+                        })
+                        .catch(error => console.error('Erro ao carregar os produtos:', error));
+                });
+
+                // Filtros e itens por página
+                document.getElementById('filterSelect').addEventListener('change', function () {
+                    const filter = this.value;
+                    fetch(`{{ route('products.index') }}?filter=${filter}&ajax=1`)
+                        .then(handleErrorResponse)
+                        .then(data => {
+                            if (data.html) {
+                                productsContainer.innerHTML = data.html; // Insere apenas o HTML da tabela
+                            }
+                        });
+                });
+
+                document.getElementById('perPageSelect').addEventListener('change', function () {
+                    const perPage = this.value;
+                    fetch(`{{ route('products.index') }}?per_page=${perPage}&ajax=1`)
+                        .then(handleErrorResponse)
+                        .then(data => {
+                            if (data.html) {
+                                productsContainer.innerHTML = data.html; // Insere apenas o HTML da tabela
+                            }
+                        });
+                });
+
+                // Paginação dinâmica
+                const paginationLinks = document.querySelectorAll('.pagination a');
+                paginationLinks.forEach(link => {
+                    link.addEventListener('click', function (event) {
+                        event.preventDefault();
+                        const url = this.href + '&ajax=1';
+
+                        fetch(url)
+                            .then(handleErrorResponse)
+                            .then(data => {
+                                if (data.html) {
+                                    productsContainer.innerHTML = data.html; // Insere apenas o HTML da tabela
+                                }
+                            })
+                            .catch(error => console.error('Erro ao carregar a página:', error));
+                    });
+                });
             });
-    }
 
-    // Função para remover o produto do DOM
-    function removeProductFromPage(productId) {
-        const productCard = document.getElementById(`product-card-${productId}`);
-        if (productCard) {
-            productCard.remove();
-        }
-    }
+            // Função para excluir produto dinamicamente
+            function deleteProduct(productId) {
+                if (confirm('Tem certeza que deseja excluir este produto?')) {
+                    fetch(`{{ url('products') }}/${productId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById(`product-card-${productId}`).remove();
+                            } else {
+                                alert('Erro ao excluir o produto.');
+                            }
+                        })
+                        .catch(error => console.error('Erro:', error));
+                }
+            }
 
-    // Função para atualizar a paginação sem recarregar a página
-    function updatePagination(page, perPage) {
-        const paginationLinks = document.querySelectorAll('.pagination a');
-        paginationLinks.forEach(link => {
-            const href = new URL(link.href);
-            href.searchParams.set('page', page);
-            href.searchParams.set('per_page', perPage);
-            link.href = href.toString();
-        });
-    }
+            document.addEventListener('DOMContentLoaded', function () {
+                const filterSelect = document.getElementById('filterSelect');
+                const perPageSelect = document.getElementById('perPageSelect');
 
-    // Função para restaurar a paginação a partir do localStorage
-    function restorePaginationParams() {
-        // Recupera os valores do localStorage
-        const page = localStorage.getItem('currentPage') || 1; // Se não houver, página 1
-        const perPage = localStorage.getItem('perPage') || 10; // Se não houver, 10 por padrão
+                // Evento para o filtro
+                if (filterSelect) {
+                    filterSelect.addEventListener('change', function () {
+                        const filter = this.value;
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('filter', filter); // Atualiza o parâmetro 'filter'
+                        window.location.href = url.toString(); // Redireciona para a URL atualizada
+                    });
+                }
 
-        // Redireciona para a URL com os parâmetros corretos
-        const url = new URL(window.location);
-        url.searchParams.set('page', page);
-        url.searchParams.set('per_page', perPage);
-        window.location.href = url.toString();
-    }
+                // Evento para itens por página
+                if (perPageSelect) {
+                    perPageSelect.addEventListener('change', function () {
+                        const perPage = this.value;
+                        const url = new URL(window.location.href);
+                        url.searchParams.set('per_page', perPage); // Atualiza o parâmetro 'per_page'
+                        window.location.href = url.toString(); // Redireciona para a URL atualizada
+                    });
+                }
+            });
+        </script>
 
-    // Verifica se há parâmetros no localStorage e aplica
-    if (localStorage.getItem('currentPage') && localStorage.getItem('perPage')) {
-        restorePaginationParams();
-    }
-</script>
+        @include('products.delet')
+        @include('products.upload')
+        @include('products.create')
+        @include('products.edit')
 
-<style>
-    .pagination .page-item {
-        margin: 0 5px;
-        /* Adiciona espaçamento horizontal entre os botões */
-    }
+        <style>
+            .pagination .page-item {
+                margin: 0 5px;
+                /* Adiciona espaçamento horizontal entre os botões */
+            }
 
-    .pagination .page-item .page-link {
-        min-width: 60px;
-        /* Garante que o texto fique dentro do círculo */
-        text-align: center;
-        /* Garante que o texto fique centralizado */
-        border-radius: 50%;
-        /* Forma circular */
-        padding: 6px 3px;
-        /* Ajuste no padding para um visual mais equilibrado */
-    }
+            .pagination .page-item .page-link {
+                min-width: 60px;
+                /* Garante que o texto fique dentro do círculo */
+                text-align: center;
+                /* Garante que o texto fique centralizado */
+                border-radius: 50%;
+                /* Forma circular */
+                padding: 6px 3px;
+                /* Ajuste no padding para um visual mais equilibrado */
+            }
 
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: white;
-    }
+            .pagination .page-item.active .page-link {
+                background-color: #007bff;
+                border-color: #007bff;
+                color: white;
+            }
 
-    .pagination .page-item.disabled .page-link {
-        background-color: #e9ecef;
-        color: #6c757d;
-    }
+            .pagination .page-item.disabled .page-link {
+                background-color: #e9ecef;
+                color: #6c757d;
+            }
+
+            /* Garantir que os cards tenham uma altura fixa e o conteúdo se ajuste adequadamente */
+            .card {
+                height: auto;
+                /* Defina uma altura fixa para os cards */
+            }
+
+            /* Para a imagem, defina um tamanho fixo e ajuste o conteúdo */
+            .card-img-top {
+                width: 100%;
+                height: 200px;
+                /* Altura fixa para as imagens */
+                object-fit: cover;
+                /* Faz com que a imagem se ajuste ao tamanho sem distorcer */
+            }
+
+            /* Truncar o nome e a descrição com "..." e permitir que o nome completo seja mostrado em um tooltip */
+            .card-title {
+                white-space: nowrap;
+                /* Não quebra a linha */
+                overflow: hidden;
+                /* Esconde o texto que ultrapassa */
+                text-overflow: ellipsis;
+                /* Adiciona "..." no final */
+                max-width: 250px;
+                /* Define o tamanho máximo para o nome */
+                text-align: center;
+                position: relative;
+            }
+
+            /* Tooltip para o nome completo do produto */
+            .card-title[data-bs-toggle="tooltip"]:hover::after {
+                content: attr(data-bs-original-title);
+                position: absolute;
+                top: 100%;
+                left: 0;
+                padding: 5px;
+                background-color: rgba(0, 0, 0, 0.7);
+                color: white;
+                font-size: 12px;
+                border-radius: 3px;
+                width: 100%;
+                z-index: 10;
+            }
+
+            /* Garantir que o conteúdo da descrição também seja truncado corretamente */
+            .card-text {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: 250px;
+                /* Ajuste de largura */
+            }
+
+            /* Para os campos de preço e quantidade, garantir que eles não ultrapassem o tamanho do card */
+            .card-body .row .col-6 {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                max-width: 100%;
+                /* Assegura que a largura seja ajustada */
+            }
+
+            /* Definir altura fixa para os inputs de preço, venda e quantidade */
+            .card-body input.form-control {
+                height: 38px;
+                /* Altura consistente para os inputs */
+                width: 100%;
+            }
+
+            /* Definir largura fixa para os botões e garantir que eles ocupem toda a largura do card */
+            .card-body button {
+                width: 100%;
+                padding: 10px;
+                font-size: 1em;
+            }
+
+            /* Manter uma proporção de layout consistente dentro do card */
+            .card-body {
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 100%;
+                /* Assegura que o card se expanda para preencher o espaço */
+            }
+
+            /* Ajuste de altura das colunas para garantir que elas não se sobreponham */
+            .col-md-3 {
+                height: 100%;
+            }
+
+            /* Ajuste do card para que a altura total seja compatível */
+            .card-body .row {
+                margin-bottom: 10px;
+            }
 
 
-    /* Garantir que os cards tenham uma altura fixa e o conteúdo se ajuste adequadamente */
-    .card {
-        height: auto;
-        /* Defina uma altura fixa para os cards */
-    }
+            .category-filter {
+                max-height: 250px;
+                overflow-y: auto;
+                padding: 10px 0;
+                margin-bottom: 20px;
+                transition: all 0.3s ease;
+            }
 
-    /* Para a imagem, defina um tamanho fixo e ajuste o conteúdo */
-    .card-img-top {
-        width: 100%;
-        height: 200px;
-        /* Altura fixa para as imagens */
-        object-fit: cover;
-        /* Faz com que a imagem se ajuste ao tamanho sem distorcer */
-    }
+            .category-option {
+                display: flex;
+                align-items: center;
+                padding: 8px 0;
+                transition: background-color 0.2s ease;
+            }
 
-    /* Truncar o nome e a descrição com "..." e permitir que o nome completo seja mostrado em um tooltip */
-    .card-title {
-        white-space: nowrap;
-        /* Não quebra a linha */
-        overflow: hidden;
-        /* Esconde o texto que ultrapassa */
-        text-overflow: ellipsis;
-        /* Adiciona "..." no final */
-        max-width: 250px;
-        /* Define o tamanho máximo para o nome */
-        text-align: center;
-        position: relative;
-    }
+            .category-option:hover {
+                background-color: #f7f7f7;
+                cursor: pointer;
+            }
 
-    /* Tooltip para o nome completo do produto */
-    .card-title[data-bs-toggle="tooltip"]:hover::after {
-        content: attr(data-bs-original-title);
-        position: absolute;
-        top: 100%;
-        left: 0;
-        padding: 5px;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        font-size: 12px;
-        border-radius: 3px;
-        width: 100%;
-        z-index: 10;
-    }
+            .category-option input[type="checkbox"] {
+                margin-right: 10px;
+                transform: scale(1.2);
+            }
 
-    /* Garantir que o conteúdo da descrição também seja truncado corretamente */
-    .card-text {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        max-width: 250px;
-        /* Ajuste de largura */
-    }
+            #applyFilterBtn {
+                font-size: 16px;
+                font-weight: bold;
+                padding: 10px;
+                background-color: #007bff;
+                border-color: #007bff;
+                transition: background-color 0.3s, transform 0.3s;
+            }
 
-    /* Para os campos de preço e quantidade, garantir que eles não ultrapassem o tamanho do card */
-    .card-body .row .col-6 {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        max-width: 100%;
-        /* Assegura que a largura seja ajustada */
-    }
+            #applyFilterBtn:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+                transform: scale(1.05);
+            }
 
-    /* Definir altura fixa para os inputs de preço, venda e quantidade */
-    .card-body input.form-control {
-        height: 38px;
-        /* Altura consistente para os inputs */
-        width: 100%;
-    }
+            #perPageSelect {
+                margin-top: 10px;
+                padding: 5px;
+                font-size: 14px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                transition: border-color 0.3s;
+            }
 
-    /* Definir largura fixa para os botões e garantir que eles ocupem toda a largura do card */
-    .card-body button {
-        width: 100%;
-        padding: 10px;
-        font-size: 1em;
-    }
+            #perPageSelect:hover {
+                border-color: #007bff;
+            }
 
-    /* Manter uma proporção de layout consistente dentro do card */
-    .card-body {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        height: 100%;
-        /* Assegura que o card se expanda para preencher o espaço */
-    }
+            .dropdown-item {
+                padding: 10px;
+            }
 
-    /* Ajuste de altura das colunas para garantir que elas não se sobreponham */
-    .col-md-3 {
-        height: 100%;
-    }
-
-    /* Ajuste do card para que a altura total seja compatível */
-    .card-body .row {
-        margin-bottom: 10px;
-    }
-</style>
+            #applyFilterBtn {
+                margin-top: 10px;
+            }
+        </style>
 @endsection

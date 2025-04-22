@@ -13,6 +13,26 @@ class ClientController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->ajax()) {
+            try {
+                // Verificar se o usuário está autenticado
+                if (!auth()->check()) {
+                    return response()->json(['error' => 'Usuário não autenticado.'], 401);
+                }
+
+                // Buscar clientes com base no termo de pesquisa
+                $search = $request->get('search', '');
+                $clients = Client::where('user_id', auth()->id())
+                    ->where('name', 'like', "%{$search}%")
+                    ->with('sales')
+                    ->get();
+
+                return response()->json(['clients' => $clients]); // Retornar JSON
+            } catch (\Exception $e) {
+                return response()->json(['error' => $e->getMessage()], 500); // Retornar erro em JSON
+            }
+        }
+
         $userId = auth()->id();  // Obter o ID do usuário logado
 
         // Inicializa a consulta para clientes, filtrando pelo user_id

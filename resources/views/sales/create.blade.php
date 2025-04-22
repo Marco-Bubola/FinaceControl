@@ -46,8 +46,7 @@
                                                 </span>
                                             </div>
                                             <div class="form-group">
-                                                <select name="client_id" id="client_id" class="form-select" required
-                                                    onchange="displayClientInfo()">
+                                                <select name="client_id" id="client_id" class="form-select" required onchange="displayClientInfo()">
                                                     <option value="" selected disabled>Selecione o cliente</option>
                                                     @foreach($clients as $client)
                                                         <option value="{{ $client->id }}">{{ $client->name }}
@@ -276,32 +275,43 @@
     });
 
     function displayClientInfo() {
-        var clientId = document.getElementById('client_id').value; // Pega o ID do cliente selecionado
-
-        // Verifica se o ID do cliente foi selecionado
+        const clientSelect = document.getElementById('client_id'); // Obtém o elemento select
+        const clientId = clientSelect.value; // Obtém o ID do cliente selecionado
+// Obtém o valor do cliente selecionado
         if (clientId) {
             // Fazendo uma requisição AJAX para buscar os dados do cliente
             fetch(`/client/${clientId}/data`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao buscar os dados do cliente.');
+                    }
+                    return response.json();
+                })
                 .then(data => {
-                    // Preenchendo os campos com os dados do cliente
-                    document.getElementById('client-name').textContent = data.name || 'N/A';
-                    document.getElementById('client-email').textContent = data.email || 'N/A';
-                    document.getElementById('client-phone').textContent = data.phone || 'N/A';
-                    document.getElementById('client-address').textContent = data.address || 'N/A';
-                    document.getElementById('client-registration_date').textContent = data.created_at || 'N/A';
+                    // Verifica se os dados do cliente foram retornados corretamente
+                    if (data && data.name) {
+                        // Preenchendo os campos com os dados do cliente
+                        document.getElementById('client-name').textContent = data.name || 'N/A';
+                        document.getElementById('client-email').textContent = data.email || 'N/A';
+                        document.getElementById('client-phone').textContent = data.phone || 'N/A';
+                        document.getElementById('client-address').textContent = data.address || 'N/A';
+                        document.getElementById('client-registration_date').textContent = data.created_at || 'N/A';
 
-                    // Atualiza o resumo do cliente
-                    document.getElementById('summary-client-name').textContent = data.name || 'N/A';
-                    document.getElementById('summary-client-phone').textContent = data.phone || 'N/A';
-                    document.getElementById('summary-client-address').textContent = data.address || 'N/A';
-                    document.getElementById('summary-client-registration_date').textContent = data.created_at || 'N/A';
+                        // Atualiza o resumo do cliente
+                        document.getElementById('summary-client-name').textContent = data.name || 'N/A';
+                        document.getElementById('summary-client-phone').textContent = data.phone || 'N/A';
+                        document.getElementById('summary-client-address').textContent = data.address || 'N/A';
+                        document.getElementById('summary-client-registration_date').textContent = data.created_at || 'N/A';
 
-                    // Exibe a seção de informações do cliente
-                    document.getElementById('client-info').style.display = 'block';
+                        // Exibe a seção de informações do cliente
+                        document.getElementById('client-info').style.display = 'block';
+                    } else {
+                        throw new Error('Dados do cliente não encontrados.');
+                    }
                 })
                 .catch(error => {
                     console.error('Erro ao buscar os dados do cliente:', error);
+                    alert('Não foi possível carregar as informações do cliente. Tente novamente.');
                 });
         } else {
             // Se nenhum cliente for selecionado, esconde a área de informações
@@ -362,9 +372,9 @@
             selectedProductsSummary.appendChild(summaryItem);
         });
     }
+
     document.getElementById('productSearch').addEventListener('input', function () {
         let filter = this.value.toLowerCase().replace(/\./g, ''); // Remove os pontos do input
-
         let products = document.querySelectorAll('.product-card');
 
         products.forEach(function (product) {
@@ -383,6 +393,7 @@
     function searchClients() {
         let filter = document.getElementById('clientSearch').value.toLowerCase();
         let clients = document.querySelectorAll('#client_id option');
+
         clients.forEach(function (client) {
             let name = client.textContent.toLowerCase();
             if (name.includes(filter)) {
@@ -392,7 +403,6 @@
             }
         });
     }
-
 
     // Função para lidar com o estado de seleção do produto
     document.querySelectorAll('.product-checkbox').forEach(function (checkbox) {
@@ -497,6 +507,7 @@
             productsInput.value = JSON.stringify(selectedProductData);
         }
     });
+
     // Atualiza o resumo sempre que a navegação for realizada (próximo passo)
     document.getElementById('nextBtn').addEventListener('click', updateSummary);
 
@@ -510,7 +521,6 @@
         const paymentFields = document.getElementById('paymentFields');
         const newPaymentField = document.createElement('div');
         newPaymentField.classList.add('payment-item', 'mb-3');
-
         newPaymentField.innerHTML = `
                 <label for="paymentAmount" class="form-label">Valor do Pagamento</label>
                 <input type="number" step="0.01" class="form-control" name="amount_paid[]" required min="0">
@@ -525,14 +535,13 @@
                 <label for="paymentDate" class="form-label">Data do Pagamento</label>
                 <input type="date" class="form-control" name="payment_date[]" required>
             `;
-
         paymentFields.appendChild(newPaymentField);
     });
+
     document.addEventListener("DOMContentLoaded", function () {
         // Encontrar todos os botões de expandir para cada venda
         document.querySelectorAll("[id^='expandProducts-']").forEach(function (expandBtn) {
             const saleId = expandBtn.id.split('-')[1]; // Extrai o ID da venda do botão
-
             let collapseBtn = document.getElementById(`collapseProducts-${saleId}`);
 
             // Expansão dos produtos
@@ -552,7 +561,6 @@
             });
         });
     });
-
 
     // Função para buscar produtos durante a digitação
     document.getElementById('searchProduct').addEventListener('keyup', function () {
@@ -574,6 +582,7 @@
     // Botão para filtrar e mostrar apenas os produtos selecionados
     document.getElementById('filterSelectedProducts').addEventListener('click', function () {
         var products = document.querySelectorAll('.product-item');
+
         products.forEach(function (product) {
             var checkbox = product.querySelector('.product-checkbox');
             if (checkbox.checked) {

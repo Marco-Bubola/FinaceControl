@@ -4,7 +4,12 @@
         <nav aria-label="breadcrumb">
             <div class="d-flex align-items-center "> <!-- Adicionado mt-2 para espaçamento superior -->
                 <!-- Botão Voltar -->
-                <a href="{{ url()->previous() }}" class="btn btn-sm btn-outline-secondary me-7 mt-3 d-flex align-items-center">
+                @php
+                    $previousUrl = url()->previous();
+                    $currentUrl = url()->current();
+                    $backUrl = $previousUrl !== $currentUrl ? $previousUrl : url('/dashboard');
+                @endphp
+                <a href="{{ $backUrl }}" class="btn btn-sm btn-outline-secondary me-7 mt-3 d-flex align-items-center">
                     <i class="fas fa-arrow-left"></i> Voltar
                 </a>
                 <!-- Nome da Página Traduzido -->

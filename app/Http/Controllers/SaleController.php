@@ -64,7 +64,7 @@ class SaleController extends Controller
         }
 
         // Controle do número de itens por página (valor padrão é 10)
-        $perPage = $request->input('per_page', 9);  // Pega o valor de 'per_page' ou usa 10 como padrão
+        $perPage = $request->input('per_page', 8);  // Pega o valor de 'per_page' ou usa 10 como padrão
 
         // Paginando os resultados com a quantidade definida
         $sales = $sales->with(['client', 'saleItems.product'])->paginate($perPage);
@@ -200,7 +200,7 @@ class SaleController extends Controller
                     return redirect()->route('sales.index')->with('error', 'Produto não encontrado.');
                 }
 
-                $item_price = $productModel->price * $product['quantity']; // Preço total do item
+                $item_price = $productModel->price_sale * $product['quantity']; // Preço total do item
                 $total_price += $item_price;
             }
         }
