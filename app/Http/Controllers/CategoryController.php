@@ -9,13 +9,30 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
-{
-    // Método para listar todas as categorias
-    public function index()
+{public function index()
     {
-        $categories = Category::where('is_active', 1)->get();
-        return view('categories.index', compact('categories'));
+        // Obtém o ID do usuário logado
+        $userId = auth()->id();
+
+        // Filtra as categorias ativas e associadas ao usuário logado e aplica a paginação
+        $productCategories = Category::where('is_active', 1)
+                                     ->where('user_id', $userId)
+                                     ->where('type', 'product')  // Filtro para produtos
+                                     ->paginate(10); // Aplica a paginação (10 categorias por página)
+
+        $transactionCategories = Category::where('is_active', 1)
+                                         ->where('user_id', $userId)
+                                         ->where('type', 'transaction')  // Filtro para transações
+                                         ->paginate(10); // Aplica a paginação (10 categorias por página)
+
+        // Obter todas as categorias para o formulário
+        $categories = Category::where('user_id', $userId)->get();
+
+        // Retorna a view com as categorias paginadas
+        return view('categories.index', compact('productCategories', 'transactionCategories', 'categories', 'userId'));
     }
+
+
 
     // Método para mostrar o formulário de criação
     public function create()

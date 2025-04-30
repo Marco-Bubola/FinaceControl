@@ -214,6 +214,8 @@
             {{ $clients->appends(request()->query())->links('pagination::bootstrap-5') }}
         </div>
     </div>
+@include('clients.create')
+
     <style>
         /* Personalizando a tabela */
         .table th,

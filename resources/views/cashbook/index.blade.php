@@ -67,7 +67,9 @@
                             @else
                                 <!-- Conteúdo do mês será carregado dinamicamente -->
                             @endif
+
                         </div>
+
                     </div>
 
                 </div>
@@ -79,6 +81,8 @@
     @include('cashbook.edit')
     @include('cashbook.delete')
     <script>
+
+
         let currentMonth = "{{ $currentMonth }}";
 
         function loadMonth(direction) {
@@ -87,7 +91,6 @@
             const incomeElement = document.querySelector('.text-success');
             const expenseElement = document.querySelector('.text-danger');
             const balanceElement = document.querySelector('.text-lg.font-weight-bold.text-success, .text-lg.font-weight-bold.text-danger');
-
             fetch(`/cashbook/month/${direction}?currentMonth=${currentMonth}`)
                 .then(response => response.json())
                 .then(data => {
@@ -103,52 +106,53 @@
                     // Verificar se há transações para o mês selecionado
                     if (data.transactionsByDay && Object.keys(data.transactionsByDay).length > 0) {
                         container.innerHTML = `
-                        ${Object.keys(data.transactionsByDay).map(day => `
-                            <div class="mb-4">
-                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">${day}</h6>
-                                <ul class="list-group">
-                                    ${data.transactionsByDay[day].map(transaction => `
-                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                                            <div class="d-flex align-items-center">
-                                                <button class="btn btn-icon-only btn-rounded btn-outline-${transaction.type_id == 2 ? 'danger' : 'success'} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
-                                                    <i class="fas fa-arrow-${transaction.type_id == 2 ? 'down' : 'up'}"></i>
-                                                </button>
-                                                <div class="d-flex flex-column">
-                                                    <h6 class="mb-1 text-dark text-sm">${transaction.description}</h6>
-                                                    <span class="text-xs">Data: ${transaction.time}</span>
-                                                    <span class="text-xs">Categoria: ${transaction.category_name || 'N/A'}</span>
-                                                    <span class="text-xs">Nota: ${transaction.note || 'Sem nota'}</span>
-                                                    <span class="text-xs">Segmento: ${transaction.segment_name || 'Nenhum'}</span>
-                                                </div>
+                                        ${Object.keys(data.transactionsByDay).map(day => `
+                                            <div class="col-lg-6 mb-4">
+
+                                                <ul class="list-group">
+                                                    ${data.transactionsByDay[day].map(transaction => `
+                                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                                            <div class="col-md-6 d-flex align-items-center">
+                                                                <button class="btn btn-icon-only btn-rounded btn-outline-${transaction.type_id == 2 ? 'danger' : 'success'} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
+                                                                    <i class="fas fa-arrow-${transaction.type_id == 2 ? 'down' : 'up'}"></i>
+                                                                </button>
+                                                                <div class="">
+                                                                    <h6 class="mb-1 text-dark text-sm">${transaction.description}</h6>
+                                                                    <span class="text-xs">Data: ${transaction.time}</span>
+                                                                    <span class="text-xs">Categoria: ${transaction.category_name || 'N/A'}</span>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="col-md-6 d-flex align-items-center justify-content-end">
+                                                                <button class="btn btn-icon-only btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTransactionModal" onclick="loadEditModal(${transaction.id})">
+                                                                    <i class="fas fa-edit"></i>
+                                                                </button>
+                                                                <button class="btn btn-icon-only btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" onclick="loadDeleteModal(${transaction.id}, '${transaction.description}')">
+                                                                    <i class="fas fa-trash"></i>
+                                                                </button>
+                                                                <div class="d-flex align-items-center justify-content-end text-${transaction.type_id == 2 ? 'danger' : 'success'} text-gradient text-sm font-weight-bold">
+                                                                ${transaction.type_id == 2 ? '-' : '+'} R$ ${Math.abs(transaction.value).toFixed(2)} </div>
+
+                                                            </div>
+
+                                                        </li>
+                                                    `).join('')}
+                                                </ul>
                                             </div>
-                                            <div class="d-flex align-items-center text-${transaction.type_id == 2 ? 'danger' : 'success'} text-gradient text-sm font-weight-bold">
-                                                ${transaction.type_id == 2 ? '-' : '+'} $ ${Math.abs(transaction.value).toFixed(2)}
-                                            </div>
-                                            <div class="d-flex align-items-center">
-                                                <button class="btn btn-icon-only btn-warning btn-sm me-2" data-bs-toggle="modal" data-bs-target="#editTransactionModal" onclick="loadEditModal(${transaction.id})">
-                                                    <i class="fas fa-edit"></i>
-                                                </button>
-                                                <button class="btn btn-icon-only btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" onclick="loadDeleteModal(${transaction.id}, '${transaction.description}')">
-                                                    <i class="fas fa-trash"></i>
-                                                </button>
-                                            </div>
-                                        </li>
-                                    `).join('')}
-                                </ul>
-                            </div>
-                        `).join('')}
-                    `;
+                                        `).join('')}
+                                    `;
                     } else {
                         container.innerHTML = `
-                        <div class="text-center">
-                            <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
-                        </div>
-                    `;
+                                        <div class="text-center">
+                                            <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
+                                        </div>
+                                    `;
                     }
                 })
                 .catch(error => {
                     console.error('Erro ao carregar os dados do mês:', error);
                 });
+
         }
 
         // Carregar o mês atual ao carregar a página
@@ -218,9 +222,45 @@
             form.action = `/cashbook/${id}`;
             document.getElementById('deleteTransactionDescription').textContent = description;
         }
+
+
     </script>
 
     <style>
+
+        .list-group-item .d-flex .text-xs {
+            margin-right: 10px;
+        }
+
+        .d-flex.align-items-center.justify-content-end {
+            margin-left: auto;
+            /* Fixa o valor no final */
+            font-weight: bold;
+            color: var(--bs-success);
+        }
+
+        .d-flex.align-items-center.justify-content-end.text-danger {
+            color: var(--bs-danger);
+        }
+
+        /* Alinhamento e espaçamento entre os elementos do item */
+        .d-flex .btn {
+            margin-left: 10px;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .list-group-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .d-flex.align-items-center.justify-content-end {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+        }
+
         .progress-container {
             position: relative;
         }
@@ -253,5 +293,4 @@
             color: #fff;
         }
     </style>
-
 @endsection

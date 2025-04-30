@@ -14,7 +14,9 @@
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.6",
-        "smalot/pdfparser": "^2.11"
+        "laravel/ui": "^4.6",
+        "smalot/pdfparser": "^2.11",
+        "twbs/bootstrap": "^5.3"
     },
     "require-dev": {
         "spatie/laravel-ignition": "^2.0",

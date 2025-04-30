@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Log;
 use Smalot\PdfParser\Parser;
 use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
@@ -11,60 +12,56 @@ use Illuminate\Support\Facades\Auth;
 class ProductUploadController extends Controller
 {
     public function store(Request $request)
-    {
-        // Validação
-        $request->validate([
-            'products.*.name' => 'required|string|max:255',
-            'products.*.description' => 'nullable|string|max:1000',
-            'products.*.price' => 'required|numeric',
-            'products.*.price_sale' => 'required|numeric',
-            'products.*.quantity' => 'required|integer',
-            'products.*.product_code' => 'required|string|max:255',
-            'products.*.status' => 'required|in:active,inactive',
-            'products.*.image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
-        ]);
+{
+    // Validação
+    $request->validate([
+        'products.*.name' => 'required|string|max:255',
+        'products.*.description' => 'nullable|string|max:1000',
+        'products.*.price' => 'required|numeric',
+        'products.*.price_sale' => 'required|numeric',
+        'products.*.quantity' => 'required|integer',
+        'products.*.product_code' => 'required|string|max:255',
+        'products.*.status' => 'required|in:active,inactive',
+        'products.*.image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+    ]);
 
-        // Processar cada produto
-        foreach ($request->products as $index => $product) {
-            $imageName = null;
+    // Log: Validação dos dados
+    \Log::info('Validação bem-sucedida dos produtos.');
 
-            // Se o produto tiver uma imagem, faz o upload
-            if ($request->hasFile("products.{$index}.image")) {
-                $imagePath = $request->file("products.{$index}.image")->store('products', 'public');
-                $imageName = basename($imagePath);
-            }
+    // Processar cada produto
+    foreach ($request->products as $index => $product) {
+        $imageName = null;
 
-            $imageName = $imageName ?? 'product-placeholder.png'; // Se a imagem não for fornecida, usa a imagem padrão.
+        // Se o produto tiver uma imagem, faz o upload
+        if ($request->hasFile("products.{$index}.image")) {
+            $imagePath = $request->file("products.{$index}.image")->store('products', 'public');
+            $imageName = basename($imagePath);
+            // Log: Imagem foi carregada
+            \Log::info("Imagem carregada para o produto {$product['product_code']}: {$imageName}");
+        }
 
-            try {
-                // Verificar se já existe um produto com o mesmo product_code e preço
-                $existingProduct = Product::where('product_code', $product['product_code'])
-                    ->where('price', $product['price'])
-                    ->where('price_sale', $product['price_sale'])
-                    ->first();
+        $imageName = $imageName ?? 'product-placeholder.png'; // Se a imagem não for fornecida, usa a imagem padrão.
 
-                if ($existingProduct) {
-                    // Se o preço de venda for o mesmo, apenas atualiza a quantidade
-                    if ($existingProduct->price_sale == $product['price_sale']) {
-                        $existingProduct->stock_quantity += $product['quantity']; // Aumenta a quantidade
-                        $existingProduct->save(); // Salva as alterações
-                    } else {
-                        // Caso o preço de venda seja diferente, cria um novo produto com o mesmo código
-                        Product::create([
-                            'name' => $product['name'],
-                            'description' => $product['description'] ?? null,
-                            'price' => $product['price'],
-                            'price_sale' => $product['price_sale'],
-                            'stock_quantity' => $product['quantity'],
-                            'product_code' => $product['product_code'],
-                            'status' => $product['status'],
-                            'image' => $imageName,
-                            'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
-                            'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
-                        ]);
-                    }
+        try {
+            // Verificar se já existe um produto com o mesmo product_code e preço para o usuário logado
+            $existingProduct = Product::where('product_code', $product['product_code'])
+                ->where('price', $product['price'])
+                ->where('price_sale', $product['price_sale'])
+                ->where('user_id', Auth::id()) // Verifica se é do usuário logado
+                ->first();
+
+            if ($existingProduct) {
+                // Log: Produto já existe
+                \Log::info("Produto existente encontrado para o código {$product['product_code']} do usuário " . Auth::id());
+
+                // Se o preço de venda for o mesmo, apenas atualiza a quantidade
+                if ($existingProduct->price_sale == $product['price_sale']) {
+                    $existingProduct->stock_quantity += $product['quantity']; // Aumenta a quantidade
+                    $existingProduct->save(); // Salva as alterações
+                    // Log: Quantidade do produto atualizada
+                    \Log::info("Quantidade do produto {$product['product_code']} atualizada para {$existingProduct->stock_quantity}.");
                 } else {
-                    // Se o produto não existe, cria um novo produto
+                    // Caso o preço de venda seja diferente, cria um novo produto com o mesmo código
                     Product::create([
                         'name' => $product['name'],
                         'description' => $product['description'] ?? null,
@@ -77,16 +74,47 @@ class ProductUploadController extends Controller
                         'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
                         'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
                     ]);
+                    // Log: Novo produto criado devido à mudança no preço de venda
+                    \Log::info("Novo produto criado para o código {$product['product_code']} com preço de venda alterado.");
                 }
-            } catch (\Exception $e) {
-                // Captura erros e retorna para o formulário de upload com a mensagem de erro
-                return redirect()->route('products.index')->withErrors(['message' => 'Erro ao salvar os produtos: ' . $e->getMessage()]);
-            }
-        }
+            } else {
+                // Log: Produto não encontrado, criando novo produto
+                \Log::info("Produto não encontrado para o código {$product['product_code']} do usuário " . Auth::id() . ", criando novo produto.");
 
-        // Redireciona para a lista de produtos após o sucesso
-        return redirect()->route('products.index')->with('success', 'Produtos salvos com sucesso!');
+                // Se o produto não existe, cria um novo produto
+                Product::create([
+                    'name' => $product['name'],
+                    'description' => $product['description'] ?? null,
+                    'price' => $product['price'],
+                    'price_sale' => $product['price_sale'],
+                    'stock_quantity' => $product['quantity'],
+                    'product_code' => $product['product_code'],
+                    'status' => $product['status'],
+                    'image' => $imageName,
+                    'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
+                    'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
+                ]);
+                // Log: Novo produto criado
+                \Log::info("Novo produto criado com o código {$product['product_code']}.");
+            }
+        } catch (\Exception $e) {
+            // Log: Erro durante o processamento
+            \Log::error('Erro ao salvar o produto', [
+                'error' => $e->getMessage(),
+                'product' => $product
+            ]);
+
+            // Captura erros e retorna para o formulário de upload com a mensagem de erro
+            return redirect()->route('products.index')->withErrors(['message' => 'Erro ao salvar os produtos: ' . $e->getMessage()]);
+        }
     }
+
+    // Log: Sucesso ao salvar os produtos
+    \Log::info('Produtos salvos com sucesso.');
+
+    // Redireciona para a lista de produtos após o sucesso
+    return redirect()->route('products.index')->with('success', 'Produtos salvos com sucesso!');
+}
 
 
     // Método para mostrar o formulário de upload
@@ -156,22 +184,22 @@ class ProductUploadController extends Controller
             $filteredText = substr($text, $startPos + strlen('OPERAÇÃO'), $endPos - ($startPos + strlen('OPERAÇÃO')));
             $filteredText = preg_replace('/\s+/', ' ', $filteredText);
             $filteredText = preg_replace('/\bOPERAÇÃO\b/', '', $filteredText);
-
             return $filteredText;
         }
 
+        Log::debug('Não foi possível encontrar as palavras-chave no texto.');
         return '';
     }
-
     private function separateProducts($text)
     {
         if (!is_string($text)) {
             // Se for um array, transforma-o em uma string
             $text = implode(' ', $text); // converte array para string com separação por espaço
-        }        // A regex para separação dos produtos
+        }
+        // A regex para separação dos produtos, com modificação para aceitar parênteses nos nomes dos produtos
         $pattern = '/(\d{1,5}\.\d{3})\s+           # Código do produto (CÓD.)
                 (\d+)\s+                       # Quantidade (QTD.)
-                ([A-Za-z0-9À-ÿ\s&\-\/,]+(?:[A-Za-z0-9À-ÿ\s&\-\/,]*))\s+   # Nome do produto
+                ([A-Za-z0-9À-ÿ\s&\-\/,()]+(?:[A-Za-z0-9À-ÿ\s&\-\/,()]*))\s+   # Nome do produto
                 ([\d,\.]+)\s+                  # Preço Tabela (R$ TABELA)
                 ([\d,\.]+)\s+                  # Preço Praticado (R$ PRATICADO)
                 ([\d,\.]+)\s+                  # Preço Revenda (R$ REVENDA)
@@ -179,6 +207,7 @@ class ProductUploadController extends Controller
                 ([\d,\.]+)\s+                  # Lucro (R$ LUCRO)
                 (Venda)?                       # Operação (opcional)
             /x';
+
         preg_match_all($pattern, $text, $matches, PREG_OFFSET_CAPTURE);
 
         $productsText = [];
@@ -202,8 +231,10 @@ class ProductUploadController extends Controller
             }
         }
 
+
         return ['products' => $productsText];
     }
+
 
     private function extractProductsFromText($productsText)
     {
@@ -221,6 +252,7 @@ class ProductUploadController extends Controller
         }
         return $products;
     }
+
 
     private function formatPrice($price)
     {
