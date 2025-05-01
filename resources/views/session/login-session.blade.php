@@ -49,7 +49,7 @@
                                     </a>
                                 </div>
                                 <div class="col-4">
-                                    <a class="btn btn-outline-light w-100" href="javascript:;">
+                                    <a class="btn btn-outline-light w-100" href="{{ route('google-auth') }}">
                                         <!-- Google Icon -->
                                         <svg width="24px" height="32px" viewBox="0 0 64 64" version="1.1"
                                             xmlns="http://www.w3.org/1999/xlink">

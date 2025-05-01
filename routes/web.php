@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BankController;
 use App\Http\Controllers\ChangePasswordController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\GoogleAuthController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InfoUserController;
 use App\Http\Controllers\InvoiceController;
@@ -28,6 +29,8 @@ use App\Http\Controllers\UploadCashbookController;
 | These routes are loaded by the RouteServiceProvider within a group
 | which contains the "web" middleware group. Now create something great!
 */
+Route::get('/auth/google/redirect', [GoogleAuthController::class, 'redirect'])->name('google-auth');
+Route::get('/auth/google/call-back', [GoogleAuthController::class, 'callback']);
 
 Route::group(['middleware' => 'auth'], function () {
     // Dashboard and general routes

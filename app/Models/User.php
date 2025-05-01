@@ -26,6 +26,7 @@ class User extends Authenticatable
         'about_me',
         'profile_picture', // Adicionado o campo profile_picture
         'role_id', // Certifique-se de que o role_id também pode ser atribuído
+        'google_id'
     ];
 
     /**

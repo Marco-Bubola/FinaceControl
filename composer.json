@@ -13,6 +13,7 @@
         "guzzlehttp/guzzle": "^7.4",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
+        "laravel/socialite": "^5.20",
         "laravel/tinker": "^2.6",
         "laravel/ui": "^4.6",
         "smalot/pdfparser": "^2.11",
