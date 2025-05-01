@@ -1,7 +1,9 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-
+<div class="p-4 mb-4 text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400" role="alert">
+  <span class="font-medium">Danger alert!</span> Change a few things up and try submitting again.
+</div>
     <div class="row">
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
             <div class="card">

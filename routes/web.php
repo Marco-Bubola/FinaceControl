@@ -51,7 +51,7 @@ Route::group(['middleware' => 'auth'], function () {
 
     Route::middleware(['auth'])->group(function () {
         // Rota para visualizar o cartão (irá redirecionar para as invoices)
-        Route::get('/faturas/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
+        Route::get('/invoices/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
         Route::post('/invoices', [InvoiceController::class, 'store'])->name('invoices.store');
         Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
         Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');

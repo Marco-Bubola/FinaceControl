@@ -66,10 +66,10 @@ class UploadInvoiceController extends Controller
             'transactions.*.installments' => 'nullable|string|max:255',
             'transactions.*.category_id' => 'required|exists:category,id_category',
         ]);
-
+    
         foreach ($request->transactions as $transaction) {
             Invoice::create([
-                'id_bank' => $request->id_bank,
+                'id_bank' => $request->id_bank,  // O id_bank está sendo passado corretamente
                 'invoice_date' => $transaction['date'],
                 'value' => $transaction['value'],
                 'description' => $transaction['description'],
@@ -78,28 +78,222 @@ class UploadInvoiceController extends Controller
                 'user_id' => auth()->id(),
             ]);
         }
-
-        return redirect()->route('invoice.index')->with('success', 'Transações confirmadas com sucesso.');
+    
+        // Redireciona de volta para a página de invoices com a variável 'bank_id'
+        return redirect()->route('invoices.index', ['bank_id' => $request->id_bank])
+                         ->with('success', 'Transações confirmadas com sucesso.');
     }
+    
     protected function extractTransactionsFromCsv($csvPath)
     {
         $transactions = [];
+        // Mapeamento de meses em português para números
+         // Mapeamento de meses em português para números
+         $monthMapping = [
+            'jan' => '01',
+            'fev' => '02',
+            'mar' => '03',
+            'abr' => '04',
+            'mai' => '05',
+            'jun' => '06',
+            'jul' => '07',
+            'ago' => '08',
+            'set' => '09',
+            'out' => '10',
+            'nov' => '11',
+            'dez' => '12',
+            'JAN' => '01',
+            'FEV' => '02',
+            'MAR' => '03',
+            'ABR' => '04',
+            'MAI' => '05',
+            'JUN' => '06',
+            'JUL' => '07',
+            'AGO' => '08',
+            'SET' => '09',
+            'OUT' => '10',
+            'NOV' => '11',
+            'DEZ' => '12',
+        ];
+
+        $categoryMapping = [
+            'BOTICARIO' => '1019',
+            'Eudora' => '1019',
+            'NATURA' => '1019',
+            'COSMETIC' => '1019',
+            'BEER' => '1018',
+            'BURGER' => '1018',
+            'Bar' => '1018',
+            'RESTAURANTE' => '1018',
+            '1A99' => '1021',
+            'SUPERMERCADO' => '1021',
+            'ATACADAO' => '1021',
+            'ROFATTO' => '1021',
+            'PENHA' => '1021',
+            'mix' => '1021',
+            'DAVID BARBOZA' => '1021',
+            'PANDULANCHES' => '1021',
+            'CASARAO' => '1021',
+            'SUCOS' => '1021',
+            'PIZZARIA' => '1021',
+            'POSTO' => '1022',
+            'Posto' => '1022',
+            'Shell' => '1022',
+            'ARENA' => '1022',
+            'N. R.' => '1022',
+            'ITAPIRENSE' => '1022',
+            'PANORAMA' => '1022',
+            'PHARMA' => '1023',
+            'DROGARIA' => '1023',
+            'CLARO' => '1029',
+            'AUTO CENTER' => '1023',
+            'AIRBNB' => '1027',
+            'BYMA' => '1027',
+
+            'MERCADOLIVRE' => '1024',
+            'SHOPEE' => '1024',
+            'Pagamentos' => '1025',
+            'MP*JOSE' => '1025',
+            'FABIOLUIZDAGNONI' => '1026',
+            'CLEUSA' => '1018',
+            'JOSE ROBERTO' => '1026',
+            'LUCIANO DE ANDRADE' => '1026',
+            'Mega Motos' => '1030',
+            'FACEBK' => '1031',
+            'SHOPIFY' => '1031',
+
+            // Novas adições para garantir maior cobertura:
+            'Skyfit' => '1028',  // Se o nome aparecer em transações de supermercado
+
+            'ANTONELLI' => '1021',
+            'Agro' => '1021',     // Agro pode ser relacionado a supermercados ou mercados
+            'Amazon Prime' => '1029', // Se for referente ao serviço de streaming
+            'Ton Central' => '1018',
+            'Bear' => '1018', // Pode ser uma referência a bares ou restaurantes
+            'Zeferinoltda' => '1023', // Farmácia (considerando o nome da empresa)
+            'Tabacaria' => '1018', // Categoria de farmácias ou tabacarias
+            'Spotify' => '1029',   // Pagamentos relacionados a serviços de streaming
+            'Cubatao' => '1021',   // Pode se referir a supermercado ou mercado
+            'Fabioluizdagnoni' => '1026', // Nome específico
+            'Supermercado' => '1021', // Generalização para supermercados
+            'Lojaehcases' => '1024',  // Considerando como uma loja online (Shopee)
+            'Melimais' => '1025', // Pode ser considerado pagamento
+            'Pg' => '1018',         // Pode se referir a restaurante ou bar (Ton Central Beer)
+            'Tabacaria Jb' => '1018',  // Farmácia ou loja de tabaco
+            'Supermercado Jardim P' => '1021', // Supermercado
+            'Auto Posto' => '1022', // Auto posto (N. R. e Arena)
+            'sem Parar' => '1025', // Pagamentos (serviços recorrentes)
+            'Pandulanches' => '1021',  // Supermercado ou alimentação
+        ];
+
         if (($handle = fopen($csvPath, 'r')) !== false) {
-            // Ler o cabeçalho
-            $headers = fgetcsv($handle, 1000, ';');
-            while (($data = fgetcsv($handle, 1000, ';')) !== false) {
-                // Adaptar para os campos necessários
-                $transactions[] = [
-                    'invoice_date' => $data[0] ?? null,
-                    'value' => isset($data[1]) ? floatval(str_replace(',', '.', str_replace('.', '', $data[1]))) : null,
-                    'description' => $data[2] ?? null,
-                    'installments' => $data[3] ?? '-',
-                    'category_id' => null,
-                ];
+            $headers = fgetcsv($handle, 1000, ',');
+            Log::info('Cabeçalho CSV:', ['headers' => $headers]);
+    
+            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                // Limpeza de dados
+                $data = array_map(function ($item) {
+                    return trim(str_replace('"', '', $item)); // Remover aspas e espaços extras
+                }, $data);
+    
+                Log::info('Linha CSV limpa:', ['data' => $data]);
+    
+                if (count($data) >= 5) {
+                    // Adaptar para os campos necessários
+                    $transaction = [
+                        'invoice_date' => $data[0] ?? null,
+                        'description' => $data[1] ?? null,
+                        'category' => $data[2] ?? null,
+                        'installments' => $data[3] ?? '-',
+                        'value' => isset($data[4]) ? $this->processValue($data[4]) : '0.00', // Usando a função processValue para processar o valor
+                        'category_id' => null,
+                    ];
+    
+                    // Converter a data no formato correto
+                    if ($transaction['invoice_date']) {
+                        $dateParts = explode('/', $transaction['invoice_date']);
+                        if (count($dateParts) == 3) {
+                            $day = $dateParts[0];
+                            $month = $dateParts[1];
+                            $year = $dateParts[2];
+    
+                            $transaction['invoice_date'] = $year . '-' . $month . '-' . $day;
+                        }
+                    }
+    
+                    // Verificação de categoria mapeada
+                    if ($transaction['description']) {
+                        foreach ($categoryMapping as $keyword => $categoryId) {
+                            if (stripos($transaction['description'], $keyword) !== false) {
+                                $transaction['category_id'] = $categoryId;
+                                break;
+                            }
+                        }
+                    }
+    
+                    // Se a categoria não for mapeada, atribua uma categoria padrão
+                    if (!$transaction['category_id']) {
+                        $transaction['category_id'] = '1026';  // Categoria padrão
+                    }
+    
+                    // Verificação e formatação da descrição
+                    $transaction['description'] = $transaction['description'] ?? 'Descrição não disponível';
+                    
+                    // Verificação e formatação das parcelas
+                    $transaction['installments'] = $transaction['installments'] ?? 'Compra à vista';
+    
+                    Log::info('Transação após processamento:', ['transaction' => $transaction]);
+    
+                    // Adicionar transação à lista se o valor for maior que 0, e a data e descrição estiverem presentes
+                    if ($transaction['value'] > 0 && !empty($transaction['invoice_date']) && !empty($transaction['description'])) {
+                        $transactions[] = $transaction;
+                    } else {
+                        Log::warning('Transação ignorada devido a valores inválidos:', ['transaction' => $transaction]);
+                    }
+                } else {
+                    Log::warning('Linha CSV com dados incompletos:', ['data' => $data]);
+                }
             }
+    
             fclose($handle);
+            Log::info('Transações extraídas do CSV:', ['transactions' => $transactions]);
+        } else {
+            Log::error('Erro ao abrir o arquivo CSV:', ['csv_path' => $csvPath]);
         }
+    
+         // Garante que todas as transações tenham os campos necessários
+         foreach ($transactions as &$transaction) {
+            $transaction['date'] = $transaction['invoice_date'] ?? ''; // Corrigir para "date"
+            $transaction['valor'] = $transaction['value'] ?? '';
+            $transaction['descricao'] = $transaction['description'] ?? '';
+            $transaction['parcelas'] = $transaction['installments'] ?? '-';
+        }
+
+        // Log para verificar as transações extraídas
+        Log::info('Transações extraídas do PDF:', $transactions);
+
         return $transactions;
+    }
+    
+
+    private function processValue($value)
+    {
+        // Remover "R$", espaços extras e pontos de milhar antes de processar
+        $value = str_replace(['R$', ' '], ['', ''], $value); // Remove 'R$', espaços e pontos de milhar
+        $value = str_replace(',', '.', $value); // Substitui vírgula por ponto
+
+        // Remover caracteres invisíveis ou estranhos
+        $value = trim($value); // Remove espaços extras no início e fim
+        $value = preg_replace('/[^\x20-\x7E]/', '', $value); // Remove caracteres não imprimíveis
+
+        // Verificar se a string não está vazia antes de tentar convertê-la
+        if (is_numeric($value)) {
+            // Retornar o valor como string, com 2 casas decimais
+            return number_format((float) $value, 2, '.', '');
+        } else {
+            // Se o valor não for válido, retornar "0.00" como string
+            return "0.00";
+        }
     }
     // Método para extrair transações do PDF
     protected function extractTransactionsFromPdf($pdfPath)

@@ -1,197 +1,64 @@
 @forelse ($eventsGroupedByMonth as $month => $monthlyInvoices)
-<h6 class="text-uppercase text-body text-xs font-weight-bolder mt-4 custom-month-title">{{ $month }}</h6>
-<ul class="list-group custom-transaction-list">
-    @foreach ($monthlyInvoices as $invoice)
-    <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg custom-transaction-item">
-        <div class="d-flex align-items-center">
-            <button
-                class="btn btn-icon-only btn-rounded {{ $invoice->value < 0 ? 'btn-outline-danger' : 'btn-outline-success' }} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center custom-transaction-icon">
-                <i class="{{ $invoice->value < 0 ? 'fas fa-arrow-down' : 'fas fa-arrow-up' }}"></i>
-            </button>
-            <div class="d-flex flex-column custom-transaction-details">
-                <h6 class="mb-1 text-dark text-sm custom-transaction-description">{{ $invoice->description }}</h6>
-                <span class="text-xs custom-transaction-category">Categoria: {{ $invoice->category->name }}</span>
-                <span class="text-xs custom-transaction-installments">Parcelas: {{ $invoice->installments }}</span>
-                <span class="text-xs custom-transaction-date">{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</span>
-            </div>
-        </div>
-        <div class="d-flex align-items-center">
-            <button class="btn btn-sm btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#editInvoiceModal{{ $invoice->id_invoice }}">
-                <i class="fas fa-edit"></i> <!-- Ícone de edição -->
-            </button>
-            <button class="btn btn-sm btn-outline-danger me-2" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal{{ $invoice->id_invoice }}">
-                <i class="fas fa-trash"></i> <!-- Ícone de exclusão -->
-            </button>
-            <button class="btn btn-sm btn-outline-success" data-bs-toggle="modal" data-bs-target="#copyInvoiceModal{{ $invoice->id_invoice }}">
-                <i class="fas fa-copy"></i> <!-- Ícone de cópia -->
-            </button>
-            <div
-            class="d-flex align-items-center {{ $invoice->value < 0 ? 'text-danger text-gradient' : 'text-success text-gradient' }} text-sm font-weight-bold custom-transaction-value">
-            {{ $invoice->value < 0 ? '-' : '+' }} R$ {{ number_format(abs($invoice->value), 2) }}
-            </div>
-        </div>
-    </li>
+    <h6 class="text-uppercase text-body text-xs font-weight-bolder mt-4 custom-month-title">{{ $month }}</h6>
+    <div class="row"> <!-- Container flex para os cards -->
+        @foreach ($monthlyInvoices as $invoice)
+            <div class="col-md-3 mb-4"> <!-- 3 cards por linha -->
+                <div class="card border-0 shadow-sm custom-transaction-card">
+                    <div class="card-body d-flex flex-column position-relative">
+                        <div class="d-flex align-items-center mb-3">
+                            <!-- Botão de Transação com ícone da categoria e tooltip -->
+                            <button
+                                class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"
+                                style="border: 3px solid {{ $invoice->category->hexcolor_category }}; color: #fff; width: 50px; height: 50px;"
+                                title="{{ $invoice->category->name }}" data-bs-toggle="tooltip" data-bs-placement="top">
+                                <i class="{{ $invoice->category->icone }}" style="font-size: 1.5rem;"></i>
+                            </button>
 
-    <!-- Modal de Edição -->
-    <div class="modal fade" id="editInvoiceModal{{ $invoice->id_invoice }}" tabindex="-1" aria-labelledby="editInvoiceModalLabel{{ $invoice->id_invoice }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="editInvoiceModalLabel{{ $invoice->id_invoice }}">Editar Transação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                <form method="POST" action="{{ route('invoices.update', $invoice->id_invoice) }}">
-                    @csrf
-                    @method('PUT')
-                        <div class="row">
+                            <div class="d-flex flex-column">
+                                <h6 class="mb-1 text-dark text-sm custom-transaction-description">{{ $invoice->description }}</h6>
+                                <span class="text-xs custom-transaction-installments">Parcelas: {{ $invoice->installments }}</span>
+                                <span class="text-xs custom-transaction-date">{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d/m/Y') }}</span>
+                                <div class="d-flex align-items-center {{ $invoice->value < 0 ? 'text-danger text-gradient' : 'text-success text-gradient' }} text-sm font-weight-bold custom-transaction-value">
+                                {{ $invoice->value < 0 ? '-' : '+' }} R$ {{ number_format(abs($invoice->value), 2) }}
+                            </div>
+                            </div>
 
-                            <div class="col-md-6 mb-3">
-                                <label for="description{{ $invoice->id_invoice }}" class="form-label">Descrição</label>
-                                <input type="text" class="form-control" id="description{{ $invoice->id_invoice }}" name="description" value="{{ $invoice->description }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="value{{ $invoice->id_invoice }}" class="form-label">Valor</label>
-                                <input type="number" class="form-control" id="value{{ $invoice->id_invoice }}" name="value" value="{{ $invoice->value }}" step="0.01" required>
-                            </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="installments{{ $invoice->id_invoice }}" class="form-label">Parcelas</label>
-                                <input type="number" class="form-control" id="installments{{ $invoice->id_invoice }}" name="installments" value="{{ $invoice->installments }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="category_id{{ $invoice->id_invoice }}" class="form-label">Categoria</label>
-                                <select class="form-control" id="category_id{{ $invoice->id_invoice }}" name="category_id" required>
-                                    @foreach ($categories as $category)
-                                    <option value="{{ $category->id_category }}" {{ $invoice->category_id == $category->id_category ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <button class="btn btn-outline-primary btn-sm" data-bs-toggle="modal" data-bs-target="#editInvoiceModal{{ $invoice->id_invoice }}">
+                                <i class="fas fa-edit"></i> <!-- Ícone de edição -->
+                            </button>
+                            <button class="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteInvoiceModal{{ $invoice->id_invoice }}">
+                                <i class="fas fa-trash"></i> <!-- Ícone de exclusão -->
+                            </button>
+                            <button class="btn btn-outline-success btn-sm" data-bs-toggle="modal" data-bs-target="#copyInvoiceModal{{ $invoice->id_invoice }}">
+                                <i class="fas fa-copy"></i> <!-- Ícone de cópia -->
+                            </button>
+
                         </div>
-                        <div class="row">
-                            <div class="col-md-12 mb-3">
-                                <label for="invoice_date{{ $invoice->id_invoice }}" class="form-label">Data da Transferência</label>
-                                <input type="date" class="form-control" id="invoice_date{{ $invoice->id_invoice }}" name="invoice_date" value="{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Salvar</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
+            @include('invoice.edit')
+            @include('invoice.delet')
+            @include('invoice.copy')
 
-    <!-- Modal de Exclusão -->
-    <div class="modal fade" id="deleteInvoiceModal{{ $invoice->id_invoice }}" tabindex="-1" aria-labelledby="deleteInvoiceModalLabel{{ $invoice->id_invoice }}" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="deleteInvoiceModalLabel{{ $invoice->id_invoice }}">Excluir Transação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <p>Tem certeza de que deseja excluir a transação <strong>{{ $invoice->description }}</strong> no valor de <strong>R$ {{ number_format($invoice->value, 2) }}</strong>?</p>
-                </div>
-                <div class="modal-footer">
-                    <form method="POST" action="{{ route('invoices.destroy', $invoice->id_invoice) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Excluir</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    const modalId = 'copyInvoiceModal{{ $invoice->id_invoice }}';
+                    const divisionsInput = document.querySelector(`#${modalId} #divisions_copy{{ $invoice->id_invoice }}`);
+                    const valueInput = document.querySelector(`#${modalId} #value_copy{{ $invoice->id_invoice }}`);
+                    const originalValue = {{ $invoice->value }};
 
-    <!-- Modal de Cópia -->
-    <div class="modal fade" id="copyInvoiceModal{{ $invoice->id_invoice }}" tabindex="-1" aria-labelledby="copyInvoiceModalLabel{{ $invoice->id_invoice }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="copyInvoiceModalLabel{{ $invoice->id_invoice }}">Copiar Transação</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{{ route('invoices.copy', $invoice->id_invoice) }}">
-                        @csrf
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="description_copy{{ $invoice->id_invoice }}" class="form-label">Descrição</label>
-                                <input type="text" class="form-control" id="description_copy{{ $invoice->id_invoice }}" name="description" value="{{ $invoice->description }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="value_copy{{ $invoice->id_invoice }}" class="form-label">Valor</label>
-                                <input type="number" class="form-control" id="value_copy{{ $invoice->id_invoice }}" name="value" value="{{ $invoice->value }}" step="0.01" required>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="installments_copy{{ $invoice->id_invoice }}" class="form-label">Parcelas</label>
-                                <input type="number" class="form-control" id="installments_copy{{ $invoice->id_invoice }}" name="installments" value="{{ $invoice->installments }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="category_id_copy{{ $invoice->id_invoice }}" class="form-label">Categoria</label>
-                                <select class="form-control" id="category_id_copy{{ $invoice->id_invoice }}" name="category_id" required>
-                                    @foreach ($categories as $category)
-                                    <option value="{{ $category->id_category }}" {{ $invoice->category_id == $category->id_category ? 'selected' : '' }}>
-                                        {{ $category->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="invoice_date_copy{{ $invoice->id_invoice }}" class="form-label">Data da Transferência</label>
-                                <input type="date" class="form-control" id="invoice_date_copy{{ $invoice->id_invoice }}" name="invoice_date" value="{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d') }}" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label for="id_bank_copy{{ $invoice->id_invoice }}" class="form-label">Banco/Cartão de Destino</label>
-                                <select class="form-control" id="id_bank_copy{{ $invoice->id_invoice }}" name="id_bank" required>
-                                    @foreach ($banks as $bank)
-                                    <option value="{{ $bank->id_bank }}">{{ $bank->description }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label for="divisions_copy{{ $invoice->id_invoice }}" class="form-label">Dividir em Quantas Partes?</label>
-                                <input type="number" class="form-control" id="divisions_copy{{ $invoice->id_invoice }}" name="divisions" value="1" min="1" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="submit" class="btn btn-success">Copiar</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const modalId = 'copyInvoiceModal{{ $invoice->id_invoice }}';
-            const divisionsInput = document.querySelector(`#${modalId} #divisions_copy{{ $invoice->id_invoice }}`);
-            const valueInput = document.querySelector(`#${modalId} #value_copy{{ $invoice->id_invoice }}`);
-            const originalValue = {{ $invoice->value }};
-
-            divisionsInput.addEventListener('input', function () {
-                const divisions = parseInt(divisionsInput.value) || 1;
-                valueInput.value = (originalValue / divisions).toFixed(2);
-            });
-        });
-    </script>
-    @endforeach
-</ul>
+                    divisionsInput.addEventListener('input', function () {
+                        const divisions = parseInt(divisionsInput.value) || 1;
+                        valueInput.value = (originalValue / divisions).toFixed(2);
+                    });
+                });
+            </script>
+        @endforeach
+    </div> <!-- Fim do container flex -->
 @empty
-<p class="text-muted custom-no-transactions">Nenhuma transação encontrada neste mês.</p>
+    <p class="text-muted custom-no-transactions">Nenhuma transação encontrada neste mês.</p>
 @endforelse

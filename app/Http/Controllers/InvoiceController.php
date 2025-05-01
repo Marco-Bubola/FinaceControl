@@ -18,12 +18,17 @@ class InvoiceController extends Controller
 
         // Obtém o mês atual da paginação (se não fornecido, usa o mês inicial do banco)
         $currentMonth = $request->query('month', \Carbon\Carbon::parse($bank->start_date)->format('Y-m-d'));
-
-        // Define o intervalo de datas para o mês atual com base no $bank->start_date
+        // Define o mês de início com o cálculo correto para o mês atual
         $currentStartDate = \Carbon\Carbon::parse($currentMonth)
-            ->setDay(\Carbon\Carbon::parse($bank->start_date)->day)
-            ->startOfDay();
-        $currentEndDate = $currentStartDate->copy()->addMonth()->subDay()->endOfDay(); // Termina no mesmo dia do próximo mês, menos um dia
+            ->setDay(\Carbon\Carbon::parse($bank->start_date)->day)  // Ajusta para o mesmo dia da fatura
+            ->startOfDay(); // Início do dia
+
+        // Define o mês de fim com a lógica de adicionar 1 mês ao currentStartDate
+        $currentEndDate = $currentStartDate->copy()->addMonth()->subDay()->endOfDay();  // Termina no mesmo dia do próximo mês, menos um dia
+
+        // Corrigindo a navegação para os meses anterior e próximo
+        $previousMonth = $currentStartDate->copy()->subMonth()->startOfMonth()->format('Y-m-d');
+        $nextMonth = $currentStartDate->copy()->addMonth()->startOfMonth()->format('Y-m-d');
 
         // Filtra as faturas dentro do intervalo de datas
         $invoices = Invoice::where('id_bank', $bank->id_bank)
@@ -33,7 +38,7 @@ class InvoiceController extends Controller
 
         // Agrupa as faturas por mês com base no campo invoice_date
         $eventsGroupedByMonth = $invoices->groupBy(function ($invoice) {
-            return \Carbon\Carbon::parse($invoice->invoice_date)->format('d'); // Agrupa por ano e mês
+             // Agrupa por ano e mês
         });
 
         // Para ser usado no FullCalendar (detalhes das faturas)
@@ -62,9 +67,6 @@ class InvoiceController extends Controller
             ];
         });
 
-        // Define os links de navegação para os meses anterior e próximo
-        $previousMonth = $currentStartDate->copy()->subMonth()->format('Y-m-d');
-        $nextMonth = $currentStartDate->copy()->addMonth()->format('Y-m-d');
 
         // Nome do mês atual traduzido para português
         Carbon::setLocale('pt_BR');
@@ -85,18 +87,18 @@ class InvoiceController extends Controller
         if ($request->ajax()) {
             try {
                 // Filtra as categorias com base nas transações do mês
-        $categoriesWithTransactions = $categories->filter(function ($category) use ($invoices) {
-            return $invoices->where('category_id', $category->id_category)->isNotEmpty();
-        });
+                $categoriesWithTransactions = $categories->filter(function ($category) use ($invoices) {
+                    return $invoices->where('category_id', $category->id_category)->isNotEmpty();
+                });
 
-        // Calculando as categorias e os valores totais por categoria
-        $categoriesData = $categoriesWithTransactions->map(function ($category) use ($invoices) {
-            $categoryTotal = $invoices->where('category_id', $category->id_category)->sum('value');
-            return [
-                'label' => $category->name,
-                'value' => $categoryTotal,
-            ];
-        });
+                // Calculando as categorias e os valores totais por categoria
+                $categoriesData = $categoriesWithTransactions->map(function ($category) use ($invoices) {
+                    $categoryTotal = $invoices->where('category_id', $category->id_category)->sum('value');
+                    return [
+                        'label' => $category->name,
+                        'value' => $categoryTotal,
+                    ];
+                });
 
                 \Log::info('Dados de categorias enviados para o gráfico:', $categoriesData->toArray()); // Log para depuração
 

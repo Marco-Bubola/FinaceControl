@@ -1,135 +1,22 @@
-/* Estilos gerais */
-.custom-invoice-container {
-    font-family: 'Roboto', sans-serif;
-    background-color: #f4f6f9;
-    padding: 20px;
-    border-radius: 10px;
+.custom-card-background {
+    background-image: url('../assets/img/curved-images/curved14.jpg');
+    background-size: cover; /* Garante que a imagem ocupe toda a área */
+    background-position: center; /* Centraliza a imagem */
+    height: 100%; /* Garante que a imagem ocupe toda a altura do card */
+    width: 100%; /* Garante que a imagem ocupe toda a largura do card */
+    position: relative; /* Para permitir que o conteúdo seja posicionado sobre a imagem */
 }
 
-/* Mensagens de erro e sucesso */
-.custom-error-message, .custom-success-message {
-    border-radius: 8px;
-    font-size: 14px;
-    position: relative;
+.card-body {
+    position: relative; /* Para garantir que o conteúdo fique sobre a imagem */
+ /* Coloca o conteúdo acima da imagem */
 }
 
-.custom-error-message .alert-timer, .custom-success-message .alert-timer {
-    background-color: #ff5722;
+.card {
+    height: 100%; /* Faz com que o card ocupe toda a altura disponível */
 }
 
-/* Informações do Cartão */
-.custom-card-info .custom-card {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-
-/* Calendário */
-.custom-calendar-card {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.custom-calendar-card #calendar {
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 10px;
-}
-
-/* Transações */
-.custom-transactions .custom-transactions-card {
-    border-radius: 15px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.custom-transactions .custom-transactions-card h6 {
-    color: #007bff;
-    font-weight: bold;
-}
-
-.custom-transactions .btn {
-    border-radius: 20px;
-    font-size: 12px;
-}
-
-/* Botões de navegação */
-.btn-change-month {
-    border-radius: 20px;
-    font-size: 12px;
-    color: #007bff;
-    border: 1px solid #007bff;
-}
-
-.btn-change-month:hover {
-    background-color: #007bff;
-    color: #fff;
-}
-/* Título do mês */
-.custom-month-title {
-    color: #007bff;
-    font-size: 14px;
-    margin-bottom: 10px;
-}
-
-/* Lista de transações */
-.custom-transaction-list {
-    padding: 0;
-    margin: 0;
-    list-style: none;
-}
-
-/* Item de transação */
-.custom-transaction-item {
-    background-color: #f9f9f9;
-    border-radius: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    padding: 10px;
-    transition: transform 0.2s ease-in-out;
-}
-
-.custom-transaction-item:hover {
-    transform: scale(1.02);
-}
-
-/* Ícone de transação */
-.custom-transaction-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Detalhes da transação */
-.custom-transaction-details {
-    margin-left: 10px;
-}
-
-.custom-transaction-description {
-    font-weight: bold;
-    color: #343a40;
-}
-
-.custom-transaction-category,
-.custom-transaction-installments,
-.custom-transaction-date {
-    color: #6c757d;
-    font-size: 12px;
-}
-
-/* Valor da transação */
-.custom-transaction-value {
-    font-size: 14px;
-    font-weight: bold;
-}
-
-/* Mensagem de nenhuma transação */
-.custom-no-transactions {
-    font-style: italic;
-    color: #6c757d;
-    text-align: center;
-    margin-top: 20px;
+.custom-card img {
+    max-width: 100%; /* Garante que a imagem não ultrapasse a largura do card */
+    height: auto; /* Ajusta a altura automaticamente */
 }
