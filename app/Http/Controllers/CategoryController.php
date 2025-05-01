@@ -14,23 +14,24 @@ class CategoryController extends Controller
         // Obtém o ID do usuário logado
         $userId = auth()->id();
 
-        // Filtra as categorias ativas e associadas ao usuário logado e aplica a paginação
+        // Filtra as categorias ativas e associadas ao usuário logado
         $productCategories = Category::where('is_active', 1)
                                      ->where('user_id', $userId)
                                      ->where('type', 'product')  // Filtro para produtos
-                                     ->paginate(10); // Aplica a paginação (10 categorias por página)
+                                     ->get(); // Retorna todas as categorias de produto
 
         $transactionCategories = Category::where('is_active', 1)
                                          ->where('user_id', $userId)
                                          ->where('type', 'transaction')  // Filtro para transações
-                                         ->paginate(10); // Aplica a paginação (10 categorias por página)
+                                         ->get(); // Retorna todas as categorias de transação
 
-        // Obter todas as categorias para o formulário
+        // Obter todas as categorias para o formulário (não é necessário filtro adicional aqui)
         $categories = Category::where('user_id', $userId)->get();
 
-        // Retorna a view com as categorias paginadas
+        // Retorna a view com as categorias
         return view('categories.index', compact('productCategories', 'transactionCategories', 'categories', 'userId'));
     }
+
 
 
 

@@ -20,11 +20,7 @@
                         </div>
                     </div>
                     <div class="card-body pt-4 p-3">
-                        <!-- Filtro de Pesquisa -->
-                        <div class="mb-3">
-                            <input type="text" class="form-control searchCategory" id="searchCategory{{ $type }}" placeholder="Pesquisar categorias...">
-                        </div>
-
+                        <!-- Removido filtro de pesquisa -->
                         <ul class="list-group" id="categoryList{{ $type }}">
                             @if ($type === 'product')
                                 @forelse ($productCategories as $category)
@@ -32,7 +28,7 @@
                                         <div class="d-flex align-items-center">
                                             <button
                                                 class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"
-                                                style="background-color: {{ $category->hexcolor_category }}; color: #fff; width: 50px; height: 50px;">
+                                                style="border: 3px solid {{ $category->hexcolor_category }}; color: #fff; width: 50px; height: 50px;">
                                                 <i class="{{ $category->icone }}" style="font-size: 1.5rem;"></i>
                                             </button>
                                             <div class="d-flex flex-column" style="opacity: 0.7;">
@@ -47,10 +43,10 @@
                                                 data-bs-toggle="modal"
                                                 data-bs-target="#editCategoryModal"
                                                 data-id="{{ $category->id_category }}"
-                                                data-name="{{ $category->name }}"
+                                                data-name="{{ $category->name }} "
                                                 data-desc="{{ $category->desc_category }}"
                                                 data-color="{{ $category->hexcolor_category }}"
-                                                data-parent-id="{{ $category->parent_id }}"
+                                                data-parent-id="{{ $category->parent_id }} "
                                                 data-detailed-desc="{{ $category->descricao_detalhada }}"
                                                 data-tags="{{ $category->tags }}"
                                                 data-regras="{{ $category->regras_auto_categorizacao }}"
@@ -72,7 +68,7 @@
                                         <div class="d-flex align-items-center">
                                             <button
                                                 class="btn btn-icon-only btn-rounded mb-0 me-3 btn-sm d-flex align-items-center justify-content-center"
-                                                style="background-color: {{ $category->hexcolor_category }}; color: #fff; width: 50px; height: 50px;">
+                                                style="border: 3px solid {{ $category->hexcolor_category }}; color: #fff; width: 50px; height: 50px;">
                                                 <i class="{{ $category->icone }}" style="font-size: 1.5rem;"></i>
                                             </button>
                                             <div class="d-flex flex-column" style="opacity: 0.7;">
@@ -110,14 +106,7 @@
                             @endif
                         </ul>
 
-                        <!-- Paginação -->
-                        <div class="d-flex justify-content-center">
-                            @if ($type === 'product')
-                                {{ $productCategories->links() }} <!-- Paginação para produtos -->
-                            @elseif ($type === 'transaction')
-                                {{ $transactionCategories->links() }} <!-- Paginação para transações -->
-                            @endif
-                        </div>
+                        <!-- Removido o bloco de paginação -->
                     </div>
                 </div>
             </div>

@@ -158,7 +158,7 @@
                     'bi-cash', 'bi-credit-card', 'bi-wallet', 'bi-bank', 'bi-building', 'bi-fuel-pump',
                     'bi-basket', 'bi-arrow-left-right', 'bi-geo', 'bi-file-earmark', 'bi-bell', 'bi-calendar-check',
                     'bi-clipboard', 'bi-bell', 'bi-briefcase', 'bi-receipt', 'bi-x', 'bi-graph-up',
-                    'bi-cart-check', 'icons8-nubank', 'icons8-inter', 'icons8-restaurante','icons8-beleza','icons8-farmacia', 'icons8-viagem','icons8-steaming ','icons8-academia',
+                    'bi-cart-check', 'fi-rs-dumbbell-weightlifting', 'icons8-nubank', 'icons8-inter', 'icons8-restaurante','icons8-beleza','icons8-farmacia', 'icons8-viagem','icons8-steaming ','icons8-academia',
                 ];
             } else {
                 console.error('Tipo inválido fornecido: ' + type);
