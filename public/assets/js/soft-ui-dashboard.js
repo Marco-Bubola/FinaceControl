@@ -263,37 +263,50 @@ if (document.querySelector('.fixed-plugin')) {
   }
 
 }
-
-//Set Sidebar Color
+// Set Sidebar and Button Color
 function sidebarColor(a) {
-  var parent = a.parentElement.children;
-  var color = a.getAttribute("data-color");
+    var parent = a.parentElement.children;
+    var color = a.getAttribute("data-color");
 
-  for (var i = 0; i < parent.length; i++) {
-    parent[i].classList.remove('active');
+    // Remove 'active' class from all siblings
+    for (var i = 0; i < parent.length; i++) {
+      parent[i].classList.remove('active');
+    }
+
+    // Add 'active' class to the clicked item
+    if (!a.classList.contains('active')) {
+      a.classList.add('active');
+    } else {
+      a.classList.remove('active');
+    }
+
+    // Change the sidebar color
+    var sidebar = document.querySelector('.sidenav');
+    sidebar.setAttribute("data-color", color);
+
+    // Change the 'sidenavCard' color if it exists
+    if (document.querySelector('#sidenavCard')) {
+      var sidenavCard = document.querySelector('#sidenavCard');
+      let sidenavCardClasses = ['card', 'card-background', 'shadow-none', 'card-background-mask-' + color];
+      sidenavCard.className = '';
+      sidenavCard.classList.add(...sidenavCardClasses);
+
+      var sidenavCardIcon = document.querySelector('#sidenavCardIcon');
+      let sidenavCardIconClasses = ['ni', 'ni-diamond', 'text-gradient', 'text-lg', 'top-0', 'text-' + color];
+      sidenavCardIcon.className = '';
+      sidenavCardIcon.classList.add(...sidenavCardIconClasses);
+    }
+
+    // Select the button
+    var button = document.querySelector('.btn.bg-gradient-primary'); // Select the button
+    if (button) {
+      console.log("Botão encontrado:", button); // Verifique se o botão está sendo selecionado corretamente
+      button.classList.remove('bg-gradient-primary'); // Remove a classe original
+      button.classList.add('bg-gradient-' + color); // Adiciona a nova classe baseada na cor selecionada
+    } else {
+      console.log('Botão não encontrado!');
+    }
   }
-
-  if (!a.classList.contains('active')) {
-    a.classList.add('active');
-  } else {
-    a.classList.remove('active');
-  }
-
-  var sidebar = document.querySelector('.sidenav');
-  sidebar.setAttribute("data-color", color);
-
-  if (document.querySelector('#sidenavCard')) {
-    var sidenavCard = document.querySelector('#sidenavCard');
-    let sidenavCardClasses = ['card', 'card-background', 'shadow-none', 'card-background-mask-' + color];
-    sidenavCard.className = '';
-    sidenavCard.classList.add(...sidenavCardClasses);
-
-    var sidenavCardIcon = document.querySelector('#sidenavCardIcon');
-    let sidenavCardIconClasses = ['ni', 'ni-diamond', 'text-gradient', 'text-lg', 'top-0', 'text-' + color];
-    sidenavCardIcon.className = '';
-    sidenavCardIcon.classList.add(...sidenavCardIconClasses);
-  }
-}
 
 //Set Sidebar Type
 function sidebarType(a) {

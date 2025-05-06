@@ -154,10 +154,35 @@ class CashbookController extends Controller
                     'type_id' => $transaction->type_id,
                     'time' => \Carbon\Carbon::parse($transaction->date)->format('d/m'),
                     'category_name' => $transaction->category->name ?? null,
+                    'category_hexcolor_category' => $transaction->category->hexcolor_category ?? '#cccccc',
+                    'category_icone' => $transaction->category->icone ?? 'fas fa-question',
                     'note' => $transaction->note,
                 ];
             });
         });
+
+        // Obter dados de categorias para receitas e despesas
+        $incomeCategories = $transactions->where('type_id', 1)
+            ->groupBy('category_id')
+            ->map(function ($group) {
+                $category = $group->first()->category;
+                return [
+                    'name' => $category->name ?? 'Sem Categoria',
+                    'total' => $group->sum('value'),
+                    'hexcolor_category' => $category->hexcolor_category ?? '#cccccc',
+                ];
+            })->values();
+
+        $expenseCategories = $transactions->where('type_id', 2)
+            ->groupBy('category_id')
+            ->map(function ($group) {
+                $category = $group->first()->category;
+                return [
+                    'name' => $category->name ?? 'Sem Categoria',
+                    'total' => $group->sum('value'),
+                    'hexcolor_category' => $category->hexcolor_category ?? '#cccccc', // Garantir que a cor seja retornada
+                ];
+            })->values();
 
         // Tradução manual dos meses
         $monthTranslations = [
@@ -185,6 +210,10 @@ class CashbookController extends Controller
             'monthName' => $monthName,
             'transactionsByDay' => $transactionsByDay,
             'totals' => $totals,
+            'categories' => [
+                'income' => $incomeCategories,
+                'expense' => $expenseCategories,
+            ],
         ]);
     }
 }

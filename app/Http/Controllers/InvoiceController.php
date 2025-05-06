@@ -16,8 +16,9 @@ class InvoiceController extends Controller
         $categories = Category::all();
         $banks = Bank::all(); // Adicionado para listar todos os bancos
 
-        // Obtém o mês atual da paginação (se não fornecido, usa o mês inicial do banco)
-        $currentMonth = $request->query('month', \Carbon\Carbon::parse($bank->start_date)->format('Y-m-d'));
+        // Obtém o mês atual da paginação (se não fornecido, usa o mês atual)
+        $currentMonth = $request->query('month', now()->format('Y-m-d'));
+
         // Define o mês de início com o cálculo correto para o mês atual
         $currentStartDate = \Carbon\Carbon::parse($currentMonth)
             ->setDay(\Carbon\Carbon::parse($bank->start_date)->day)  // Ajusta para o mesmo dia da fatura
@@ -35,6 +36,17 @@ class InvoiceController extends Controller
             ->whereBetween('invoice_date', [$currentStartDate, $currentEndDate])
             ->orderBy('invoice_date', 'asc') // Ordena por data
             ->get();
+
+        // Gera os dados diários para o gráfico de linhas
+        $dailyData = $invoices->groupBy(function ($invoice) {
+            return Carbon::parse($invoice->invoice_date)->day; // Agrupa por dia do mês
+        })->map(function ($dayInvoices) {
+            return $dayInvoices->sum('value'); // Soma os valores das faturas por dia
+        });
+
+        // Cria os arrays para o gráfico
+        $dailyLabels = $dailyData->keys()->toArray(); // Dias do mês
+        $dailyValues = $dailyData->values()->toArray(); // Valores das faturas por dia
 
         // Agrupa as faturas por mês com base no campo invoice_date
         $eventsGroupedByMonth = $invoices->groupBy(function ($invoice) {
@@ -113,7 +125,9 @@ class InvoiceController extends Controller
                     'nextMonth' => $nextMonth,
                     'currentMonthTitle' => "$currentMonthName ({$currentStartDate->format('d/m/Y')} - {$currentEndDate->format('d/m/Y')})",
                     'categories' => $categoriesData,
-                    'categoriesWithTransactions' => $categoriesWithTransactions
+                    'categoriesWithTransactions' => $categoriesWithTransactions,
+                    'dailyLabels' => $dailyLabels, // Dias do mês
+                    'dailyValues' => $dailyValues, // Valores das faturas por dia
                 ]);
             } catch (\Exception $e) {
                 \Log::error('Erro ao carregar os dados do mês:', ['error' => $e->getMessage()]);

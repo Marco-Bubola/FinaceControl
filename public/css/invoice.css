@@ -1,11 +1,3 @@
-.custom-card-background {
-    background-image: url('../assets/img/curved-images/curved14.jpg');
-    background-size: cover; /* Garante que a imagem ocupe toda a área */
-    background-position: center; /* Centraliza a imagem */
-    height: 100%; /* Garante que a imagem ocupe toda a altura do card */
-    width: 100%; /* Garante que a imagem ocupe toda a largura do card */
-    position: relative; /* Para permitir que o conteúdo seja posicionado sobre a imagem */
-}
 
 .card-body {
     position: relative; /* Para garantir que o conteúdo fique sobre a imagem */
@@ -13,7 +5,7 @@
 }
 
 .card {
-    height: 100%; /* Faz com que o card ocupe toda a altura disponível */
+    height: 90%; /* Faz com que o card ocupe toda a altura disponível */
 }
 
 .custom-card img {

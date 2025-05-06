@@ -353,12 +353,7 @@
                                             padding: 0.5rem 0;
                                         }
 
-                                        /* Efeito de animação do dropdown */
-                                        #customDropdown .dropdown-menu.show {
-                                            opacity: 1;
-                                            transform: translateY(10px);
-                                            /* Efeito de deslizamento suave */
-                                        }
+
 
                                         /* Estilo para os itens do dropdown */
                                         #customDropdown .dropdown-item {

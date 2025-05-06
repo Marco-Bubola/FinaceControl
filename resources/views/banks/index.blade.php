@@ -6,80 +6,10 @@
 
         @include('message.alert')
         <div class="row">
-            <div class="col-md-5">
-                <div class="card h-100">
-                    <div class="card-header pb-0 px-3">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="mb-0">Suas Transações</h6>
-                            </div>
-                            <div class="col-md-6 d-flex justify-content-end align-items-center">
-                                <i class="far fa-calendar-alt me-2"></i>
-                                <small>{{ \Carbon\Carbon::now()->format('d - m Y') }}</small>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Título do mês, fora da div transactionsContainer -->
-                    <div class="card-body">
-                        <h3 id="monthTitle" class="text-center mb-3">
-                            <!-- O título será atualizado dinamicamente -->
-                        </h3>
-                        <div class="d-flex justify-content-center mb-3">
-                            <button id="prevMonth" class="btn btn-outline-primary btn-sm me-2">
-                                <i class="fas fa-chevron-left"></i> Mês Anterior
-                            </button>
-                            <button id="nextMonth" class="btn btn-outline-primary btn-sm">
-                                Próximo Mês <i class="fas fa-chevron-right"></i>
-                            </button>
-                        </div>
-                        <!-- Informações adicionais -->
-                        <div class="text-center mb-3">
-                            <h5>Total do Mês:</h5>
-                            <h4 id="totalMonth" class="text-success">$ {{ number_format($totalMonth, 2) }}</h4>
-                        </div>
-                    </div>
-
-                    <!-- Contêiner de transações -->
-                    <div class="card-body" id="transactionsContainer">
-                        @if ($groupedInvoices->isEmpty())
-                            <p>Você ainda não tem transações para este mês.</p>
-                        @else
-                            @foreach ($groupedInvoices as $date => $invoices)
-                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">
-                                    {{ \Carbon\Carbon::parse($date)->translatedFormat('d \d\e F \d\e Y') }}
-                                </h6>
-                                <ul class="list-group">
-                                    @foreach ($invoices as $invoice)
-                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
-                                            <div class="d-flex align-items-center">
-                                                <button
-                                                    class="btn btn-icon-only btn-rounded {{ $invoice->value < 0 ? 'btn-outline-danger' : 'btn-outline-success' }} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
-                                                    <i class="{{ $invoice->value < 0 ? 'fas fa-arrow-down' : 'fas fa-arrow-up' }}"></i>
-                                                </button>
-                                                <div class="d-flex flex-column">
-                                                    <h6 class="mb-1 text-dark text-sm">{{ $invoice->description }}</h6>
-                                                    <span class="text-xs">
-                                                        {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('H:i A') }}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                            <div
-                                                class="d-flex align-items-center {{ $invoice->value < 0 ? 'text-danger text-gradient' : 'text-success text-gradient' }} text-sm font-weight-bold">
-                                                {{ $invoice->value < 0 ? '-' : '+' }} $ {{ number_format(abs($invoice->value), 2) }}
-                                            </div>
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @endforeach
-                        @endif
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-lg-7">
+          
+            <div class="col-lg-12">
                 <div class="row">
-                    <div id="cardCarousel" class="carousel slide col-xl-12 mb-xl-0 " data-bs-ride="carousel">
+                    <div id="cardCarousel" class="carousel slide col-xl-6 mb-xl-0 " data-bs-ride="carousel">
                         <div class="carousel-inner">
                             @forelse ($banks as $index => $bank)
                                 <div class="carousel-item {{ $index == 0 ? 'active' : '' }}">
@@ -146,10 +76,7 @@
                             <span class="visually-hidden">Próximo</span>
                         </button>
                     </div>
-
-
-
-                    <div class="col-md-12 mb-lg-0">
+                    <div class="col-md-6 mb-lg-0">
                         <div class="card mt-4">
                             <div class="card-header pb-0 p-3">
                                 <div class="row">
@@ -193,6 +120,77 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="card h-100">
+                    <div class="card-header pb-0 px-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="mb-0">Suas Transações</h6>
+                            </div>
+                            <div class="col-md-6 d-flex justify-content-end align-items-center">
+                                <i class="far fa-calendar-alt me-2"></i>
+                                <small>{{ \Carbon\Carbon::now()->format('d - m Y') }}</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Título do mês, fora da div transactionsContainer -->
+                    <div class="card-body">
+                      
+                        <div class="d-flex justify-content-center mb-3">
+                            <button id="prevMonth" class="btn btn-outline-primary btn-sm me-2">
+                                <i class="fas fa-chevron-left"></i> Mês Anterior
+                            </button>
+                            <h3 id="monthTitle" class="text-center mb-3">
+                            <!-- O título será atualizado dinamicamente -->
+                        </h3>
+                            <button id="nextMonth" class="btn btn-outline-primary btn-sm">
+                                Próximo Mês <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <!-- Informações adicionais -->
+                        <div class="text-center mb-3">
+                            <h5>Total do Mês:</h5>
+                            <h4 id="totalMonth" class="text-success">$ {{ number_format($totalMonth, 2) }}</h4>
+                        </div>
+                    </div>
+
+                    <!-- Contêiner de transações -->
+                    <div class="card-body" id="transactionsContainer">
+                        @if ($groupedInvoices->isEmpty())
+                            <p>Você ainda não tem transações para este mês.</p>
+                        @else
+                            @foreach ($groupedInvoices as $date => $invoices)
+                                <h6 class="text-uppercase text-body text-xs font-weight-bolder mb-3">
+                                    {{ \Carbon\Carbon::parse($date)->translatedFormat('d \d\e F \d\e Y') }}
+                                </h6>
+                                <ul class="list-group">
+                                    @foreach ($invoices as $invoice)
+                                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg">
+                                            <div class="d-flex align-items-center">
+                                                <button
+                                                    class="btn btn-icon-only btn-rounded {{ $invoice->value < 0 ? 'btn-outline-danger' : 'btn-outline-success' }} mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
+                                                    <i class="{{ $invoice->value < 0 ? 'fas fa-arrow-down' : 'fas fa-arrow-up' }}"></i>
+                                                </button>
+                                                <div class="d-flex flex-column">
+                                                    <h6 class="mb-1 text-dark text-sm">{{ $invoice->description }}</h6>
+                                                    <span class="text-xs">
+                                                        {{ \Carbon\Carbon::parse($invoice->invoice_date)->format('H:i A') }}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="d-flex align-items-center {{ $invoice->value < 0 ? 'text-danger text-gradient' : 'text-success text-gradient' }} text-sm font-weight-bold">
+                                                {{ $invoice->value < 0 ? '-' : '+' }} $ {{ number_format(abs($invoice->value), 2) }}
+                                            </div>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
             </div>
