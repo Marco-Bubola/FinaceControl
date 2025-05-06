@@ -38,24 +38,66 @@ class BankController extends Controller
 
         // Calculando o valor total das transações do mês
         $totalMonth = $invoices->sum('value');
+        $highestInvoice = $invoices->sortByDesc('value')->first();
+        $lowestInvoice = $invoices->sortBy('value')->first();
+        $totalTransactions = $invoices->count();
 
         // Agrupar as transações por data (dia)
         $groupedInvoices = $invoices->groupBy(function ($invoice) {
             return \Carbon\Carbon::parse($invoice->invoice_date)->format('Y-m-d');
         });
 
+        // Adicionar dados de categorias para o gráfico de categorias
+        $categoryTotals = $invoices->groupBy('category_id')->map(function ($group) {
+            $category = $group->first()->category;
+            return [
+                'label' => $category->name ?? 'Sem Categoria',
+                'value' => $group->sum('value'),
+                'hexcolor' => $category->hexcolor_category ?? '#cccccc',
+                'icone' => $category->icone ?? 'fas fa-question', // Adiciona o ícone da categoria
+            ];
+        })->values();
+
+      
+
         // Verificar se é uma requisição AJAX
         if ($request->ajax()) {
             return response()->json([
-                'groupedInvoices' => $groupedInvoices,
+                'groupedInvoices' => $groupedInvoices->map(function ($invoices) {
+                    return $invoices->map(function ($invoice) {
+                        return [
+                            'description' => $invoice->description,
+                            'value' => $invoice->value,
+                            'type_id' => $invoice->type_id,
+                            'invoice_date' => $invoice->invoice_date,
+                            'category_hexcolor_category' => $invoice->category->hexcolor_category ?? '#cccccc',
+                            'category_icone' => $invoice->category->icone ?? 'fas fa-question',
+                       
+                        ];
+                    });
+                }),
                 'month' => $month,
                 'year' => $year,
                 'totalMonth' => $totalMonth,
+                'highestInvoice' => $highestInvoice ? number_format($highestInvoice->value, 2) : '0,00',
+                'lowestInvoice' => $lowestInvoice ? number_format($lowestInvoice->value, 2) : '0,00',
+                'totalTransactions' => $totalTransactions,
+                'totals' => $categoryTotals, // Dados para o gráfico de categorias
+            
             ]);
         }
 
         // Retornando a view com as transações agrupadas, os dados do mês/ano e o total
-        return view('banks.index', compact('banks', 'groupedInvoices', 'month', 'year', 'totalMonth'));
+        return view('banks.index', compact(
+            'banks',
+            'groupedInvoices',
+            'month',
+            'year',
+            'totalMonth',
+            'highestInvoice',
+            'lowestInvoice',
+            'totalTransactions'
+        ));
     }
 
     // Método para mostrar o formulário de criação
