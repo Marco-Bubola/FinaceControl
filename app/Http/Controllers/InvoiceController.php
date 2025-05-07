@@ -117,7 +117,7 @@ class InvoiceController extends Controller
                 return response()->json([
                     'transactionsHtml' => view('invoice.transactions', compact('eventsGroupedByMonth', 'categories', 'banks'))->render(), // Incluído $banks
                     'eventsDetailed' => $eventsDetailed,
-                    'totalInvoices' => $totalInvoices,
+                    'totalInvoices' => $totalInvoices, // Passa o total de invoices para o gráfico
                     'highestInvoice' => $highestInvoice ? number_format($highestInvoice->value, 2) : '0,00',
                     'lowestInvoice' => $lowestInvoice ? number_format($lowestInvoice->value, 2) : '0,00',
                     'totalTransactions' => $totalTransactions,

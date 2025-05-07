@@ -155,9 +155,9 @@
             // Ícones para 'transaction'
             else if (type === 'transaction') {
                 icons = [
-                    'bi-cash', 'bi-credit-card', 'bi-wallet', 'bi-bank', 'bi-building', 'bi-fuel-pump',
-                    'bi-basket', 'bi-arrow-left-right', 'bi-geo', 'bi-file-earmark', 'bi-bell', 'bi-calendar-check',
-                    'bi-clipboard', 'bi-bell', 'bi-briefcase', 'bi-receipt', 'bi-x', 'bi-graph-up',
+                    'icons8-pagamento', 'icons8-pix', 'icons8-rendimento', 'icons8-cartao ', 'icons8-supermercado', 'icons8-posto',
+                    'icons8-online', 'icons8-transferencia', 'bi-geo', 'bi-file-earmark', 'bi-bell', 'bi-calendar-check',
+                    'bi-clipboard', 'bi-bell', 'bi-briefcase', 'icons8-academia', 'icons8-xp', 'bi-graph-up',
                     'bi-cart-check', 'fi-rs-dumbbell-weightlifting', 'icons8-nubank', 'icons8-inter', 'icons8-restaurante','icons8-beleza','icons8-farmacia', 'icons8-viagem','icons8-steaming ','icons8-academia',
                 ];
             } else {

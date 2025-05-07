@@ -30,7 +30,7 @@
     display: inline-block;
     width: 64px;
     height: 64px;
-    background: url('   https://cdn-icons-png.flaticon.com/512/826/826019.png ') 50% 50% no-repeat;
+    background: url('   https://cdn-icons-png.flaticon.com/512/5086/5086785.png ') 50% 50% no-repeat;
     background-size: 100%;
 }
 .icons8-steaming {
@@ -40,11 +40,81 @@
     background: url('   https://cdn-icons-png.flaticon.com/512/3771/3771491.png') 50% 50% no-repeat;
     background-size: 100%;
 }
+.icons8-pagamento {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('https://cdn-icons-png.flaticon.com/512/1019/1019607.png') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-transferencia {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('   https://cdn-icons-png.flaticon.com/512/4140/4140809.png ') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-online {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('   https://cdn-icons-png.flaticon.com/512/924/924998.png ') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-supermercado {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('   https://cdn-icons-png.flaticon.com/512/2203/2203239.png ') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-posto {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('   https://cdn-icons-png.flaticon.com/512/3219/3219368.png  ') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-cartao {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('   https://cdn-icons-png.flaticon.com/512/1086/1086741.png ') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-pix {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('https://www.svgrepo.com/show/500416/pix.svg') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-rendimento {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('   https://cdn-icons-png.flaticon.com/512/1389/1389181.png ') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-xp {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('https://upload.wikimedia.org/wikipedia/pt/0/0b/XP_Investimentos_logo.png') 50% 50% no-repeat; 
+    background-size: 100%;
+}
+.icons8-pix {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+    background: url('https://www.svgrepo.com/show/500416/pix.svg') 50% 50% no-repeat; 
+    background-size: 100%;
+}
 .icons8-academia {
     display: inline-block;
     width: 64px;
     height: 64px;
-    background: url('  https://cdn-icons.flaticon.com/svg/16304/16304901.svg?token=exp=1746098516~hmac=e0d62f89b51a158acab3845160377eea  ') 50% 50% no-repeat;
+    background: url('   https://cdn-icons-png.flaticon.com/512/6201/6201280.png ') 50% 50% no-repeat;
     background-size: 100%;
 }
 .icons8-perfume {

@@ -133,7 +133,9 @@ $(document).ready(function() {
     var initialCategories = @json($categoriesData);
 
     // Atualiza o gráfico na carga inicial
-    updateCategoryChart(initialCategories);
+    if (!window.categoryChart) {
+        updateCategoryChart(initialCategories, {{ $totalInvoices }});
+    }
     // Dados dos eventos passados do backend para o JavaScript
     var eventsData = @json($eventsDetailed); // Usando os detalhes das faturas
 
@@ -185,7 +187,7 @@ $(document).ready(function() {
                 $('#next-month').data('month', response.nextMonth);
 
                 // Atualiza o gráfico de categorias
-                updateCategoryChart(response.categories);
+                updateCategoryChart(response.categories, response.totalInvoices);
 
                 // Atualiza o gráfico de linha com dados reais
                 addLineChart({
@@ -201,7 +203,7 @@ $(document).ready(function() {
     }
 
     // Função para atualizar o gráfico de categorias
-    function updateCategoryChart(categories) {
+    function updateCategoryChart(categories, totalInvoices) {
         // Converte o objeto de categorias em um array, se necessário
         if (categories && typeof categories === 'object' && !Array.isArray(categories)) {
             categories = Object.values(categories);
@@ -212,25 +214,19 @@ $(document).ready(function() {
             console.error('Elemento canvas para o gráfico não encontrado.');
             return;
         }
-
-        // Se não houver dados, mostra a mensagem "Sem dados" e cria o gráfico com valor zero
-        if (!categories || categories.length === 0) {
-
-
-            // Criar gráfico com valor zero e cor vermelha
-            categories = [{
-                label: 'Nenhuma Categoria',
-                value: 0
-            }]; // Categoria fictícia com valor zero
-        } else {
-            document.getElementById('no-data-message').style.display = 'none'; // Esconde a mensagem "Sem dados"
-        }
-
+  // Se não houver dados, mostra a mensagem "Sem dados" e cria o gráfico com valor zero
+  if (!categories || categories.length === 0) {
+          console.warn('Nenhum dado encontrado para o gráfico de categorias.');
+          document.getElementById('no-data-message').style.display = 'block'; // Mostra a mensagem "Sem dados"
+          categories = [{ label: 'Nenhuma Categoria', value: 0 }];
+      } else {
+          document.getElementById('no-data-message').style.display = 'none'; // Esconde a mensagem "Sem dados"
+      }
         // Se já existir um gráfico, destrua-o antes de criar um novo
         if (window.categoryChart) {
-            window.categoryChart.destroy();
-        }
-
+          window.categoryChart.destroy();
+      }
+  
         // Processa os dados para o gráfico
         const categoryData = categories.map(category => category.value);
         const labels = categories.map(category => category.label);
@@ -263,7 +259,7 @@ $(document).ready(function() {
                     responsive: true,
                     plugins: {
                         legend: {
-                            position: 'bottom',
+                            position: false,
                         },
                         title: {
                             display: true,
@@ -274,7 +270,27 @@ $(document).ready(function() {
                         padding: 30
                     },
                     backgroundColor: 'transparent'
-                }
+                },
+                plugins: [{
+                    id: 'centerText',
+                    beforeDraw: (chart) => {
+                        const { width } = chart;
+                        const ctx = chart.ctx;
+                        ctx.save();
+                        ctx.font = 'bold 20px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+
+                        // Exibe o texto "Total de Faturas"
+                        ctx.fillStyle = '#333';
+                        ctx.fillText('Total de Faturas', width / 2, chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2 - 10);
+
+                        // Exibe o valor total no centro
+                        ctx.fillStyle = '#4caf50';
+                        ctx.fillText(`R$ ${totalInvoices.toFixed(2)}`, width / 2, chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2 + 15);
+                        ctx.restore();
+                    }
+                }]
             });
         } catch (error) {
             console.error('Erro ao criar o gráfico:', error);
@@ -355,12 +371,6 @@ $(document).ready(function() {
 
 
 
-    // Atualiza o gráfico e os dados do mês ao clicar nos botões de navegação
-    $('.btn-change-month').on('click', function(e) {
-        e.preventDefault();
-        const month = $(this).data('month');
-        updateMonthData(month);
-    });
 });
 </script>
 

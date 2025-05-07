@@ -28,19 +28,28 @@ class BankController extends Controller
             $year = now()->year;
         }
 
+        // Ajustar o filtro de datas para garantir que o intervalo está correto
+        $startOfMonth = \Carbon\Carbon::create($year, $month, 1)->startOfDay();
+        $endOfMonth = \Carbon\Carbon::create($year, $month, 1)->endOfMonth()->endOfDay();
+
         // Obtendo as transações do usuário logado para o mês e ano selecionados
         $invoices = Invoice::where('user_id', auth()->id())
-            ->whereMonth('invoice_date', $month)
-            ->whereYear('invoice_date', $year)
+            ->whereBetween('invoice_date', [$startOfMonth, $endOfMonth]) // Certifique-se de que o intervalo está correto
             ->with(['bank', 'category'])
             ->orderBy('invoice_date', 'asc') // Ordem crescente
             ->get();
 
+      // Obtém a maior fatura
+      $highestInvoice = $invoices->sortByDesc('value')->first();
+
+      // Obtém a menor fatura
+      $lowestInvoice = $invoices->sortBy('value')->first();
+
+      // Conta o total de transações no mês
+      $totalTransactions = $invoices->count();
+
         // Calculando o valor total das transações do mês
         $totalMonth = $invoices->sum('value');
-        $highestInvoice = $invoices->sortByDesc('value')->first();
-        $lowestInvoice = $invoices->sortBy('value')->first();
-        $totalTransactions = $invoices->count();
 
         // Agrupar as transações por data (dia)
         $groupedInvoices = $invoices->groupBy(function ($invoice) {
@@ -58,7 +67,12 @@ class BankController extends Controller
             ];
         })->values();
 
-      
+        // Adicionar dados diários para o gráfico de linha
+        $dailyData = $invoices->groupBy(function ($invoice) {
+            return \Carbon\Carbon::parse($invoice->invoice_date)->format('d'); // Agrupa por dia do mês
+        })->map(function ($group) {
+            return $group->sum('value'); // Soma os valores das faturas por dia
+        });
 
         // Verificar se é uma requisição AJAX
         if ($request->ajax()) {
@@ -83,6 +97,10 @@ class BankController extends Controller
                 'lowestInvoice' => $lowestInvoice ? number_format($lowestInvoice->value, 2) : '0,00',
                 'totalTransactions' => $totalTransactions,
                 'totals' => $categoryTotals, // Dados para o gráfico de categorias
+                'dailyData' => [
+                    'labels' => $dailyData->keys()->toArray(), // Dias do mês
+                    'values' => $dailyData->values()->toArray(), // Valores das faturas por dia
+                ],
             
             ]);
         }

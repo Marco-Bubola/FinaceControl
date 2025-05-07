@@ -66,6 +66,8 @@ document.addEventListener("DOMContentLoaded", function () {
   
           // Atualizar os gráficos
           updateChart(data.totals, data.totalMonth);
+          // Atualizar o gráfico de linha com os dados diários
+          addLineChart(data.dailyData);
         })
         .catch((error) => console.error("Erro ao carregar transações:", error));
     }
@@ -169,8 +171,9 @@ document.addEventListener("DOMContentLoaded", function () {
       const categoryData = categories.map(category => category.value);
       const labels = categories.map(category => category.label);
   
-      // Define um tamanho fixo para o gráfico
-      ctx.height = 400;
+      // Ajusta dinamicamente o tamanho do gráfico com base no número de categorias
+      const chartHeight = Math.max(300, categories.length * 30);
+      ctx.height = chartHeight;
   
       // Cria o gráfico
       try {
@@ -181,13 +184,19 @@ document.addEventListener("DOMContentLoaded", function () {
                   datasets: [{
                       data: categoryData,
                       backgroundColor: [
-                          '#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF',
-                          '#FF9F40', '#FF5733', '#C70039', '#900C3F', '#DAF7A6'
-                      ],
-                      hoverBackgroundColor: [
-                          '#36A2EB', '#FF6384', '#FFCE56', '#4BC0C0', '#9966FF',
-                          '#FF9F40', '#FF5733', '#C70039', '#900C3F', '#DAF7A6'
-                      ]
+                        categoryData[0] === 0 ? '#FF6384' : '#36A2EB', '#FF6384',
+                        '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF5733',
+                        '#C70039', '#900C3F', '#DAF7A6', '#FFC300',
+                        '#581845', '#FF6F61', '#1E90FF', '#00FA9A',
+                        '#FF1493'
+                    ],
+                    hoverBackgroundColor: [
+                        categoryData[0] === 0 ? '#FF6384' : '#36A2EB', '#FF6384',
+                        '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40', '#FF5733',
+                        '#C70039', '#900C3F', '#DAF7A6', '#FFC300',
+                        '#581845', '#FF6F61', '#1E90FF', '#00FA9A',
+                        '#FF1493'
+                    ]
                   }]
               },
               options: {
@@ -195,12 +204,6 @@ document.addEventListener("DOMContentLoaded", function () {
                   plugins: {
                       legend: {
                           position: false,
-                          labels: {
-                              boxWidth: 30, // Reduz o tamanho da caixa de cor da legenda
-                              font: {
-                                  size: 10 // Reduz o tamanho da fonte das legendas
-                              }
-                          }
                       },
                       tooltip: {
                           enabled: true,
@@ -208,10 +211,7 @@ document.addEventListener("DOMContentLoaded", function () {
                   },
                   cutout: '70%', // Cria espaço no centro do gráfico
                   layout: {
-                      padding: {
-                          top: 30, // Ajusta o espaçamento superior
-                          bottom: 30 // Ajusta o espaçamento inferior
-                      }
+                      padding: 40
                   }
               },
               plugins: [{

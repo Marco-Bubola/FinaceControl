@@ -27,7 +27,7 @@
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label for="installments{{ $invoice->id_invoice }}" class="form-label">Parcelas</label>
-                                        <input type="number" class="form-control" id="installments{{ $invoice->id_invoice }}"
+                                        <input type="text" class="form-control" id="installments{{ $invoice->id_invoice }}"
                                             name="installments" value="{{ $invoice->installments }}" required>
                                     </div>
                                     <div class="col-md-6 mb-3">

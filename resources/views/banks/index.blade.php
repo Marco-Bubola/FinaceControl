@@ -27,24 +27,33 @@
                         <div class="col-md-3 mb-4">
                             <div
                                 class="card card-body border shadow-sm border-radius-lg d-flex align-items-center flex-row">
-                                <img class="w-15 me-3 mb-0 rounded-circle border"
-                                    src="../assets/img/logos/mastercard.png" alt="logo">
-                                <div class="d-flex flex-column">
+                               
+                                <div class="d-flex flex-column align-items-center">
+                                <img class="w-45 me-3 mb-0 "
+                                src="../assets/img/logos/mastercard.png" alt="logo">
                                     <h6 class="mb-0 text-dark">{{ $bank->name }}</h6>
                                     <small class="text-muted">{{ $bank->description }}</small>
                                 </div>
-                                <div class="ms-auto d-flex">
+                                <div class="ms-auto d-flex flex-column">
                                     <a href="{{ route('invoices.index', ['bank_id' => $bank->id_bank]) }}"
-                                        class="btn btn-info btn-sm me-2" title="Visualizar">
+                                        class="btn btn-info me-2" title="Visualizar">
                                         <i class="fas fa-eye"></i>
                                     </a>
-                                    <i class="fas fa-pencil-alt text-dark cursor-pointer me-2" data-bs-toggle="modal"
-                                        data-bs-target="#editBankModal{{ $bank->id_bank }}" title="Editar"></i>
-                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#deleteBankModal{{ $bank->id_bank }}" title="Excluir">
+
+                                    <!-- Botão com ícone de lápis (pincel) -->
+                                    <button class="btn btn-light d-flex align-items-center justify-content-center me-2"
+                                        data-bs-toggle="modal" data-bs-target="#editBankModal{{ $bank->id_bank }}"
+                                        title="Editar">
+                                        <i class="fas fa-pencil-alt text-dark"></i>
+                                    </button>
+
+                                    <button class="btn btn-danger d-flex align-items-center justify-content-center me-2"
+                                        data-bs-toggle="modal" data-bs-target="#deleteBankModal{{ $bank->id_bank }}"
+                                        title="Excluir">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
+
                             </div>
                         </div>
 
@@ -57,28 +66,28 @@
 
         </div>
         <div class="col-md-12  px-3">
-        <div class="card  h-100  shadow-none" style="background-color: transparent; border: none;">
-        <div class="card-header  pb-0 px-3" style="background-color: transparent; border-bottom: none;">
+            <div class="card  h-100  shadow-none" style="background-color: transparent; border: none;">
+                <div class="card-header  pb-0 px-3" style="background-color: transparent; border-bottom: none;">
                     <div class="row">
                         <div class="col-md-3">
                             <h6 class="mb-0">Suas Transações</h6>
                         </div>
                         <div class="col-md-6 d-flex justify-content-center mb-3">
-                            
-                                <button id="prevMonth" class="btn btn-outline-primary me-3">
-                                    <i class="fas fa-chevron-left"></i> Mês Anterior
-                                </button>
-                            
-                                <i class="fas fa-calendar-alt text-info me-2" style="font-size: 1.7rem;"></i>
-                                <h3 id="monthTitle" class="text-center me-3">
-                                    <!-- O título será atualizado dinamicamente -->
-                                </h3>
-                           
-                            
-                                <button id="nextMonth" class="btn btn-outline-primary ">
-                                    Próximo Mês <i class="fas fa-chevron-right"></i>
-                                </button>
-                            
+
+                            <button id="prevMonth" class="btn btn-outline-primary me-3">
+                                <i class="fas fa-chevron-left"></i> Mês Anterior
+                            </button>
+
+                            <i class="fas fa-calendar-alt text-info me-2" style="font-size: 1.7rem;"></i>
+                            <h3 id="monthTitle" class="text-center me-3">
+                                <!-- O título será atualizado dinamicamente -->
+                            </h3>
+
+
+                            <button id="nextMonth" class="btn btn-outline-primary ">
+                                Próximo Mês <i class="fas fa-chevron-right"></i>
+                            </button>
+
                         </div>
                         <div class="col-md-3 text-end">
                             <i class="far fa-calendar-alt me-2"></i>
@@ -145,7 +154,8 @@
                         <div class="position-relative w-100">
                             <!-- Exibe mensagem se não houver dados -->
                             <span id="no-data-message" style="display: none;">Sem dados</span>
-                            <canvas id="updateCategoryChart" style="width: 100%; height: 500px;"></canvas> <!-- Altura fixa -->
+                            <canvas id="updateCategoryChart" style="width: 100%; height: 500px;"></canvas>
+                            <!-- Altura fixa -->
                             <canvas id="lineChart" class="mt-4"></canvas> <!-- Gráfico de linha -->
                         </div>
                     </div>
@@ -165,7 +175,6 @@
 window.currentMonth = {{$month}};
 window.currentYear = {{$year}};
 
-
 </script>
 @endsection
 
@@ -173,9 +182,5 @@ window.currentYear = {{$year}};
 <script src="{{ asset('js/transactions.js') }}"></script>
 @endpush
 
-<style>
-.modal-lg {
-    max-width: 80%;
-}
-</style>
+
 <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
