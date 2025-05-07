@@ -137,73 +137,77 @@
         <!-- Tabela de clientes -->
         <div class="row mt-4" id="client-list">
             @foreach($clients as $client)
-                <div class="col-md-3 mb-4">
-                    <div class="card h-100"
-                        style="min-height: 450px; position: relative; border-radius: 12px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
-                        <img src="{{ asset('storage/products/product-placeholder.png') }}" class="card-img-top"
-                            alt="Imagem do Cliente" style="border-top-left-radius: 12px; border-top-right-radius: 12px;">
-                        <!-- Botões sobre a imagem -->
-                        <div style="position: absolute; top: 10px; right: 10px; display: flex; gap: 5px;">
-                            <button class="btn btn-primary " data-bs-toggle="modal"
-                                data-bs-target="#modalEditClient{{ $client->id }}" title="Editar">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-danger " data-bs-toggle="modal"
-                                data-bs-target="#modalDeleteClient{{ $client->id }}" title="Excluir">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                            <button class="btn btn-secondary " data-bs-toggle="modal"
-                                data-bs-target="#modalFullHistory{{ $client->id }}" title="Histórico Completo">
-                                <i class="bi bi-clock-history"></i>
-                            </button>
-                        </div>
 
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title text-center" style="font-size: 1.1rem; font-weight: 600; color: #333;">
-                                {{ ucwords($client->name) }}</h5>
-                            <p><strong>Email:</strong> {{ $client->email ?? 'N/A' }}</p>
-                            <p><strong>Telefone:</strong> {{ $client->phone ?? 'N/A' }}</p>
-                            <p><strong>Endereço:</strong> {{ $client->address ?? 'N/A' }}</p>
 
-                            <!-- Histórico de vendas pendentes -->
-                            <div class="mt-3">
-                                <h6 class="text-primary" style="font-weight: 600;">Vendas Pendentes</h6>
-                                <p><strong>Total Pendentes:</strong>
-                                    <span class="badge bg-warning text-dark">
-                                        {{ $client->sales->where('status', '!=', 'Paga')->count() }} Vendas
-                                    </span>
-                                </p>
+<div class="col-md-2 mb-4">
+    <div class="card h-100 custom-card position-relative">
+        <img src="{{ asset('storage/products/product-placeholder.png') }}" class="card-img-top"
+            alt="Imagem do Cliente">
 
-                                <table class="table table-sm table-bordered table-hover">
-                                    <thead>
-                                        <tr>
-                                            <th>Total</th>
-                                            <th>Status</th>
-                                            <th>Ação</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach($client->sales->where('status', '!=', 'Paga') as $sale)
-                                            <tr>
-                                                <td>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</td>
-                                                <td>
-                                                    <span class="badge bg-danger"
-                                                        style="font-size: 0.9rem;">{{ $sale->status }}</span>
-                                                </td>
-                                                <td>
-                                                    <a href="{{ route('sales.show', $sale->id) }}" class="btn btn-info "
-                                                        title="Ver Detalhes">
-                                                        <i class="bi bi-eye"></i>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                        @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+        <!-- Botões sobre a imagem -->
+        <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
+            <button class="btn btn-primary icon-btn" data-bs-toggle="modal"
+                data-bs-target="#modalEditClient{{ $client->id }}" title="Editar">
+                <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-danger icon-btn" data-bs-toggle="modal"
+                data-bs-target="#modalDeleteClient{{ $client->id }}" title="Excluir">
+                <i class="bi bi-trash"></i>
+            </button>
+            <button class="btn btn-secondary icon-btn" data-bs-toggle="modal"
+                data-bs-target="#modalFullHistory{{ $client->id }}" title="Histórico Completo">
+                <i class="bi bi-clock-history"></i>
+            </button>
+            <a href="{{ route('teste.index', $client->id) }}" class="btn btn-info icon-btn" title="Resumo Financeiro">
+                <i class="bi bi-bar-chart"></i>
+            </a>
+        </div>
+
+        <div class="card-body p-2 d-flex flex-column">
+            <h5 class="card-title text-center text-primary">
+                {{ ucwords($client->name) }}
+            </h5>
+            <div class="info-line"><strong>Email:</strong> {{ $client->email ?? 'N/A' }}</div>
+            <div class="info-line"><strong>Fone:</strong> {{ $client->phone ?? 'N/A' }}</div>
+            <div class="info-line"><strong>End.:</strong> {{ $client->address ?? 'N/A' }}</div>
+
+            <!-- Histórico de vendas pendentes -->
+            <div class="">
+                <h6 class="text-primary mb-1" style="font-size: 0.8rem;">Vendas Pendentes</h6>
+                <p style="font-size: 0.75rem;"><strong>Total:</strong>
+                    <span class="badge bg-warning text-dark">
+                        {{ $client->sales->where('status', '!=', 'Paga')->count() }}
+                    </span>
+                </p>
+
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered table-hover custom-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Total</th>
+                                <th>Ação</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($client->sales->where('status', '!=', 'Paga') as $sale)
+                                <tr>
+                                    <td>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</td>
+                                    <td>
+                                        <a href="{{ route('sales.show', $sale->id) }}"
+                                           class="btn btn-outline-info btn-sm icon-btn" title="Ver">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                 @include('clients.historico', ['client' => $client])
             @endforeach
         </div>
@@ -215,8 +219,59 @@
         </div>
     </div>
 @include('clients.create')
+<style>
+    .custom-card {
+        min-height: 100%;
+        border-radius: 12px;
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        font-size: 0.85rem;
+        transition: transform 0.2s;
+    }
 
-    <style>
+    .custom-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .custom-card img {
+        height: 120px;
+        object-fit: cover;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+    }
+
+    .icon-btn {
+        padding: 4px;
+        width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.85rem;
+    }
+
+    .custom-table th {
+        background-color: #f8f9fa;
+        font-weight: 500;
+        font-size: 0.75rem;
+        padding: 4px;
+    }
+
+    .custom-table td {
+        padding: 4px;
+        font-size: 0.75rem;
+    }
+
+    .card-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .info-line {
+        margin-bottom: 0.25rem;
+    }
+
         /* Personalizando a tabela */
         .table th,
         .table td {
@@ -230,7 +285,15 @@
             border-radius: 6px;
             padding: 8px 12px;
         }
-
+        .icon-btn {
+        padding: 4px;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+    }
         /* Badges de status */
         .badge {
             font-size: 0.9rem;

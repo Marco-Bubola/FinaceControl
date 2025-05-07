@@ -13,7 +13,7 @@ class Invoice extends Model
     protected $table = 'invoice';
 // Se o nome da chave primária for diferente de 'id', defina a chave primária manualmente
 protected $primaryKey = 'id_invoice'; // ou o nome correto da sua chave primária
-    
+
     // Definindo os campos que podem ser preenchidos
     protected $fillable = [
         'id_bank',
@@ -23,6 +23,7 @@ protected $primaryKey = 'id_invoice'; // ou o nome correto da sua chave primári
         'user_id',
         'category_id',
         'invoice_date',
+        'client_id',
     ];
 
     // Relacionamento com o banco

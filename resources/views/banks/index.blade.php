@@ -15,9 +15,7 @@
                             <h6 class="mb-0">Método de Pagamento</h6>
                         </div>
                         <div class="col-6 text-end">
-                            <a class="btn bg-gradient-dark mb-0" data-bs-toggle="modal"
-                                data-bs-target="#addCardModal"><i class="fas fa-plus"></i>&nbsp;&nbsp;Adicionar
-                                Novo Cartão</a>
+                        <a class="btn bg-gradient-dark mb-0" data-bs-toggle="modal" data-bs-target="#addCardModal"><i class="fas fa-plus"></i>&nbsp;&nbsp;Adicionar Novo Cartão</a>
                         </div>
                     </div>
                 </div>
@@ -27,7 +25,7 @@
                         <div class="col-md-3 mb-4">
                             <div
                                 class="card card-body border shadow-sm border-radius-lg d-flex align-items-center flex-row">
-                               
+
                                 <div class="d-flex flex-column align-items-center">
                                 <img class="w-45 me-3 mb-0 "
                                 src="../assets/img/logos/mastercard.png" alt="logo">
@@ -56,14 +54,13 @@
 
                             </div>
                         </div>
-
                         @include('banks.delet')
                         @include('banks.edit')
                         @endforeach
                     </div>
                 </div>
             </div>
-
+            @include('banks.create')
         </div>
         <div class="col-md-12  px-3">
             <div class="card  h-100  shadow-none" style="background-color: transparent; border: none;">
@@ -165,7 +162,7 @@
             </div>
         </div>
 
-        @include('banks.create')
+
 
 
     </div>

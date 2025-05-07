@@ -22,6 +22,7 @@ class Cashbook extends Model
         'type_id',
         'note',
         'segment_id',
+        'client_id',
     ];
 
     public function user()

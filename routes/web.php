@@ -20,6 +20,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\UploadInvoiceController;
 use App\Http\Controllers\CashbookController;
 use App\Http\Controllers\UploadCashbookController;
+use App\Http\Controllers\ClienteResumoController;
 
 /*
 |----------------------------------------------------------------------
@@ -39,6 +40,8 @@ Route::group(['middleware' => 'auth'], function () {
         return view('dashboard');
     })->name('dashboard');
 
+    Route::get('/teste/{id}', [ClienteResumoController::class, 'index'])->name('teste.index');
+
     Route::get('billing', function () {
         return view('billing');
     })->name('billing');
@@ -48,7 +51,9 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('profile', function () {
         return view('profile/profile');
     })->name('profile');
-
+    Route::get('billing', function () {
+        return view('billing');
+    })->name('billing');
     Route::middleware(['auth'])->group(function () {
         // Rota para visualizar o cartão (irá redirecionar para as invoices)
         Route::get('/invoices/{bank_id?}', [InvoiceController::class, 'index'])->name('invoices.index');
@@ -56,6 +61,8 @@ Route::group(['middleware' => 'auth'], function () {
         Route::put('/invoices/{id}', [InvoiceController::class, 'update'])->name('invoices.update');
         Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         Route::post('/invoices/{id}/copy', [InvoiceController::class, 'copy'])->name('invoices.copy');
+        Route::get('/client/{id}/resumo', [ClienteResumoController::class, 'index'])->name('clienteResumo.index');
+
     });
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');
@@ -137,6 +144,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/cashbook/confirm', [UploadCashbookController::class, 'confirm'])->name('cashbook.confirm');
 
     Route::get('/sales/search', [SaleController::class, 'search'])->name('sales.search');
+
 
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
 });
