@@ -102,7 +102,7 @@
                             </div>
                     </div>
 
-                    
+
                 </div>
             </div>
         </div>
@@ -111,8 +111,8 @@
     <div class="row col-md-12  pt-2">
         <div class="col-md-8">
             <div id="transactions-container">
-                <!-- Conteúdo das transações será atualizado dinamicamente -->
-                @include('invoice.transactions', ['eventsGroupedByMonth' => $eventsGroupedByMonth])
+                <!-- Inclui a view de transações e passa a variável $clients -->
+                @include('invoice.transactions', ['eventsGroupedByMonth' => $eventsGroupedByMonth, 'clients' => $clients])
             </div>
         </div>
         <!-- Gráfico à Direita -->
@@ -143,6 +143,8 @@ $(document).ready(function() {
     // Função para atualizar os dados do mês, incluindo o gráfico de categorias
     function updateMonthData(month) {
         const bankId = "{{ $bank->id_bank }}";
+
+        console.log('Enviando requisição AJAX com:', { bank_id: bankId, month });
 
         $.ajax({
             url: "{{ route('invoices.index') }}",
@@ -226,7 +228,7 @@ $(document).ready(function() {
         if (window.categoryChart) {
           window.categoryChart.destroy();
       }
-  
+
         // Processa os dados para o gráfico
         const categoryData = categories.map(category => category.value);
         const labels = categories.map(category => category.label);

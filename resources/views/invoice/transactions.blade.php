@@ -52,7 +52,7 @@
             </div>
         </div>
     </div>
-    @include('invoice.edit')
+    @include('invoice.edit', ['invoice' => $invoice, 'clients' => $clients])
     @include('invoice.delet')
     @include('invoice.copy')
 

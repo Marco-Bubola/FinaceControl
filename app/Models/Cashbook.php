@@ -38,7 +38,10 @@ class Cashbook extends Model
     {
         return $this->belongsTo(Type::class, 'type_id' );
     }
-
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
     public function segment()
     {
         return $this->belongsTo(Segment::class, 'segment_id');

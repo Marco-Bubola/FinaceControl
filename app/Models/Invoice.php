@@ -37,7 +37,10 @@ protected $primaryKey = 'id_invoice'; // ou o nome correto da sua chave primári
     {
         return $this->belongsTo(User::class, 'user_id');
     }
-
+    public function client()
+    {
+        return $this->belongsTo(Client::class);
+    }
     // Relacionamento com a categoria
     public function category()
     {
