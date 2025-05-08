@@ -68,6 +68,17 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="client_id" class="form-label">Cliente</label>
+                                <select class="form-control" id="client_id" name="client_id">
+                                    <option value="" selected>Nenhum cliente</option>
+                                    @foreach($clients as $client)
+                                        <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Step 2 -->

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Client;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Smalot\PdfParser\Parser;
@@ -48,11 +49,15 @@ class UploadInvoiceController extends Controller
             ->where('user_id', auth()->id()) // Garantir que estamos pegando apenas categorias do usuário logado
             ->get(['id_category as id', 'name']);
 
+        // Recuperar todos os clientes
+        $clients = Client::all(['id', 'name']); // Certifique-se de que o modelo Client está importado
+
         // Retornar a resposta como JSON
         return response()->json([
             'success' => true,
             'transactions' => $transactions,
             'categories' => $categories,
+            'clients' => $clients, // Inclua os clientes na resposta
         ]);
     }
 
@@ -65,8 +70,9 @@ class UploadInvoiceController extends Controller
             'transactions.*.description' => 'required|string|max:255',
             'transactions.*.installments' => 'nullable|string|max:255',
             'transactions.*.category_id' => 'required|exists:category,id_category',
+            'transactions.*.client_id' => 'required|exists:clients,id', // Validação para client_id
         ]);
-    
+
         foreach ($request->transactions as $transaction) {
             Invoice::create([
                 'id_bank' => $request->id_bank,  // O id_bank está sendo passado corretamente
@@ -75,47 +81,19 @@ class UploadInvoiceController extends Controller
                 'description' => $transaction['description'],
                 'installments' => $transaction['installments'] ?? null,
                 'category_id' => $transaction['category_id'],
+                'client_id' => $transaction['client_id'], // Salva o client_id
                 'user_id' => auth()->id(),
             ]);
         }
-    
+
         // Redireciona de volta para a página de invoices com a variável 'bank_id'
         return redirect()->route('invoices.index', ['bank_id' => $request->id_bank])
                          ->with('success', 'Transações confirmadas com sucesso.');
     }
-    
+
     protected function extractTransactionsFromCsv($csvPath)
     {
         $transactions = [];
-        // Mapeamento de meses em português para números
-         // Mapeamento de meses em português para números
-         $monthMapping = [
-            'jan' => '01',
-            'fev' => '02',
-            'mar' => '03',
-            'abr' => '04',
-            'mai' => '05',
-            'jun' => '06',
-            'jul' => '07',
-            'ago' => '08',
-            'set' => '09',
-            'out' => '10',
-            'nov' => '11',
-            'dez' => '12',
-            'JAN' => '01',
-            'FEV' => '02',
-            'MAR' => '03',
-            'ABR' => '04',
-            'MAI' => '05',
-            'JUN' => '06',
-            'JUL' => '07',
-            'AGO' => '08',
-            'SET' => '09',
-            'OUT' => '10',
-            'NOV' => '11',
-            'DEZ' => '12',
-        ];
-
         $categoryMapping = [
             'BOTICARIO' => '1019',
             'Eudora' => '1019',
@@ -189,15 +167,15 @@ class UploadInvoiceController extends Controller
         if (($handle = fopen($csvPath, 'r')) !== false) {
             $headers = fgetcsv($handle, 1000, ',');
             Log::info('Cabeçalho CSV:', ['headers' => $headers]);
-    
+
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                 // Limpeza de dados
                 $data = array_map(function ($item) {
                     return trim(str_replace('"', '', $item)); // Remover aspas e espaços extras
                 }, $data);
-    
+
                 Log::info('Linha CSV limpa:', ['data' => $data]);
-    
+
                 if (count($data) >= 5) {
                     // Adaptar para os campos necessários
                     $transaction = [
@@ -207,8 +185,9 @@ class UploadInvoiceController extends Controller
                         'installments' => $data[3] ?? '-',
                         'value' => isset($data[4]) ? $this->processValue($data[4]) : '0.00', // Usando a função processValue para processar o valor
                         'category_id' => null,
+                        'client_id' => null,
                     ];
-    
+
                     // Converter a data no formato correto
                     if ($transaction['invoice_date']) {
                         $dateParts = explode('/', $transaction['invoice_date']);
@@ -216,11 +195,11 @@ class UploadInvoiceController extends Controller
                             $day = $dateParts[0];
                             $month = $dateParts[1];
                             $year = $dateParts[2];
-    
+
                             $transaction['invoice_date'] = $year . '-' . $month . '-' . $day;
                         }
                     }
-    
+
                     // Verificação de categoria mapeada
                     if ($transaction['description']) {
                         foreach ($categoryMapping as $keyword => $categoryId) {
@@ -230,20 +209,20 @@ class UploadInvoiceController extends Controller
                             }
                         }
                     }
-    
+
                     // Se a categoria não for mapeada, atribua uma categoria padrão
                     if (!$transaction['category_id']) {
                         $transaction['category_id'] = '1026';  // Categoria padrão
                     }
-    
+
                     // Verificação e formatação da descrição
                     $transaction['description'] = $transaction['description'] ?? 'Descrição não disponível';
-                    
+
                     // Verificação e formatação das parcelas
                     $transaction['installments'] = $transaction['installments'] ?? 'Compra à vista';
-    
+
                     Log::info('Transação após processamento:', ['transaction' => $transaction]);
-    
+
                     // Adicionar transação à lista se o valor for maior que 0, e a data e descrição estiverem presentes
                     if ($transaction['value'] > 0 && !empty($transaction['invoice_date']) && !empty($transaction['description'])) {
                         $transactions[] = $transaction;
@@ -254,13 +233,13 @@ class UploadInvoiceController extends Controller
                     Log::warning('Linha CSV com dados incompletos:', ['data' => $data]);
                 }
             }
-    
+
             fclose($handle);
             Log::info('Transações extraídas do CSV:', ['transactions' => $transactions]);
         } else {
             Log::error('Erro ao abrir o arquivo CSV:', ['csv_path' => $csvPath]);
         }
-    
+
          // Garante que todas as transações tenham os campos necessários
          foreach ($transactions as &$transaction) {
             $transaction['date'] = $transaction['invoice_date'] ?? ''; // Corrigir para "date"
@@ -274,7 +253,7 @@ class UploadInvoiceController extends Controller
 
         return $transactions;
     }
-    
+
 
     private function processValue($value)
     {
@@ -324,6 +303,7 @@ class UploadInvoiceController extends Controller
             'category_id' => null,
             'invoice_date' => null,
             'user_id' => auth()->id(),
+            'client_id' => null,
         ];
 
         // Mapeamento de meses em português para números
@@ -474,6 +454,7 @@ class UploadInvoiceController extends Controller
                         'category_id' => null,
                         'invoice_date' => $currentTransaction['invoice_date'],
                         'user_id' => auth()->id(),
+                        'client_id' => null,
                     ];
 
                     $trimmedLine = str_replace($dateMatches[0], '', $trimmedLine); // Remove a data processada
@@ -544,6 +525,7 @@ class UploadInvoiceController extends Controller
                     'category_id' => null,
                     'invoice_date' => null,
                     'user_id' => auth()->id(),
+                    'client_id' => null,
                 ];
             }
         }

@@ -43,6 +43,19 @@
                                     </div>
                                 </div>
                                 <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="client_id{{ $invoice->id_invoice }}" class="form-label">Cliente</label>
+                                        <select class="form-control" id="client_id{{ $invoice->id_invoice }}" name="client_id">
+                                            <option value="" {{ is_null($invoice->client_id) ? 'selected' : '' }}>Nenhum cliente</option>
+                                            @foreach ($clients as $client)
+                                                <option value="{{ $client->id }}" {{ $invoice->client_id == $client->id ? 'selected' : '' }}>
+                                                    {{ $client->name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label for="invoice_date{{ $invoice->id_invoice }}" class="form-label">Data da
                                             Transferência</label>

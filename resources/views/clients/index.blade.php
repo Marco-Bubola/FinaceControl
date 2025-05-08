@@ -55,14 +55,14 @@
 
                                     <select name="per_page" id="per_page" class="form-control w-90"
                                         onchange="this.form.submit()">
-                                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>Itens por página:
-                                            10</option>
-                                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>Itens por página:
-                                            20</option>
+                                        <option value="18" {{ request('per_page') == 18 ? 'selected' : '' }}>Itens por página:
+                                        18</option>
                                         <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>Itens por página:
-                                            30</option>
-                                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>Itens por página:
-                                            50</option>
+                                        30</option>
+                                        <option value="48" {{ request('per_page') == 48 ? 'selected' : '' }}>Itens por página:
+                                            48</option>
+                                        <option value="96" {{ request('per_page') == 96 ? 'selected' : '' }}>Itens por página:
+                                            96  </option>
                                     </select>
                                 </form>
                             </li>

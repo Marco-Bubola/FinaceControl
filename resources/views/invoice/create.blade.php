@@ -61,7 +61,17 @@
                                 @enderror
                             </div>
                         </div>
-
+                        <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="client_id" class="form-label custom-label">Cliente</label>
+                            <select class="form-control custom-input" id="client_id" name="client_id" required>
+                                <option value="" disabled selected>Selecione um cliente</option>
+                                @foreach($clients as $client)
+                                    <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                         <div class="row">
                             <div class="col-md-12 mb-3">
                                 <label for="invoice_date" class="form-label">Data da Transferência</label>

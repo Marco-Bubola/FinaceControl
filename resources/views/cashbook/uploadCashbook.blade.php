@@ -68,7 +68,7 @@
                         <h5 class="text-center mb-3">Confirmar Transações</h5>
                         <form id="confirmationForm" method="POST" action="{{ route('cashbook.confirm') }}">
                             @csrf
-                           
+
                             <div class="table-responsive">
                                 <table class="table table-striped table-bordered text-center">
                                     <thead>
@@ -77,11 +77,12 @@
                                             <th>Data</th>
                                             <th>Valor</th>
                                             <th>Descrição</th>
-                                            
+
                                             <th>Categoria</th>
                                             <th>Tipo</th>
                                             <th>Nota</th>
                                             <th>Segmento</th>
+                                            <th>Cliente</th>
                                         </tr>
                                     </thead>
                                     <tbody id="transactionRows">
@@ -125,6 +126,15 @@
                                                     ${(data.segments || []).map(segment => {
                                                         const isSelected = segment.id == transaction.segment_id ? 'selected' : '';
                                                         return `<option value="${segment.id}" ${isSelected}>${segment.name}</option>`;
+                                                    }).join('')}
+                                                </select>
+                                            </td>
+                                            <td>
+                                                <select name="transactions[${index}][client_id]" class="form-control">
+                                                    <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
+                                                    ${data.clients.map(client => {
+                                                        const isSelected = client.id == transaction.client_id ? 'selected' : '';
+                                                        return `<option value="${client.id}" ${isSelected}>${client.name}</option>`;
                                                     }).join('')}
                                                 </select>
                                             </td>
@@ -294,6 +304,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${(data.segments || []).map(segment => {
                                 const isSelected = segment.id == transaction.segment_id ? 'selected' : '';
                                 return `<option value="${segment.id}" ${isSelected}>${segment.name}</option>`;
+                            }).join('')}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="transactions[${index}][client_id]" class="form-control">
+                            <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
+                            ${data.clients.map(client => {
+                                const isSelected = client.id == transaction.client_id ? 'selected' : '';
+                                return `<option value="${client.id}" ${isSelected}>${client.name}</option>`;
                             }).join('')}
                         </select>
                     </td>

@@ -88,15 +88,16 @@
                             <li>
                                 <div class="dropdown-item">
                                     <label for="perPageSelect" class="form-check-label">Itens por Página</label>
-                                    <select name="per_page" id="perPageSelect" class="form-control w-100">
-                                        <option value="12" {{ request('per_page') == '12' ? 'selected' : '' }}>12 itens
-                                        </option>
-                                        <option value="24" {{ request('per_page') == '24' ? 'selected' : '' }}>24 itens
-                                        </option>
-                                        <option value="48" {{ request('per_page') == '48' ? 'selected' : '' }}>48 itens
-                                        </option>
-                                        <option value="100" {{ request('per_page') == '100' ? 'selected' : '' }}>100 itens
-                                        </option>
+                                    <select name="per_page" id="perPageSelect" class="form-control w-90"
+                                        onchange="this.form.submit()">
+                                        <option value="18" {{ request('per_page') == 18 ? 'selected' : '' }}>Itens por página:
+                                        18</option>
+                                        <option value="30" {{ request('per_page') == 30 ? 'selected' : '' }}>Itens por página:
+                                        30</option>
+                                        <option value="48" {{ request('per_page') == 48 ? 'selected' : '' }}>Itens por página:
+                                            48</option>
+                                        <option value="96" {{ request('per_page') == 96 ? 'selected' : '' }}>Itens por página:
+                                            96  </option>
                                     </select>
                                 </div>
                             </li>

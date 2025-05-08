@@ -67,7 +67,7 @@ class ProductController extends Controller
         }
 
         // Controle do número de itens por página
-        $perPage = $request->input('per_page', 12);
+        $perPage = $request->input('per_page', 18);
         $products = $products->paginate($perPage)->appends($request->query()); // Preserva os parâmetros na paginação
 
         // Carregar categorias para o filtro

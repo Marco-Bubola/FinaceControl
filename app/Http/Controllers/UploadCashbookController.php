@@ -38,11 +38,15 @@ class UploadCashbookController extends Controller
             ->select(['name', 'id'])
             ->get();
 
+        // Obter todos os clientes
+        $clients = \App\Models\Client::all(['id', 'name']);
+
         return response()->json([
             'success' => true,
             'transactions' => $transactions,
             'categories' => $categories,
-            'segments' => $segments, // Inclua os segmentos na resposta
+            'segments' => $segments,
+            'clients' => $clients, // Inclua os clientes na resposta
         ]);
     }
 
@@ -54,6 +58,7 @@ class UploadCashbookController extends Controller
         foreach ($transactions as $trans) {
             $cashbook = new \App\Models\Cashbook();
             $cashbook->user_id = auth()->id();
+            $cashbook->client_id = $trans['client_id'] ?? null; // Salvar client_id como opcional
 
             // Verificar e corrigir o formato da data
             $dateFormats = ['d-m-Y', 'Y-m-d']; // Suporte para múltiplos formatos

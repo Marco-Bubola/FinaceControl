@@ -81,12 +81,12 @@
                                             <th>Descrição</th>
                                             <th>Parcelas</th>
                                             <th>Categoria</th>
-
+                                            <th>Cliente</th>
                                         </tr>
                                     </thead>
                                     <tbody id="transactionRows">
                                         <!-- As transações serão carregadas dinamicamente via JavaScript -->
-                                    </tbody>
+                                                                            </tbody>
                                 </table>
                             </div>
 
@@ -226,6 +226,15 @@ document.addEventListener('DOMContentLoaded', function() {
                             ${data.categories.map(category => {
                                 const isSelected = category.id == transaction.category_id ? 'selected' : '';
                                 return `<option value="${category.id}" ${isSelected}>${category.name}</option>`;
+                            }).join('')}
+                        </select>
+                    </td>
+                    <td>
+                        <select name="transactions[${index}][client_id]" class="form-control">
+                            <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
+                            ${data.clients.map(client => {
+                                const isSelected = client.id == transaction.client_id ? 'selected' : '';
+                                return `<option value="${client.id}" ${isSelected}>${client.name}</option>`;
                             }).join('')}
                         </select>
                     </td>

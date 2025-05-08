@@ -68,7 +68,7 @@ class ClientController extends Controller
         }
 
         // Controle do número de itens por página (valor padrão é 10)
-        $perPage = $request->input('per_page', 10);  // Pega o valor de 'per_page' ou usa 10 como padrão
+        $perPage = $request->input('per_page', 18);  // Pega o valor de 'per_page' ou usa 10 como padrão
 
         // Paginando os resultados com a quantidade definida
         $clients = $clients->with('sales')->paginate($perPage); // Paginação com a quantidade definida

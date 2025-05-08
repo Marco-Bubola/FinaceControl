@@ -9,7 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CategoryController extends Controller
-{public function index()
+{
+    public function index()
     {
         // Obtém o ID do usuário logado
         $userId = auth()->id();
@@ -28,12 +29,11 @@ class CategoryController extends Controller
         // Obter todas as categorias para o formulário (não é necessário filtro adicional aqui)
         $categories = Category::where('user_id', $userId)->get();
 
+        $clients = Client::all(); // Obter todos os clientes
+
         // Retorna a view com as categorias
-        return view('categories.index', compact('productCategories', 'transactionCategories', 'categories', 'userId'));
+        return view('categories.index', compact('productCategories', 'transactionCategories', 'categories', 'userId', 'clients'));
     }
-
-
-
 
     // Método para mostrar o formulário de criação
     public function create()

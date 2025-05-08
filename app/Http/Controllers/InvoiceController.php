@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Bank;
 use App\Models\Category;
+use App\Models\Client; // Importação do modelo Client
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -15,6 +16,7 @@ class InvoiceController extends Controller
         $bank = Bank::findOrFail($request->bank_id);
         $categories = Category::all();
         $banks = Bank::all(); // Adicionado para listar todos os bancos
+        $clients = Client::all(); // Obtém todos os clientes
 
         // Obtém o mês atual da paginação (se não fornecido, usa o mês atual)
         $currentMonth = $request->query('month', now()->format('Y-m-d'));
@@ -140,6 +142,7 @@ class InvoiceController extends Controller
         return view('invoice.index', compact(
             'bank',
             'banks', // Passando os bancos para a view
+            'clients', // Passa os clientes para a view
             'eventsDetailed', // Detalhes das faturas
             'eventsGroupedByMonth', // Agrupamento por mês
             'categoriesWithTransactions', // Apenas categorias com transações
@@ -169,6 +172,7 @@ class InvoiceController extends Controller
             'user_id' => 'required|exists:users,id',
             'category_id' => 'required|exists:category,id_category',
             'invoice_date' => 'required|date',
+            'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
         ]);
 
         Invoice::create($validated);
@@ -185,6 +189,7 @@ class InvoiceController extends Controller
             'installments' => 'required|integer|min:1',
             'category_id' => 'required|exists:category,id_category',
             'invoice_date' => 'required|date',
+            'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
         ]);
 
         $invoice = Invoice::findOrFail($id);

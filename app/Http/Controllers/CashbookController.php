@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cashbook;
+use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Models\Category;
 use App\Models\Type;
@@ -31,20 +32,17 @@ class CashbookController extends Controller
             'expense' => $transactions->where('type_id', 2)->sum('value'), // Despesas
             'balance' => $transactions->where('type_id', 1)->sum('value') - $transactions->where('type_id', 2)->sum('value'), // Saldo
         ];
-
-        // Verificar se os valores estão corretos
-        // dd($totals); // Descomente para depurar os valores
-
+        $clients = Client::all();
         $categories = Category::all();
         $types = Type::all();
         $segments = Segment::all();
 
-        return view('cashbook.index', compact('currentMonth', 'monthName', 'transactions', 'totals', 'categories', 'types', 'segments'));
+        return view('cashbook.index', compact('currentMonth', 'monthName', 'transactions', 'totals', 'clients', 'categories', 'types', 'segments'));
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+       $request->validate([
             'value' => 'required|numeric',
             'description' => 'nullable|string|max:255',
             'date' => 'required|date',
@@ -52,6 +50,7 @@ class CashbookController extends Controller
             'attachment' => 'nullable|file|max:2048',
             'category_id' => 'required|exists:category,id_category',
             'type_id' => 'required|exists:type,id_type',
+            'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
             'note' => 'nullable|string|max:255',
             'segment_id' => 'nullable|exists:segment,id',
         ]);
@@ -85,7 +84,7 @@ class CashbookController extends Controller
 
     public function update(Request $request, Cashbook $cashbook)
     {
-        $request->validate([
+        $validated = $request->validate([
             'value' => 'required|numeric',
             'description' => 'nullable|string|max:255',
             'date' => 'required|date',
@@ -93,6 +92,7 @@ class CashbookController extends Controller
             'attachment' => 'nullable|file|max:2048',
             'category_id' => 'required|exists:category,id_category',
             'type_id' => 'required|exists:type,id_type',
+            'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
             'note' => 'nullable|string|max:255',
             'segment_id' => 'nullable|exists:segment,id',
         ]);

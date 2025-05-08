@@ -1,5 +1,4 @@
-
-    <!-- Edit Modal -->
+<!-- Edit Modal -->
     <div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
@@ -64,6 +63,17 @@
                                     <option value="">Nenhum</option>
                                     @foreach($segments as $segment)
                                         <option value="{{ $segment->id }}">{{ $segment->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="edit_client_id" class="form-label">Cliente</label>
+                                <select class="form-control" id="edit_client_id" name="client_id">
+                                    <option value="" selected>Nenhum cliente</option>
+                                    @foreach($clients as $client)
+                                        <option value="{{ $client->id }}">{{ $client->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
