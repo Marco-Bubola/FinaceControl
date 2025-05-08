@@ -160,17 +160,16 @@
     <div id="productsContainer" class="row mt-4">
         @foreach($products as $product)
         <div class="col-md-2 mb-4">
-            <div class="card position-relative h-100">
-                @if($product->stock_quantity == 0)
-                <div class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1" style="z-index: 10;">
-                    Fora de Estoque
-                </div>
-                @endif
-                <img src="{{ asset('storage/products/' . $product->image) }}" class="card-img-top h-100"
-                    alt="{{ $product->name }}">
+        <div class="card h-100 position-relative border-0 shadow-sm rounded-4 overflow-hidden d-flex flex-column card-hover">
+        @if($product->stock_quantity == 0)
+            <div class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded-end z-1">
+                Fora de Estoque
+            </div>
+        @endif
 
-                <div class="position-absolute top-0 end-0 p-2">
-                    <a href="javascript:void(0)" class="btn btn-primary btn-sm p-1" data-bs-toggle="modal"
+        <!-- Botões flutuantes -->
+        <div class="position-absolute top-0 end-0 p-2">
+                    <a href="javascript:void(0)" class="btn btn-primary  p-1" data-bs-toggle="modal"
                         data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
                         <!-- Ícone de editar -->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
@@ -180,7 +179,7 @@
                         </svg>
                     </a>
                     <!-- Botão de Exclusão -->
-                    <button type="button" class="btn btn-danger btn-sm p-1" data-bs-toggle="modal"
+                    <button type="button" class="btn btn-danger p-1" data-bs-toggle="modal"
                         data-bs-target="#modalDeleteProduct{{ $product->id }}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                             class="bi bi-trash3" viewBox="0 0 16 16">
@@ -189,51 +188,58 @@
                         </svg>
                     </button>
                 </div>
-                <div class="card-body d-flex flex-column">
-                    <!-- O nome do produto com tooltip -->
-                    <h5 class="card-title text-center" data-bs-toggle="tooltip" data-bs-placement="top"
-                        title="{{ $product->name }}" style="font-size: 1.2rem; font-weight: 600; color: #333;">
-                        {{ ucwords($product->name) }}
-                    </h5>
-
-                    <!-- Descrição com truncamento -->
-                    <p class="card-text text-center text-truncate" style="max-width: 250px; font-size: 0.9rem;">
-                        {{ ucwords($product->description) }}
-                    </p>
-
-                    <!-- Informações detalhadas do produto -->
-                    <div class="row">
-                        <div class="col-6 text-center">
-                            <!-- Preço Original e Preço com Desconto -->
-                            <p><strong>Preço:</strong> <br> <span class="text-muted">R$
-                                    {{ number_format($product->price, 2, ',', '.') }}</span></p>
-                            <p><strong>Venda:</strong><br> <span class="text-success">R$
-                                    {{ number_format($product->price_sale, 2, ',', '.') }}</span></p>
-                            <p><strong>Qtd:</strong><br> <span
-                                    class="badge bg-info">{{ $product->stock_quantity }}</span></p>
-                        </div>
-
-                        <div class="col-6 text-center">
-                            <!-- Categoria e Código do Produto -->
-                            <p><strong>Categoria:</strong> <br>
-                            <button class="btn rounded-circle d-flex align-items-center justify-content-center"
-                                            style="border: 3px solid {{ $product->category->hexcolor_category }}; background-color: {{ $product->category->hexcolor_category }}10; width: 50px; height: 50px;"
-                                            title="{{ $product->category->name }}" data-bs-toggle="tooltip"
-                                            data-bs-placement="top">
-                                            <i class="{{ $product->category->icone }}"
-                                                style="font-size: 1.7rem; color: {{ $product->category->hexcolor_category }};"></i>
-                                        </button>
-                            </p>
-                            <p><strong>Código:</strong><br> <span
-                                    class="badge bg-secondary">{{ $product->product_code }}</span></p>
-                        </div>
-                    </div>
 
 
+        <img src="{{ asset('storage/products/' . $product->image) }}" class="card-img-top object-fit-cover"
+            alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+
+        <!-- Conteúdo -->
+        <div class="card-body d-flex flex-column justify-content-between text-center p-2">
+            <div>
+                <h6 class="card-title mb-1 text-truncate" title="{{ $product->name }}"
+                    style="font-size: 1rem; font-weight: 600;">
+                    {{ ucwords($product->name) }}
+                </h6>
+                <p class="text-muted text-truncate small" title="{{ $product->description }}">
+                    {{ ucwords($product->description) }}
+                </p>
+                <div class="my-2">
+                    <span class="badge bg-light text-muted d-block mb-1">
+                        PREÇO: R$ {{ number_format($product->price, 2, ',', '.') }}
+                    </span>
+                    <span class=" badge  text-success d-block"  >
+                        VENDA: R$ {{ number_format($product->price_sale, 2, ',', '.') }}
+                    </span>
                 </div>
+            </div>
+
+            <div class="mt-auto">
+                <div class="d-flex justify-content-between px-2">
+                    <div>
+                        <small class="text-muted">Qtd</small><br>
+                        <span class="badge bg-info">{{ $product->stock_quantity }}</span>
+                    </div>
+                    <div>
+                        <small class="text-muted">Código</small><br>
+                        <span class="badge bg-secondary">{{ $product->product_code }}</span>
+                    </div>
+                    <button class="btn rounded-circle d-flex align-items-center justify-content-center"
+                            style="border: 2px solid {{ $product->category->hexcolor_category }};
+                                   background-color: {{ $product->category->hexcolor_category }}20;
+                                   width: 45px; height: 45px;"
+                            title="{{ $product->category->name }}" data-bs-toggle="tooltip">
+                        <i class="{{ $product->category->icone }}"
+                           style="font-size: 1.2rem; color: {{ $product->category->hexcolor_category }};"></i>
+                    </button>
+                </div>
+
 
             </div>
         </div>
+    </div>
+</div>
+
+
         @endforeach
     </div>
 
@@ -290,6 +296,11 @@
         </nav>
     </div>
     <script>
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl)
+})
+
     document.addEventListener('DOMContentLoaded', function() {
         // Botão de Aplicar Filtros
         document.getElementById('applyFilterBtn').addEventListener('click', function() {
@@ -484,76 +495,7 @@
     @include('products.edit')
 
     <style>
-    .pagination .page-item {
-        margin: 0 5px;
-        /* Adiciona espaçamento horizontal entre os botões */
-    }
 
-    .pagination .page-item .page-link {
-        min-width: 60px;
-        /* Garante que o texto fique dentro do círculo */
-        text-align: center;
-        /* Garante que o texto fique centralizado */
-        border-radius: 50%;
-        /* Forma circular */
-        padding: 6px 3px;
-        /* Ajuste no padding para um visual mais equilibrado */
-    }
-
-    .pagination .page-item.active .page-link {
-        background-color: #007bff;
-        border-color: #007bff;
-        color: white;
-    }
-
-    .pagination .page-item.disabled .page-link {
-        background-color: #e9ecef;
-        color: #6c757d;
-    }
-
-    /* Garantir que os cards tenham uma altura fixa e o conteúdo se ajuste adequadamente */
-    .card {
-        height: auto;
-        /* Defina uma altura fixa para os cards */
-    }
-
-    /* Para a imagem, defina um tamanho fixo e ajuste o conteúdo */
-    .card-img-top {
-        width: 100%;
-        height: 200px;
-        /* Altura fixa para as imagens */
-        object-fit: cover;
-        /* Faz com que a imagem se ajuste ao tamanho sem distorcer */
-    }
-
-    /* Truncar o nome e a descrição com "..." e permitir que o nome completo seja mostrado em um tooltip */
-    .card-title {
-        white-space: nowrap;
-        /* Não quebra a linha */
-        overflow: hidden;
-        /* Esconde o texto que ultrapassa */
-        text-overflow: ellipsis;
-        /* Adiciona "..." no final */
-        max-width: 250px;
-        /* Define o tamanho máximo para o nome */
-        text-align: center;
-        position: relative;
-    }
-
-    /* Tooltip para o nome completo do produto */
-    .card-title[data-bs-toggle="tooltip"]:hover::after {
-        content: attr(data-bs-original-title);
-        position: absolute;
-        top: 100%;
-        left: 0;
-        padding: 5px;
-        background-color: rgba(0, 0, 0, 0.7);
-        color: white;
-        font-size: 12px;
-        border-radius: 3px;
-        width: 100%;
-        z-index: 10;
-    }
 
     /* Garantir que o conteúdo da descrição também seja truncado corretamente */
     .card-text {
@@ -564,27 +506,12 @@
         /* Ajuste de largura */
     }
 
-    /* Para os campos de preço e quantidade, garantir que eles não ultrapassem o tamanho do card */
-    .card-body .row .col-6 {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        max-width: 100%;
-        /* Assegura que a largura seja ajustada */
-    }
-
-    /* Definir altura fixa para os inputs de preço, venda e quantidade */
-    .card-body input.form-control {
-        height: 38px;
-        /* Altura consistente para os inputs */
-        width: 100%;
-    }
 
     /* Definir largura fixa para os botões e garantir que eles ocupem toda a largura do card */
     .card-body button {
         width: 100%;
         padding: 10px;
-        font-size: 1em;
+        font-size: 1.2em;
     }
 
     /* Manter uma proporção de layout consistente dentro do card */
@@ -605,67 +532,16 @@
     .card-body .row {
         margin-bottom: 10px;
     }
+    .card-hover:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+    transform: scale(1.02);
+    z-index: 2;
+}
+
+.card-hover {
+    transition: all 0.2s ease-in-out;
+}
 
 
-    .category-filter {
-        max-height: 250px;
-        overflow-y: auto;
-        padding: 10px 0;
-        margin-bottom: 20px;
-        transition: all 0.3s ease;
-    }
-
-    .category-option {
-        display: flex;
-        align-items: center;
-        padding: 8px 0;
-        transition: background-color 0.2s ease;
-    }
-
-    .category-option:hover {
-        background-color: #f7f7f7;
-        cursor: pointer;
-    }
-
-    .category-option input[type="checkbox"] {
-        margin-right: 10px;
-        transform: scale(1.2);
-    }
-
-    #applyFilterBtn {
-        font-size: 16px;
-        font-weight: bold;
-        padding: 10px;
-        background-color: #007bff;
-        border-color: #007bff;
-        transition: background-color 0.3s, transform 0.3s;
-    }
-
-    #applyFilterBtn:hover {
-        background-color: #0056b3;
-        border-color: #0056b3;
-        transform: scale(1.05);
-    }
-
-    #perPageSelect {
-        margin-top: 10px;
-        padding: 5px;
-        font-size: 14px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-        transition: border-color 0.3s;
-    }
-
-    #perPageSelect:hover {
-        border-color: #007bff;
-    }
-
-    .dropdown-item {
-        padding: 10px;
-    }
-
-    #applyFilterBtn {
-        margin-top: 10px;
-    }
     </style>
     @endsection
