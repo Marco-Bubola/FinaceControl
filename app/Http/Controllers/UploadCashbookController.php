@@ -73,13 +73,11 @@ class UploadCashbookController extends Controller
             }
 
             if (!$validDate) {
-                \Log::error("Data inválida ou ausente: " . ($trans['date'] ?? 'null'));
                 return redirect()->route('cashbook.index')->with('error', 'Erro: Data inválida ou ausente em uma das transações.');
             }
 
             // Validar campos obrigatórios
             if (empty($trans['value']) || empty($trans['category_id']) || empty($trans['type_id'])) {
-                \Log::error("Campos obrigatórios ausentes: " . json_encode($trans));
                 return redirect()->route('cashbook.index')->with('error', 'Erro: Campos obrigatórios ausentes em uma das transações.');
             }
 
@@ -90,17 +88,6 @@ class UploadCashbookController extends Controller
             $cashbook->segment_id = $trans['segment_id'] ?? null;
             $cashbook->is_pending = $trans['is_pending'] ?? 0;
             $cashbook->note = $trans['note'] ?? null;
-
-            // Log dos dados antes de salvar
-            \Log::info("Tentando salvar transação: " . json_encode($cashbook->toArray()));
-
-            // Salvar e registrar logs de erro, se necessário
-            if (!$cashbook->save()) {
-                $success = false;
-                \Log::error("Erro ao salvar a transação: " . json_encode($cashbook->getErrors()));
-            } else {
-                \Log::info("Transação salva com sucesso: " . json_encode($cashbook->toArray()));
-            }
         }
 
         if ($success) {
@@ -154,7 +141,6 @@ class UploadCashbookController extends Controller
             '3/',
         ];
 
-        \Log::info("Texto extraído do PDF:\n" . $text); // Log do texto completo extraído do PDF
 
         foreach ($lines as $line) {
             $trimmedLine = trim($line);
@@ -163,12 +149,10 @@ class UploadCashbookController extends Controller
                 continue;
             }
 
-            \Log::info("Processando linha: " . $trimmedLine); // Log de cada linha processada
 
             $skipLine = false;
             foreach ($irrelevantKeywords as $keyword) {
                 if (stripos($trimmedLine, $keyword) !== false) {
-                    \Log::info("Linha ignorada devido à palavra-chave: " . $keyword); // Log de linhas ignoradas
                     $skipLine = true;
                     break;
                 }
@@ -185,7 +169,6 @@ class UploadCashbookController extends Controller
                         $currentTransaction['value'] = abs($currentTransaction['value']);
                     }
 
-                    \Log::info("Transação adicionada: " . json_encode($currentTransaction)); // Log da transação adicionada
                     $transactions[] = $currentTransaction;
                 }
 
@@ -196,9 +179,6 @@ class UploadCashbookController extends Controller
                     'category_id' => null,
                     'type_id' => null,
                 ];
-
-                \Log::info("Nova transação iniciada com data: " . $dateMatches[1]); // Log da nova transação iniciada
-
                 $trimmedLine = trim(str_replace($dateMatches[0], '', $trimmedLine));
             }
 
@@ -207,9 +187,6 @@ class UploadCashbookController extends Controller
                     $currentTransaction['value'] = str_replace(',', '.', str_replace('.', '', $valueMatches[1]));
                     $currentTransaction['value'] = abs($currentTransaction['value']);
                     $currentTransaction['type_id'] = (strpos($valueMatches[1], '-') === 0) ? '2' : '1';
-
-                    \Log::info("Valor extraído: " . $currentTransaction['value'] . ", Tipo: " . $currentTransaction['type_id']); // Log do valor extraído
-
                     $trimmedLine = trim(str_replace($valueMatches[0], '', $trimmedLine));
                 }
             }
@@ -227,7 +204,6 @@ class UploadCashbookController extends Controller
                 }
                 $currentTransaction['description'] .= trim($trimmedLine);
 
-                \Log::info("Descrição atualizada: " . $currentTransaction['description']); // Log da descrição atualizada
             }
         }
 
@@ -241,11 +217,9 @@ class UploadCashbookController extends Controller
                 $currentTransaction['value'] = abs($currentTransaction['value']);
             }
 
-            \Log::info("Última transação adicionada: " . json_encode($currentTransaction)); // Log da última transação adicionada
             $transactions[] = $currentTransaction;
         }
 
-        \Log::info("Transações extraídas: " . json_encode($transactions)); // Log de todas as transações extraídas
 
         return array_filter($transactions, function ($transaction) {
             return !empty($transaction['date']) && !is_null($transaction['value']);

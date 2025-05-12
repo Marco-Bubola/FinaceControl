@@ -25,8 +25,6 @@ class ProductUploadController extends Controller
         'products.*.image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
     ]);
 
-    // Log: Validação dos dados
-    \Log::info('Validação bem-sucedida dos produtos.');
 
     // Processar cada produto
     foreach ($request->products as $index => $product) {
@@ -36,30 +34,24 @@ class ProductUploadController extends Controller
         if ($request->hasFile("products.{$index}.image")) {
             $imagePath = $request->file("products.{$index}.image")->store('products', 'public');
             $imageName = basename($imagePath);
-            // Log: Imagem foi carregada
-            \Log::info("Imagem carregada para o produto {$product['product_code']}: {$imageName}");
         }
 
         $imageName = $imageName ?? 'product-placeholder.png'; // Se a imagem não for fornecida, usa a imagem padrão.
 
         try {
-            // Verificar se já existe um produto com o mesmo product_code e preço para o usuário logado
+
             $existingProduct = Product::where('product_code', $product['product_code'])
                 ->where('price', $product['price'])
                 ->where('price_sale', $product['price_sale'])
-                ->where('user_id', Auth::id()) // Verifica se é do usuário logado
+                ->where('user_id', Auth::id())
                 ->first();
 
             if ($existingProduct) {
-                // Log: Produto já existe
-                \Log::info("Produto existente encontrado para o código {$product['product_code']} do usuário " . Auth::id());
 
                 // Se o preço de venda for o mesmo, apenas atualiza a quantidade
                 if ($existingProduct->price_sale == $product['price_sale']) {
                     $existingProduct->stock_quantity += $product['quantity']; // Aumenta a quantidade
                     $existingProduct->save(); // Salva as alterações
-                    // Log: Quantidade do produto atualizada
-                    \Log::info("Quantidade do produto {$product['product_code']} atualizada para {$existingProduct->stock_quantity}.");
                 } else {
                     // Caso o preço de venda seja diferente, cria um novo produto com o mesmo código
                     Product::create([
@@ -71,15 +63,11 @@ class ProductUploadController extends Controller
                         'product_code' => $product['product_code'],
                         'status' => $product['status'],
                         'image' => $imageName,
-                        'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
+                        'user_id' => Auth::check() ? Auth::id() : null,
                         'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
                     ]);
-                    // Log: Novo produto criado devido à mudança no preço de venda
-                    \Log::info("Novo produto criado para o código {$product['product_code']} com preço de venda alterado.");
                 }
             } else {
-                // Log: Produto não encontrado, criando novo produto
-                \Log::info("Produto não encontrado para o código {$product['product_code']} do usuário " . Auth::id() . ", criando novo produto.");
 
                 // Se o produto não existe, cria um novo produto
                 Product::create([
@@ -91,11 +79,9 @@ class ProductUploadController extends Controller
                     'product_code' => $product['product_code'],
                     'status' => $product['status'],
                     'image' => $imageName,
-                    'user_id' => Auth::check() ? Auth::id() : null, // Associar ao usuário logado
+                    'user_id' => Auth::check() ? Auth::id() : null,
                     'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
                 ]);
-                // Log: Novo produto criado
-                \Log::info("Novo produto criado com o código {$product['product_code']}.");
             }
         } catch (\Exception $e) {
             // Log: Erro durante o processamento
@@ -109,8 +95,6 @@ class ProductUploadController extends Controller
         }
     }
 
-    // Log: Sucesso ao salvar os produtos
-    \Log::info('Produtos salvos com sucesso.');
 
     // Redireciona para a lista de produtos após o sucesso
     return redirect()->route('products.index')->with('success', 'Produtos salvos com sucesso!');
@@ -187,7 +171,6 @@ class ProductUploadController extends Controller
             return $filteredText;
         }
 
-        Log::debug('Não foi possível encontrar as palavras-chave no texto.');
         return '';
     }
     private function separateProducts($text)

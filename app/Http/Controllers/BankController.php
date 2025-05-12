@@ -86,7 +86,7 @@ class BankController extends Controller
                             'invoice_date' => $invoice->invoice_date,
                             'category_hexcolor_category' => $invoice->category->hexcolor_category ?? '#cccccc',
                             'category_icone' => $invoice->category->icone ?? 'fas fa-question',
-                       
+
                         ];
                     });
                 }),
@@ -101,7 +101,7 @@ class BankController extends Controller
                     'labels' => $dailyData->keys()->toArray(), // Dias do mês
                     'values' => $dailyData->values()->toArray(), // Valores das faturas por dia
                 ],
-            
+
             ]);
         }
 

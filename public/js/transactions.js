@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
     let currentMonth = window.currentMonth;
     let currentYear = window.currentYear;
-  
+
     // Função para formatar o título do mês e ano
     function updateMonthTitle(month, year) {
       const monthNames = [
@@ -21,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const monthTitle = document.getElementById("monthTitle");
       monthTitle.textContent = `${monthNames[month - 1]} de ${year}`;
     }
-  
+
     // Função para carregar transações dinamicamente
     function loadTransactions(month, year) {
       fetch(`/banks?month=${month}&year=${year}`, {
@@ -39,14 +39,14 @@ document.addEventListener("DOMContentLoaded", function () {
           const container = document.getElementById("transactionsContainer");
           const totalMonthElement = document.getElementById("totalMonth");
           container.innerHTML = ""; // Limpa o conteúdo atual
-  
+
           if (Object.keys(data.groupedInvoices).length === 0) {
             container.innerHTML =
               "<p>Você ainda não tem transações para este mês.</p>";
           } else {
             const row = document.createElement("div");
             row.className = "row";
-  
+
             // Itera sobre todas as transações do mês
             Object.values(data.groupedInvoices).forEach((invoices) => {
               invoices.forEach((invoice) => {
@@ -54,16 +54,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 row.innerHTML += card;
               });
             });
-  
+
             container.appendChild(row);
           }
-  
+
           // Atualiza o valor total do mês
           totalMonthElement.textContent = `$ ${data.totalMonth.toFixed(2)}`;
-  
+
           // Atualizar o título do mês
           updateMonthTitle(month, year);
-  
+
           // Atualizar os gráficos
           updateChart(data.totals, data.totalMonth);
           // Atualizar o gráfico de linha com os dados diários
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .catch((error) => console.error("Erro ao carregar transações:", error));
     }
-  
+
     // Função para alterar o mês e o ano
     function changeMonth(direction) {
       if (direction === "prev") {
@@ -83,22 +83,22 @@ document.addEventListener("DOMContentLoaded", function () {
       }
       loadTransactions(currentMonth, currentYear);
     }
-  
+
     // Inicializar o título com o mês e ano atuais
     updateMonthTitle(currentMonth, currentYear);
-  
+
     // Carregar as transações iniciais
     loadTransactions(currentMonth, currentYear);
-  
+
     // Eventos para os botões de navegação
     document.getElementById("prevMonth").addEventListener("click", function () {
       changeMonth("prev");
     });
-  
+
     document.getElementById("nextMonth").addEventListener("click", function () {
       changeMonth("next");
     });
-  
+
     function renderTransactionCard(transaction) {
       const borderColor = transaction.type_id == 2 ? "danger" : "success";
       const categoryColor = transaction.category_hexcolor_category || "#cccccc";
@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const transactionValue = `${
           transaction.type_id == 2 ? "-" : "+"
       } R$ ${Math.abs(transaction.value).toFixed(2)}`;
-  
+
       return `
           <div class="col-md-4">
               <div class="card border" style="border: 3px solid ${categoryColor};">
@@ -137,22 +137,21 @@ document.addEventListener("DOMContentLoaded", function () {
           </div>
       `;
     }
-  
+
    // Função para atualizar o gráfico de categorias
    function updateCategoryChart(categories, totalInvoices) {
-      console.log('Dados recebidos para updateCategoryChart:', categories);
-  
+
       // Converte o objeto de categorias em um array, se necessário
       if (categories && typeof categories === 'object' && !Array.isArray(categories)) {
           categories = Object.values(categories);
       }
-  
+
       const ctx = document.getElementById('updateCategoryChart');
       if (!ctx) {
           console.error('Elemento canvas para o gráfico de categorias não encontrado.');
           return;
       }
-  
+
       // Se não houver dados, mostra a mensagem "Sem dados" e cria o gráfico com valor zero
       if (!categories || categories.length === 0) {
           console.warn('Nenhum dado encontrado para o gráfico de categorias.');
@@ -161,20 +160,20 @@ document.addEventListener("DOMContentLoaded", function () {
       } else {
           document.getElementById('no-data-message').style.display = 'none'; // Esconde a mensagem "Sem dados"
       }
-  
+
       // Se já existir um gráfico, destrua-o antes de criar um novo
       if (window.categoryChart) {
           window.categoryChart.destroy();
       }
-  
+
       // Processa os dados para o gráfico
       const categoryData = categories.map(category => category.value);
       const labels = categories.map(category => category.label);
-  
+
       // Ajusta dinamicamente o tamanho do gráfico com base no número de categorias
       const chartHeight = Math.max(300, categories.length * 30);
       ctx.height = chartHeight;
-  
+
       // Cria o gráfico
       try {
           window.categoryChart = new Chart(ctx.getContext('2d'), {
@@ -223,11 +222,11 @@ document.addEventListener("DOMContentLoaded", function () {
                       ctx.font = 'bold 20px Arial';
                       ctx.textAlign = 'center';
                       ctx.textBaseline = 'middle';
-  
+
                       // Exibe o texto "Total de Faturas"
                       ctx.fillStyle = '#333';
                       ctx.fillText('Total de Faturas', width / 2, chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2 - 10);
-  
+
                       // Exibe o valor total no centro
                       ctx.fillStyle = '#4caf50';
                       ctx.fillText(`R$ ${totalInvoices.toFixed(2)}`, width / 2, chart.chartArea.top + (chart.chartArea.bottom - chart.chartArea.top) / 2 + 15);
@@ -239,34 +238,33 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error('Erro ao criar o gráfico de categorias:', error);
       }
   }
-  
+
   // Atualiza o gráfico e os dados do mês
   $('.btn-change-month').on('click', function(e) {
       e.preventDefault();
       const month = $(this).data('month');
       updateMonthData(month);
   });
-  
+
   // Função para adicionar o gráfico de linha com dados reais
   function addLineChart(dailyData) {
-      console.log('Dados recebidos para addLineChart:', dailyData);
-  
+
       const ctx = document.getElementById('lineChart');
       if (!ctx) {
           console.error('Elemento canvas para o gráfico de linha não encontrado.');
           return;
       }
-  
+
       const labels = dailyData.labels || []; // Dias do mês
       const dataset = dailyData.values || []; // Valores reais das faturas por dia
-  
+
       if (labels.length === 0 || dataset.length === 0) {
           console.warn('Nenhum dado encontrado para o gráfico de linha.');
       }
-  
+
       // Gera cores diferentes para cada dia
       const colors = labels.map((_, index) => `hsl(${(index * 360) / labels.length}, 70%, 50%)`);
-  
+
       const chartData = {
           labels: labels,
           datasets: [{
@@ -281,7 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
               tension: 0.4
           }]
       };
-  
+
       const config = {
           type: 'line',
           data: chartData,
@@ -306,12 +304,12 @@ document.addEventListener("DOMContentLoaded", function () {
               }
           }
       };
-  
+
       // Verifica se o gráfico já existe antes de destruí-lo
       if (window.lineChart && typeof window.lineChart.destroy === 'function') {
           window.lineChart.destroy();
       }
-  
+
       // Cria o novo gráfico
       try {
           window.lineChart = new Chart(ctx.getContext('2d'), config);
@@ -319,11 +317,11 @@ document.addEventListener("DOMContentLoaded", function () {
           console.error('Erro ao criar o gráfico de linha:', error);
       }
   }
-  
+
   // Função para atualizar os gráficos
   function updateChart(categoryData, totalInvoices) {
       updateCategoryChart(categoryData, totalInvoices); // Atualiza o gráfico de categorias
       addLineChart(categoryData); // Atualiza o gráfico de linha
   }
-  
+
   });

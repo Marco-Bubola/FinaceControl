@@ -14,10 +14,8 @@ class InvoiceController extends Controller
     public function index(Request $request)
     {
         try {
-            \Log::info('Iniciando método index com parâmetros:', $request->all());
 
             $bank = Bank::findOrFail($request->bank_id);
-            \Log::info('Banco encontrado:', ['bank' => $bank]);
 
             $categories = Category::all();
             $banks = Bank::all(); // Adicionado para listar todos os bancos
@@ -43,7 +41,6 @@ class InvoiceController extends Controller
                 ->whereBetween('invoice_date', [$currentStartDate, $currentEndDate])
                 ->orderBy('invoice_date', 'asc') // Ordena por data
                 ->get();
-            \Log::info('Faturas encontradas:', ['invoices' => $invoices]);
 
             // Gera os dados diários para o gráfico de linhas
             $dailyData = $invoices->groupBy(function ($invoice) {
@@ -120,7 +117,6 @@ class InvoiceController extends Controller
                         ];
                     });
 
-                    \Log::info('Dados de categorias enviados para o gráfico:', $categoriesData->toArray()); // Log para depuração
 
                     return response()->json([
                         'transactionsHtml' => view('invoice.transactions', compact('eventsGroupedByMonth', 'categories', 'banks', 'clients'))->render(), // Incluído $banks e $clients
@@ -139,12 +135,10 @@ class InvoiceController extends Controller
                         'clients' => $clients, // Passa os clientes para a view
                     ]);
                 } catch (\Exception $e) {
-                    \Log::error('Erro ao carregar os dados do mês:', ['error' => $e->getMessage()]);
                     return response()->json(['error' => 'Erro ao carregar os dados do mês.'], 500);
                 }
             }
 
-            \Log::info('Dados de categorias enviados para a view:', $categoriesData->toArray()); // Log para depuração
 
             return view('invoice.index', compact(
                 'bank',
@@ -167,48 +161,53 @@ class InvoiceController extends Controller
                 'categoriesData' // Passando as categorias para a view
             ));
         } catch (\Exception $e) {
-            \Log::error('Erro no método index:', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Erro ao carregar os dados do mês.'], 500);
         }
     }
 
-    public function store(Request $request)
-    {
-        $validated = $request->validate([
-            'id_bank' => 'required|exists:banks,id_bank',
-            'description' => 'required|string|max:255',
-            'value' => 'required|numeric',
-            'installments' => 'required|integer|min:1',
-            'user_id' => 'required|exists:users,id',
-            'category_id' => 'required|exists:category,id_category',
-            'invoice_date' => 'required|date',
-            'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
-        ]);
+   public function store(Request $request)
+{
+    $validated = $request->validate([
+        'id_bank' => 'required|exists:banks,id_bank',
+        'description' => 'required|string|max:255',
+        'value' => 'required|string|max:255',
+        'installments' => 'nullable|string|max:255',
+        'user_id' => 'required|exists:users,id',
+        'category_id' => 'required|exists:category,id_category',
+        'invoice_date' => 'required|date',
+        'client_id' => 'nullable|exists:clients,id',
+    ]);
 
-        Invoice::create($validated);
+    // Converter vírgula para ponto no valor
+    $validated['value'] = str_replace(',', '.', $validated['value']);
 
-        return redirect()->route('invoices.index', ['bank_id' => $request->id_bank])
-            ->with('success', 'Transferência adicionada com sucesso!');
-    }
+    Invoice::create($validated);
 
-    public function update(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'description' => 'required|string|max:255',
-            'value' => 'required|numeric',
-            'installments' => 'required|integer|min:1',
-            'category_id' => 'required|exists:category,id_category',
-            'invoice_date' => 'required|date',
-            'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
-        ]);
+    return redirect()->route('invoices.index', ['bank_id' => $request->id_bank])
+        ->with('success', 'Transferência adicionada com sucesso!');
+}
 
-        $invoice = Invoice::findOrFail($id);
-        $invoice->update($validated);
 
-        // Redireciona para a página correta com o id_bank
-        return redirect()->route('invoices.index', ['bank_id' => $invoice->id_bank])
-            ->with('success', 'Transação atualizada com sucesso!');
-    }
+public function update(Request $request, $id)
+{
+    $validated = $request->validate([
+        'description' => 'required|string|max:255',
+        'value' => 'required|string|max:255',
+        'installments' => 'nullable|string|max:255',
+        'category_id' => 'required|exists:category,id_category',
+        'invoice_date' => 'required|date',
+        'client_id' => 'nullable|exists:clients,id',
+    ]);
+
+    // Converter vírgula para ponto no valor
+    $validated['value'] = str_replace(',', '.', $validated['value']);
+
+    $invoice = Invoice::findOrFail($id);
+    $invoice->update($validated);
+
+    return redirect()->route('invoices.index', ['bank_id' => $invoice->id_bank])
+        ->with('success', 'Transação atualizada com sucesso!');
+}
 
     public function destroy($id)
     {
@@ -220,34 +219,37 @@ class InvoiceController extends Controller
             ->with('success', 'Transação excluída com sucesso!');
     }
 
-    public function copy(Request $request, $id)
-    {
-        $validated = $request->validate([
-            'id_bank' => 'required|exists:banks,id_bank',
-            'description' => 'required|string|max:255',
-            'value' => 'required|numeric',
-            'installments' => 'required|integer|min:1',
-            'category_id' => 'required|exists:category,id_category',
-            'invoice_date' => 'required|date',
-            'divisions' => 'required|integer|min:1', // Validação para o número de divisões
-        ]);
+public function copy(Request $request, $id)
+{
+    $validated = $request->validate([
+        'id_bank' => 'required|exists:banks,id_bank',
+        'description' => 'required|string|max:255',
+        'value' => 'required|string|max:255', // Alterado de numeric para string
+        'installments' => 'required|string|max:255',
+        'category_id' => 'required|exists:category,id_category',
+        'invoice_date' => 'required|date',
+        'divisions' => 'required|integer|min:1',
+    ]);
 
-        $originalInvoice = Invoice::findOrFail($id);
+    // Corrigir formato decimal
+    $validated['value'] = str_replace(',', '.', $validated['value']);
 
-        // Salva a nova fatura com o valor já dividido
-        Invoice::create([
-            'id_bank' => $validated['id_bank'],
-            'description' => $validated['description'],
-            'value' => $validated['value'], // Valor já dividido
-            'installments' => $validated['installments'],
-            'category_id' => $validated['category_id'],
-            'invoice_date' => $validated['invoice_date'],
-            'user_id' => $originalInvoice->user_id, // Mantém o mesmo usuário
-        ]);
+    $originalInvoice = Invoice::findOrFail($id);
 
-        return redirect()->route('invoices.index', ['bank_id' => $validated['id_bank']])
-            ->with('success', 'Transação copiada com sucesso!');
-    }
+    Invoice::create([
+        'id_bank' => $validated['id_bank'],
+        'description' => $validated['description'],
+        'value' => $validated['value'], // já corrigido
+        'installments' => $validated['installments'],
+        'category_id' => $validated['category_id'],
+        'invoice_date' => $validated['invoice_date'],
+        'user_id' => $originalInvoice->user_id,
+    ]);
+
+    return redirect()->route('invoices.index', ['bank_id' => $validated['id_bank']])
+        ->with('success', 'Transação copiada com sucesso!');
+}
+
 
     public function edit($id)
     {

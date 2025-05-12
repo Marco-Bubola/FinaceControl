@@ -16,7 +16,6 @@ class SaleController extends Controller
 {
     public function index(Request $request)
     {
-        // Obtém o ID do usuário logado
         $userId = auth()->id();  // Ou Auth::id()
 
         // Inicializa a consulta para vendas, filtrando por user_id
@@ -71,7 +70,6 @@ class SaleController extends Controller
 
         $products = Product::where('user_id', $userId)->get(); // Filtra os produtos associados ao usuário
 
-        // Carregar clientes associados ao usuário logado para o filtro
         $clients = Client::where('user_id', $userId)->get(); // Filtra os clientes associados ao usuário
 
         // Passar vendas, clientes e produtos para a view

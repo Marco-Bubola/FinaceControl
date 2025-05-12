@@ -224,15 +224,15 @@ function renderTransactionCard(transaction) {
                                     ${transactionValue}
                                 </div>
                                 <div class="d-flex">
-                                    <button class="btn btn-warning d-flex align-items-center justify-content-center" 
-                                        style="width: 30px; height: 30px;" 
-                                        data-bs-toggle="modal" data-bs-target="#editTransactionModal" 
+                                    <button class="btn btn-warning d-flex align-items-center justify-content-center"
+                                        style="width: 30px; height: 30px;"
+                                        data-bs-toggle="modal" data-bs-target="#editTransactionModal"
                                         onclick="loadEditModal(${transaction.id})">
                                         <i class="fas fa-edit"></i>
                                     </button>
-                                    <button class="btn btn-danger  d-flex align-items-center justify-content-center" 
-                                        style="width: 30px; height: 30px;" 
-                                        data-bs-toggle="modal" data-bs-target="#deleteTransactionModal" 
+                                    <button class="btn btn-danger  d-flex align-items-center justify-content-center"
+                                        style="width: 30px; height: 30px;"
+                                        data-bs-toggle="modal" data-bs-target="#deleteTransactionModal"
                                         onclick="loadDeleteModal(${transaction.id}, '${transaction.description}')">
                                         <i class="fas fa-trash"></i>
                                     </button>
@@ -394,7 +394,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('uploadCashbookModal');
-    console.log(modal); // Deve exibir o elemento do modal no console
     if (!modal) {
         console.error('O modal uploadCashbookModal não foi encontrado no DOM.');
     }

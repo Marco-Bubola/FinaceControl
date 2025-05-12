@@ -144,7 +144,6 @@ $(document).ready(function() {
     function updateMonthData(month) {
         const bankId = "{{ $bank->id_bank }}";
 
-        console.log('Enviando requisição AJAX com:', { bank_id: bankId, month });
 
         $.ajax({
             url: "{{ route('invoices.index') }}",
@@ -154,7 +153,6 @@ $(document).ready(function() {
                 month: month
             },
             success: function(response) {
-                console.log('Dados recebidos do backend:', response);
 
                 // Verifica se os dados diários estão presentes
                 if (!response.dailyLabels || !response.dailyValues) {

@@ -41,23 +41,21 @@ class UploadInvoiceController extends Controller
             return response()->json(['success' => false, 'message' => 'Formato de arquivo não suportado.']);
         }
 
-        // Log das transações extraídas do arquivo
-        Log::info('Transações extraídas: ', $transactions);
 
         // Recuperar categorias ativas do usuário
         $categories = Category::where('is_active', 1)
-            ->where('user_id', auth()->id()) // Garantir que estamos pegando apenas categorias do usuário logado
+            ->where('user_id', auth()->id())
             ->get(['id_category as id', 'name']);
 
         // Recuperar todos os clientes
-        $clients = Client::all(['id', 'name']); // Certifique-se de que o modelo Client está importado
+        $clients = Client::all(['id', 'name']);
 
         // Retornar a resposta como JSON
         return response()->json([
             'success' => true,
             'transactions' => $transactions,
             'categories' => $categories,
-            'clients' => $clients, // Inclua os clientes na resposta
+            'clients' => $clients,
         ]);
     }
 
@@ -70,18 +68,18 @@ class UploadInvoiceController extends Controller
             'transactions.*.description' => 'required|string|max:255',
             'transactions.*.installments' => 'nullable|string|max:255',
             'transactions.*.category_id' => 'required|exists:category,id_category',
-            'transactions.*.client_id' => 'required|exists:clients,id', // Validação para client_id
+            'transactions.*.client_id' => 'required|exists:clients,id',
         ]);
 
         foreach ($request->transactions as $transaction) {
             Invoice::create([
-                'id_bank' => $request->id_bank,  // O id_bank está sendo passado corretamente
+                'id_bank' => $request->id_bank,
                 'invoice_date' => $transaction['date'],
                 'value' => $transaction['value'],
                 'description' => $transaction['description'],
                 'installments' => $transaction['installments'] ?? null,
                 'category_id' => $transaction['category_id'],
-                'client_id' => $transaction['client_id'], // Salva o client_id
+                'client_id' => $transaction['client_id'],
                 'user_id' => auth()->id(),
             ]);
         }
@@ -127,7 +125,6 @@ class UploadInvoiceController extends Controller
             'AUTO CENTER' => '1023',
             'AIRBNB' => '1027',
             'BYMA' => '1027',
-
             'MERCADOLIVRE' => '1024',
             'SHOPEE' => '1024',
             'Pagamentos' => '1025',
@@ -139,34 +136,30 @@ class UploadInvoiceController extends Controller
             'Mega Motos' => '1030',
             'FACEBK' => '1031',
             'SHOPIFY' => '1031',
-
-            // Novas adições para garantir maior cobertura:
-            'Skyfit' => '1028',  // Se o nome aparecer em transações de supermercado
-
+            'Skyfit' => '1028',
             'ANTONELLI' => '1021',
-            'Agro' => '1021',     // Agro pode ser relacionado a supermercados ou mercados
-            'Amazon Prime' => '1029', // Se for referente ao serviço de streaming
+            'Agro' => '1021',
+            'Amazon Prime' => '1029',
             'Ton Central' => '1018',
-            'Bear' => '1018', // Pode ser uma referência a bares ou restaurantes
-            'Zeferinoltda' => '1023', // Farmácia (considerando o nome da empresa)
-            'Tabacaria' => '1018', // Categoria de farmácias ou tabacarias
-            'Spotify' => '1029',   // Pagamentos relacionados a serviços de streaming
-            'Cubatao' => '1021',   // Pode se referir a supermercado ou mercado
-            'Fabioluizdagnoni' => '1026', // Nome específico
-            'Supermercado' => '1021', // Generalização para supermercados
-            'Lojaehcases' => '1024',  // Considerando como uma loja online (Shopee)
-            'Melimais' => '1025', // Pode ser considerado pagamento
-            'Pg' => '1018',         // Pode se referir a restaurante ou bar (Ton Central Beer)
-            'Tabacaria Jb' => '1018',  // Farmácia ou loja de tabaco
-            'Supermercado Jardim P' => '1021', // Supermercado
-            'Auto Posto' => '1022', // Auto posto (N. R. e Arena)
-            'sem Parar' => '1025', // Pagamentos (serviços recorrentes)
-            'Pandulanches' => '1021',  // Supermercado ou alimentação
+            'Bear' => '1018',
+            'Zeferinoltda' => '1023',
+            'Tabacaria' => '1018',
+            'Spotify' => '1029',
+            'Cubatao' => '1021',
+            'Fabioluizdagnoni' => '1026',
+            'Supermercado' => '1021',
+            'Lojaehcases' => '1024',
+            'Melimais' => '1025',
+            'Pg' => '1018',
+            'Tabacaria Jb' => '1018',
+            'Supermercado Jardim P' => '1021',
+            'Auto Posto' => '1022',
+            'sem Parar' => '1025',
+            'Pandulanches' => '1021',
         ];
 
         if (($handle = fopen($csvPath, 'r')) !== false) {
             $headers = fgetcsv($handle, 1000, ',');
-            Log::info('Cabeçalho CSV:', ['headers' => $headers]);
 
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                 // Limpeza de dados
@@ -174,7 +167,6 @@ class UploadInvoiceController extends Controller
                     return trim(str_replace('"', '', $item)); // Remover aspas e espaços extras
                 }, $data);
 
-                Log::info('Linha CSV limpa:', ['data' => $data]);
 
                 if (count($data) >= 5) {
                     // Adaptar para os campos necessários
@@ -221,7 +213,6 @@ class UploadInvoiceController extends Controller
                     // Verificação e formatação das parcelas
                     $transaction['installments'] = $transaction['installments'] ?? 'Compra à vista';
 
-                    Log::info('Transação após processamento:', ['transaction' => $transaction]);
 
                     // Adicionar transação à lista se o valor for maior que 0, e a data e descrição estiverem presentes
                     if ($transaction['value'] > 0 && !empty($transaction['invoice_date']) && !empty($transaction['description'])) {
@@ -235,7 +226,6 @@ class UploadInvoiceController extends Controller
             }
 
             fclose($handle);
-            Log::info('Transações extraídas do CSV:', ['transactions' => $transactions]);
         } else {
             Log::error('Erro ao abrir o arquivo CSV:', ['csv_path' => $csvPath]);
         }
@@ -247,9 +237,6 @@ class UploadInvoiceController extends Controller
             $transaction['descricao'] = $transaction['description'] ?? '';
             $transaction['parcelas'] = $transaction['installments'] ?? '-';
         }
-
-        // Log para verificar as transações extraídas
-        Log::info('Transações extraídas do PDF:', $transactions);
 
         return $transactions;
     }
@@ -281,10 +268,6 @@ class UploadInvoiceController extends Controller
         $pdf = new Parser();
         $document = $pdf->parseFile($pdfPath);
         $text = $document->getText();
-
-        // Log para verificar o texto extraído do PDF
-        Log::info('Texto extraído do PDF:', ['text' => $text]);
-
         // Verificar se o texto foi extraído corretamente
         if (empty($text)) {
             Log::error('Erro: Nenhum texto extraído do PDF.');
@@ -293,7 +276,6 @@ class UploadInvoiceController extends Controller
 
         // Explodir o texto em linhas
         $lines = explode("\n", $text);
-        Log::info('Linhas extraídas do texto:', ['lines' => $lines]);
 
         $currentTransaction = [
             'id_bank' => null,
@@ -406,25 +388,20 @@ class UploadInvoiceController extends Controller
 
         // Função para determinar a categoria com base na descrição
         $determineCategoryId = function ($description, $categoryMapping) {
-            Log::info("Determinando categoria para a descrição: ", ['description' => $description]);
 
             foreach ($categoryMapping as $keyword => $categoryId) {
                 if (stripos($description, $keyword) !== false) {
-                    Log::info("Categoria encontrada: ", ['category_id' => $categoryId, 'keyword' => $keyword]);
                     return $categoryId;
                 }
             }
 
-            Log::info("Categoria não encontrada, retornando default: ", ['default_category_id' => '1026']);
-            return '1026'; // Categoria padrão caso não encontre nenhuma correspondência
+           return '1026'; // Categoria padrão caso não encontre nenhuma correspondência
         };
 
         // Processa cada linha do texto extraído do PDF
         foreach ($lines as $line) {
             $trimmedLine = trim($line);
 
-            // Log para verificar cada linha processada
-            Log::info('Processando linha:', ['line' => $trimmedLine]);
 
             if (empty($trimmedLine)) {
                 continue;
@@ -485,7 +462,6 @@ class UploadInvoiceController extends Controller
                 $shouldExcludeLine = false;
                 foreach ($excludedKeywords as $keyword) {
                     if (stripos($trimmedLine, $keyword) !== false) {
-                        Log::info('Excluindo linha da descrição devido à palavra-chave', ['line' => $trimmedLine, 'keyword' => $keyword]);
                         $shouldExcludeLine = true;
                         break; // Se encontrar qualquer palavra-chave, a linha será excluída
                     }
@@ -537,10 +513,6 @@ class UploadInvoiceController extends Controller
             $transaction['descricao'] = $transaction['description'] ?? '';
             $transaction['parcelas'] = $transaction['installments'] ?? '-';
         }
-
-        // Log para verificar as transações extraídas
-        Log::info('Transações extraídas do PDF:', $transactions);
-
         return $transactions;
     }
 
