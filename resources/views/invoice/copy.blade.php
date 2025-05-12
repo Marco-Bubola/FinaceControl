@@ -24,13 +24,11 @@
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="installments_copy{{ $invoice->id_invoice }}"
-                                            class="form-label">Parcelas</label>
-                                        <input type="number" class="form-control"
-                                            id="installments_copy{{ $invoice->id_invoice }}" name="installments"
-                                            value="{{ $invoice->installments }}" required>
-                                    </div>
+                                   <div class="col-md-6 mb-3">
+                            <label for="installments{{ $invoice->id_invoice }}" class="form-label">Parcelas</label>
+                            <input type="text" class="form-control" id="installments{{ $invoice->id_invoice }}"
+                                name="installments" value="{{ $invoice->installments }}" required>
+                        </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="category_id_copy{{ $invoice->id_invoice }}"
                                             class="form-label">Categoria</label>
@@ -64,14 +62,7 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="col-md-6 mb-3">
-                                        <label for="divisions_copy{{ $invoice->id_invoice }}" class="form-label">Dividir em
-                                            Quantas Partes?</label>
-                                        <input type="number" class="form-control" id="divisions_copy{{ $invoice->id_invoice }}"
-                                            name="divisions" value="1" min="1" required>
-                                    </div>
-                                </div>
+
                                 <div class="modal-footer justify-content-center">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                                     <button type="submit" class="btn btn-success">Copiar</button>

@@ -19,9 +19,30 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label for="value{{ $invoice->id_invoice }}" class="form-label">Valor</label>
-                            <input type="number" class="form-control" id="value{{ $invoice->id_invoice }}"
-                                name="value" value="{{ $invoice->value }}" step="0.01" required>
+                            <input type="text" class="form-control @error('value') is-invalid @enderror" id="value{{ $invoice->id_invoice }}"
+                                name="value" value="{{ $invoice->value }}" required>
+                            @error('value')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
                         </div>
+
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const input = document.getElementById('value{{ $invoice->id_invoice }}');
+                                let rawValue = ''; // guarda os dígitos sem ponto ou vírgula
+
+                                input.addEventListener('input', function (e) {
+                                    // Remove tudo que não for número
+                                    rawValue = input.value.replace(/\D/g, '');
+
+                                    // Converte para valor com 2 casas decimais
+                                    const numericValue = (parseInt(rawValue || '0', 10) / 100).toFixed(2);
+
+                                    // Formata com vírgula (se preferir ponto, altere para .)
+                                    input.value = numericValue.replace('.', ',');
+                                });
+                            });
+                        </script>
                     </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
