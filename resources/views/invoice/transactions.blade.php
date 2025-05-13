@@ -3,7 +3,7 @@
     <div class="row">
         <!-- Container flex para os cards -->
         @foreach ($monthlyInvoices as $invoice)
-            <div class="col-md-4 mt-4">
+            <div class="col-md-4 ">
                 <!-- 3 cards por linha -->
                 <div class="card border-0 shadow-sm custom-transaction-card">
                     <div class="card-body d-flex flex-column position-relative">

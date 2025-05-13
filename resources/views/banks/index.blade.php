@@ -7,7 +7,7 @@
     @include('message.alert')
     <div class="row">
 
-        <div class="col-lg-12 mb-4 ">
+        <div class="col-lg-12 ">
             <div class="card shadow-none" style="background-color: transparent; border: none; ">
                 <div class="card-header" style="background-color: transparent; border-bottom: none;">
                     <div class="row">
@@ -22,7 +22,7 @@
                 <div class="card-body">
                     <div class="row">
                         @foreach ($banks as $bank)
-                        <div class="col-md-3 mb-4">
+                        <div class="col-md-3">
                             <div
                                 class="card card-body border shadow-sm border-radius-lg d-flex align-items-center flex-row">
 
@@ -64,7 +64,7 @@
         </div>
         <div class="col-md-12  px-3">
             <div class="card  h-100  shadow-none" style="background-color: transparent; border: none;">
-                <div class="card-header  pb-0 px-3" style="background-color: transparent; border-bottom: none;">
+                <div class="card-header  pb-0" style="background-color: transparent; border-bottom: none;">
                     <div class="row">
                         <div class="col-md-3">
                             <h6 class="mb-0">Suas Transações</h6>
@@ -94,7 +94,7 @@
 
 
                     <!-- Informações adicionais -->
-                    <div class="row text-center mb-3">
+                    <div class="row text-center ">
                         <div class="col-md-3">
                             <div class="card bg-dark text-white shadow-sm">
                                 <div class="card-body">
@@ -141,8 +141,7 @@
 
                 <div class="row">
                     <div class="col-md-8">
-                        <!-- Added missing column class -->
-                        <!-- Contêiner de transações -->
+
                         <div class="card-body" id="transactionsContainer">
                         </div>
                     </div>
