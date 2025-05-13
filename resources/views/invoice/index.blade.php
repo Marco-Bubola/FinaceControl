@@ -6,7 +6,7 @@
     <div class="row">
         <div class="col-md-12">
             <!-- Cartão com Informações à Esquerda -->
-            <div class="card shadow-none" style="background-color: transparent; border: none; margin-top: 0;">
+            <div class="card shadow-none" style="background-color: transparent; border: none; padding-top: 0; margin-top: 0;">
                 <div class="overflow-hidden position-relative"
                     style="background-color: transparent; border: none; margin-top: 0;">
                     <div class="card-body position-relative" style="margin-top: 0; padding-top: 0;">
@@ -220,7 +220,6 @@ $(document).ready(function() {
         }
         // Se não houver dados, mostra a mensagem "Sem dados" e cria o gráfico com valor zero
         if (!categories || categories.length === 0) {
-            console.warn('Nenhum dado encontrado para o gráfico de categorias.');
             document.getElementById('no-data-message').style.display = 'block'; // Mostra a mensagem "Sem dados"
             categories = [{
                 label: 'Nenhuma Categoria',

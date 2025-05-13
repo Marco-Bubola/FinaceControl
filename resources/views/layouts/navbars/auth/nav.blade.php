@@ -1,6 +1,6 @@
 <!-- Navbar -->
-<nav class="navbar navbar-main navbar-expand-lg px-0 mx-4 shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
-    <div class="container-fluid py-1 px-3">
+<nav class="navbar navbar-main navbar-expand-lg px-0  shadow-none border-radius-xl" id="navbarBlur" navbar-scroll="true">
+    <div class="container-fluid py-1 ">
         <nav aria-label="breadcrumb">
             <div class="d-flex align-items-center "> <!-- Adicionado mt-2 para espaçamento superior -->
                 <!-- Botão Voltar -->

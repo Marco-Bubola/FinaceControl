@@ -62,7 +62,7 @@
 </head>
 
 <body
-    class="g-sidenav-show  bg-gray-100{{ (\Request::is('rtl') ? 'rtl' : (Request::is('virtual-reality') ? 'virtual-reality' : '')) }} ">
+    class="g-sidenav-show  bg-gray-100">
     @auth
     @yield('auth')
     @endauth
