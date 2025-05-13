@@ -87,82 +87,6 @@
                         </div>
                     </form>
                 </div>
-
-
-                <!-- Efeito de transição e animação -->
-                <style>
-                    /* Especificando um estilo para esse dropdown específico */
-                    #customDropdown .dropdown-toggle::after {
-                        display: none;
-                        /* Remove a seta padrão do Bootstrap */
-                    }
-
-                    /* Estilização personalizada para o botão (apenas para esse dropdown) */
-                    #customDropdown .dropdown-toggle {
-                        padding: 10px 20px;
-                        font-size: 1rem;
-                        border: none;
-                        color: white;
-                        transition: background-color 0.3s ease;
-                    }
-
-
-                    /* Estilo para o dropdown menu */
-                    #customDropdown .dropdown-menu {
-                        background-color: #ffffff;
-                        /* Cor de fundo branca */
-                        border-radius: 10px;
-                        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-                        transition: opacity 0.3s ease-in-out, transform 0.3s ease;
-                        padding: 0.5rem 0;
-                    }
-
-                    /* Efeito de animação do dropdown */
-                    #customDropdown .dropdown-menu.show {
-                        opacity: 1;
-                        transform: translateY(10px);
-                        /* Efeito de deslizamento suave */
-                    }
-
-                    /* Estilo para os itens do dropdown */
-                    #customDropdown .dropdown-item {
-                        padding: 10px 15px;
-                        font-size: 1rem;
-                        color: #495057;
-                        /* Cor de texto padrão */
-                        transition: background-color 0.2s ease, transform 0.2s ease;
-                    }
-
-                    #customDropdown .dropdown-item:hover {
-                        background-color: #d1e7ff;
-                        /* Cor de fundo suave no hover */
-                        color: #007bff;
-                        transform: scale(1.05);
-                        /* Aumento de tamanho no hover */
-                    }
-
-                    /* Estilo para os inputs de radio dentro do dropdown */
-                    #customDropdown .dropdown-item input[type="radio"] {
-                        margin-right: 10px;
-                        /* Espaço entre o botão de rádio e o texto */
-                        vertical-align: middle;
-                    }
-
-                    #customDropdown .dropdown-item label {
-                        display: inline-block;
-                        vertical-align: middle;
-                        color: inherit;
-                        /* Garantir que a cor seja herdada */
-                    }
-
-                    /* Estilo de seleção para os itens selecionados */
-                    #customDropdown .dropdown-item input[type="radio"]:checked+label {
-                        background-color: #d1e7ff;
-                        color: #007bff;
-                    }
-                </style>
-
-
                 <div class="col-md-4 mb-3">
                     <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
                         <div class="input-group w-100">
@@ -208,19 +132,20 @@
                     document.addEventListener('DOMContentLoaded', setupDynamicSearch);
                 </script>
 
-                <div class="col-md-5 mb-3 text-end">
-                    <a href="#" class="btn bg-gradient-primary btn-sm mb-0" data-bs-toggle="modal"
-                        data-bs-target="#modalAddSale">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
-                            class="bi bi-plus-square" viewBox="0 0 16 16">
-                            <path
-                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-                        </svg>
-                        Adicionar Venda
-                    </a>
-                </div>
+                <div class="col-md-5 mb-3 d-flex justify-content-end align-items-center">
+    <a href="#" class="btn bg-gradient-primary mb-0 d-flex align-items-center" data-bs-toggle="modal"
+        data-bs-target="#modalAddSale">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor"
+            class="bi bi-plus-square me-1" viewBox="0 0 16 16">
+            <path
+                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
+            <path
+                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
+        </svg>
+        Adicionar Venda
+    </a>
+</div>
+
             </div>
         </div>
 
