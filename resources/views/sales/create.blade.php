@@ -37,22 +37,18 @@
                                             <h5 class="mb-0">Selecione um Cliente</h5>
                                         </div>
                                         <div class="card-body">
-                                            <div class="input-group mb-3">
-                                                <input type="text" class="form-control" id="clientSearch"
-                                                    placeholder="Pesquise por nome ou telefone..."
-                                                    onkeyup="searchClients()" />
-                                                <span class="input-group-text bg-primary text-white">
-                                                    <i class="bi bi-search"></i>
-                                                </span>
-                                            </div>
-                                            <div class="form-group">
-                                                <select name="client_id" id="client_id" class="form-select" required onchange="displayClientInfo()">
-                                                    <option value="" selected disabled>Selecione o cliente</option>
+                                            <div class="mb-3 position-relative">
+                                                <input type="text" class="form-control" id="clientSearch" placeholder="Digite o nome ou telefone..." onkeyup="filterClients()" onclick="showDropdown()" autocomplete="off" />
+                                                <div id="clientDropdown" class="list-group position-absolute w-100" style="z-index: 1000; max-height: 200px; overflow-y: auto; display: none;">
                                                     @foreach($clients as $client)
-                                                        <option value="{{ $client->id }}">{{ $client->name }}
-                                                            ({{ $client->phone }})</option>
+                                                        <button type="button" class="list-group-item list-group-item-action"
+                                                            onclick="selectClient('{{ $client->id }}', '{{ $client->name }} ({{ $client->phone }})')">
+                                                            {{ $client->name }} ({{ $client->phone }})
+                                                        </button>
                                                     @endforeach
-                                                </select>
+                                                </div>
+                                                <!-- Campo hidden para enviar o client_id -->
+                                                <input type="hidden" name="client_id" id="client-id-hidden" />
                                             </div>
                                         </div>
                                     </div>
@@ -219,6 +215,61 @@
     </div>
 </div>
 
+<script>
+    function showDropdown() {
+        document.getElementById("clientDropdown").style.display = "block";
+    }
+
+    function filterClients() {
+        const input = document.getElementById("clientSearch").value.toLowerCase();
+        const items = document.querySelectorAll("#clientDropdown .list-group-item");
+
+        let hasResults = false;
+        items.forEach(item => {
+            const text = item.textContent.toLowerCase();
+            const show = text.includes(input);
+            item.style.display = show ? "block" : "none";
+            if (show) hasResults = true;
+        });
+
+        document.getElementById("clientDropdown").style.display = hasResults ? "block" : "none";
+    }
+
+    function selectClient(id, text) {
+        // Atualiza o campo de pesquisa com o texto do cliente selecionado
+        document.getElementById("clientSearch").value = text;
+
+        // Atualiza o campo hidden com o ID do cliente selecionado
+        document.getElementById("client-id-hidden").value = id;
+
+        // Esconde o dropdown
+        document.getElementById("clientDropdown").style.display = "none";
+
+        // Log para depuração
+        console.log(`Cliente selecionado: ID=${id}, Nome=${text}`);
+
+        // Atualiza as informações do cliente (se necessário)
+        displayClientInfo();
+    }
+
+    // Fecha dropdown se clicar fora
+    document.addEventListener("click", function (event) {
+        if (!event.target.closest(".position-relative")) {
+            document.getElementById("clientDropdown").style.display = "none";
+        }
+    });
+
+    // Validação antes de enviar o formulário
+    document.getElementById("saleForm").addEventListener("submit", function (event) {
+        const clientId = document.getElementById("client-id-hidden").value;
+
+        // Verifica se o campo client_id está vazio
+        if (!clientId) {
+            event.preventDefault();
+            alert("Por favor, selecione um cliente antes de continuar.");
+        }
+    });
+</script>
 
 <script>
     // Controlador de navegação entre as etapas
@@ -275,7 +326,7 @@
     });
 
     function displayClientInfo() {
-        const clientSelect = document.getElementById('client_id'); // Obtém o elemento select
+        const clientSelect = document.getElementById('client-id-hidden'); // Obtém o elemento select
         const clientId = clientSelect.value; // Obtém o ID do cliente selecionado
 
         if (clientId) {
@@ -327,7 +378,7 @@
 
     // Atualiza o resumo do cliente e dos produtos selecionados
     function updateSummary() {
-        const clientId = document.getElementById('client_id').value;
+        const clientId = document.getElementById('client-id-hidden').value;
         const selectedProducts = document.querySelectorAll('.product-checkbox:checked');
         const selectedProductsSummary = document.getElementById('selected-products-summary');
 
