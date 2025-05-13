@@ -572,29 +572,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         showStep(currentStep);
     });
-
-    // Adiciona novos campos de pagamento
-    document.getElementById('addPaymentField').addEventListener('click', function () {
-        const paymentFields = document.getElementById('paymentFields');
-        const newPaymentField = document.createElement('div');
-        newPaymentField.classList.add('payment-item', 'mb-3');
-        newPaymentField.innerHTML = `
-                <label for="paymentAmount" class="form-label">Valor do Pagamento</label>
-                <input type="number" step="0.01" class="form-control" name="amount_paid[]" required min="0">
-                <label for="paymentMethod" class="form-label">Forma de Pagamento</label>
-                <select class="form-control" name="payment_method[]" required>
-                    <option value="Dinheiro">Dinheiro</option>
-                    <option value="Cartão de Crédito">Cartão de Crédito</option>
-                    <option value="Cartão de Débito">Cartão de Débito</option>
-                    <option value="PIX">PIX</option>
-                    <option value="Boleto">Boleto</option>
-                </select>
-                <label for="paymentDate" class="form-label">Data do Pagamento</label>
-                <input type="date" class="form-control" name="payment_date[]" required>
-            `;
-        paymentFields.appendChild(newPaymentField);
-    });
-
+    
     document.addEventListener("DOMContentLoaded", function () {
         // Encontrar todos os botões de expandir para cada venda
         document.querySelectorAll("[id^='expandProducts-']").forEach(function (expandBtn) {
