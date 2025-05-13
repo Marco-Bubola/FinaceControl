@@ -8,6 +8,7 @@ use App\Models\SaleItem;
 use App\Models\Client;
 use App\Models\SalePayment as ModelsSalePayment;
 use Illuminate\Http\Request;
+use Log;
 use SalePayment;
 use Dompdf\Dompdf;
 use Dompdf\Options;
@@ -237,45 +238,43 @@ class SaleController extends Controller
         return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
     }
     public function addPayment(Request $request, $saleId)
-    {
-        $sale = Sale::findOrFail($saleId);
+{
+    $sale = Sale::findOrFail($saleId);
 
-        // Validando que o valor pago, método de pagamento e a data são enviados corretamente
-        $validated = $request->validate([
-            'amount_paid' => 'required|array|min:1',
-            'amount_paid.*' => 'required|numeric|min:0.01', // Garantir que os valores sejam números positivos
-            'payment_method' => 'required|array|min:1',
-            'payment_method.*' => 'required|string', // O método de pagamento deve ser uma string
-            'payment_date' => 'required|array|min:1',
-            'payment_date.*' => 'required|date', // Validando a data
+  
+    // Validação dos dados
+    $validated = $request->validate([
+        'amount_paid' => 'required|array|min:1',
+        'amount_paid.*' => 'required|string|max:255',
+        'payment_method' => 'required|array|min:1',
+        'payment_method.*' => 'required|string',
+        'payment_date' => 'required|array|min:1',
+        'payment_date.*' => 'required|date',
+    ]);
+
+    foreach ($request->input('amount_paid') as $key => $amountPaid) {
+        $paymentMethod = $request->input('payment_method')[$key];
+        $paymentDate = $request->input('payment_date')[$key];
+
+        ModelsSalePayment::create([
+            'sale_id' => $sale->id,
+            'amount_paid' => $amountPaid,
+            'payment_method' => $paymentMethod,
+            'payment_date' => $paymentDate,
         ]);
-
-        // Percorrer os pagamentos recebidos e salvar na tabela sale_payments
-        foreach ($request->input('amount_paid') as $key => $amountPaid) {
-            $paymentMethod = $request->input('payment_method')[$key];
-            $paymentDate = $request->input('payment_date')[$key]; // Adicionando a data de pagamento
-
-            // Criar o registro de pagamento com a data
-            ModelsSalePayment::create([
-                'sale_id' => $sale->id,
-                'amount_paid' => $amountPaid,
-                'payment_method' => $paymentMethod,
-                'payment_date' => $paymentDate, // Salvando a data do pagamento
-            ]);
-        }
-
-        // Atualizar o total pago na venda
-        $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
-        $sale->amount_paid = $totalPaid;
-        $sale->save();
-
-        // Verificar a origem da requisição para o redirecionamento
-        $redirectTo = request()->input('from') === 'show'
-            ? route('sales.show', $sale->id) // Redireciona para a página de show
-            : route('sales.index'); // Redireciona para a página de index
-
-        return redirect($redirectTo)->with('success', 'Pagamentos adicionados com sucesso!');
     }
+
+    $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
+    $sale->amount_paid = $totalPaid;
+    $sale->save();
+
+    $redirectTo = request()->input('from') === 'show'
+        ? route('sales.show', $sale->id)
+        : route('sales.index');
+
+    return redirect($redirectTo)->with('success', 'Pagamentos adicionados com sucesso!');
+}
+
 
     public function show($id)
     {
