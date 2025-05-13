@@ -1,27 +1,56 @@
-<!-- Modal de Confirmar Exclusão para Vendas -->
+<!-- Modal de Confirmar Exclusão para Vendas (Estilo Amigável e Grande) -->
 @foreach($sales as $sale)
 <div class="modal fade" id="modalDeleteSale{{ $sale->id }}" tabindex="-1"
     aria-labelledby="modalDeleteSaleLabel{{ $sale->id }}" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalDeleteSaleLabel{{ $sale->id }}">Confirmar Exclusão</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content border-0 shadow-lg rounded-4">
+            <div class="modal-header bg-light border-0 rounded-top-4">
+                <div class="d-flex align-items-center w-100">
+                    <i class="bi bi-emoji-smile text-primary fs-1 me-3"></i>
+                    <div>
+                        <h5 class="modal-title mb-1 fw-semibold text-primary" id="modalDeleteSaleLabel{{ $sale->id }}">
+                            Excluir venda?
+                        </h5>
+                        <small class="text-muted">Você está prestes a remover uma venda. Tudo certo?</small>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body">
-                <!-- Exibir nome do cliente e preço total da venda -->
-                <p>Tem certeza de que deseja excluir a venda do cliente <strong>{{ $sale->client->name }}</strong>?</p>
-                <p>Preço total da venda: <strong>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</strong></p>
+            <div class="modal-body text-center">
+                <p class="mb-2 fs-5">
+                    Tem certeza de que deseja excluir a venda do cliente
+                    <strong class="text-primary">{{ $sale->client->name }}</strong>?
+                </p>
+                <p class="mb-4">
+                    Preço total da venda:
+                    <strong class="text-success">R$ {{ number_format($sale->total_price, 2, ',', '.') }}</strong>
+                </p>
+                <div class="alert alert-info py-2 px-3 mb-0 small rounded-pill" role="alert">
+                    Não se preocupe, você pode cadastrar uma nova venda a qualquer momento!
+                </div>
             </div>
-            <div class="modal-footer">
-                <form action="{{ route('sales.destroy', $sale->id) }}" method="POST">
+            <div class="modal-footer border-0 justify-content-center bg-light rounded-bottom-4">
+                <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" class="d-inline">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <button type="submit" class="btn btn-outline-danger px-4 rounded-pill">
+                        <i class="bi bi-trash me-1"></i> Excluir venda
+                    </button>
                 </form>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary px-4 rounded-pill ms-2" data-bs-dismiss="modal">
+                    Manter venda
+                </button>
             </div>
         </div>
     </div>
 </div>
 @endforeach
+
+<!--
+Dicas:
+- O modal agora é grande (modal-lg), com bordas arredondadas e cores suaves.
+- O ícone é amigável (emoji-smile) e o texto é acolhedor.
+- O botão de cancelar agora diz "Manter venda" para reforçar a positividade.
+- Certifique-se de incluir Bootstrap Icons:
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+-->
