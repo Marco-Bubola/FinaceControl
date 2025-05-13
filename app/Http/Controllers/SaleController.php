@@ -458,14 +458,14 @@ class SaleController extends Controller
 
     public function getClientData($id)
     {
-        $client = Client::findOrFail($id);
+        $client = Client::findOrFail($id); // Garante que o cliente existe
 
         return response()->json([
             'name' => $client->name,
             'email' => $client->email,
             'phone' => $client->phone,
             'address' => $client->address,
-            'created_at' => $client->created_at->format('d/m/Y'),
+            'created_at' => $client->created_at->format('d/m/Y'), // Formata a data
         ]);
     }
 

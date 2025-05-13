@@ -277,8 +277,10 @@
     function displayClientInfo() {
         const clientSelect = document.getElementById('client_id'); // Obtém o elemento select
         const clientId = clientSelect.value; // Obtém o ID do cliente selecionado
-// Obtém o valor do cliente selecionado
+
         if (clientId) {
+            console.log(`Cliente selecionado: ${clientId}`); // Log para depuração
+
             // Fazendo uma requisição AJAX para buscar os dados do cliente
             fetch(`/client/${clientId}/data`)
                 .then(response => {
@@ -288,23 +290,26 @@
                     return response.json();
                 })
                 .then(data => {
+                    console.log('Dados do cliente retornados:', data); // Log para depuração
+
                     // Verifica se os dados do cliente foram retornados corretamente
                     if (data && data.name) {
-                        // Preenchendo os campos com os dados do cliente
-                        document.getElementById('client-name').textContent = data.name || 'N/A';
-                        document.getElementById('client-email').textContent = data.email || 'N/A';
-                        document.getElementById('client-phone').textContent = data.phone || 'N/A';
-                        document.getElementById('client-address').textContent = data.address || 'N/A';
-                        document.getElementById('client-registration_date').textContent = data.created_at || 'N/A';
+                        // Atualiza apenas os elementos dentro do modal de criação de vendas
+                        const modal = document.getElementById('modalAddSale');
+                        modal.querySelector('#client-name').textContent = data.name || 'N/A';
+                        modal.querySelector('#client-email').textContent = data.email || 'N/A';
+                        modal.querySelector('#client-phone').textContent = data.phone || 'N/A';
+                        modal.querySelector('#client-address').textContent = data.address || 'N/A';
+                        modal.querySelector('#client-registration_date').textContent = data.created_at || 'N/A';
 
-                        // Atualiza o resumo do cliente
-                        document.getElementById('summary-client-name').textContent = data.name || 'N/A';
-                        document.getElementById('summary-client-phone').textContent = data.phone || 'N/A';
-                        document.getElementById('summary-client-address').textContent = data.address || 'N/A';
-                        document.getElementById('summary-client-registration_date').textContent = data.created_at || 'N/A';
+                        // Atualiza o resumo do cliente na etapa de resumo
+                        modal.querySelector('#summary-client-name').textContent = data.name || 'N/A';
+                        modal.querySelector('#summary-client-phone').textContent = data.phone || 'N/A';
+                        modal.querySelector('#summary-client-address').textContent = data.address || 'N/A';
+                        modal.querySelector('#summary-client-registration_date').textContent = data.created_at || 'N/A';
 
                         // Exibe a seção de informações do cliente
-                        document.getElementById('client-info').style.display = 'block';
+                        modal.querySelector('#client-info').style.display = 'block';
                     } else {
                         throw new Error('Dados do cliente não encontrados.');
                     }
@@ -314,6 +319,7 @@
                     alert('Não foi possível carregar as informações do cliente. Tente novamente.');
                 });
         } else {
+            console.log('Nenhum cliente selecionado.'); // Log para depuração
             // Se nenhum cliente for selecionado, esconde a área de informações
             document.getElementById('client-info').style.display = 'none';
         }
