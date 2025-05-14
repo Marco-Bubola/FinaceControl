@@ -46,11 +46,3 @@
 </div>
 @endforeach
 
-<!--
-Dicas:
-- O modal agora é grande (modal-lg), com bordas arredondadas e cores suaves.
-- O ícone é amigável (emoji-smile) e o texto é acolhedor.
-- O botão de cancelar agora diz "Manter venda" para reforçar a positividade.
-- Certifique-se de incluir Bootstrap Icons:
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
--->
