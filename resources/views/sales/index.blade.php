@@ -241,89 +241,6 @@
                 transition: background 0.2s, box-shadow 0.2s;
             }
             
-            /* Gradiente para o botão de ações */
-            .btn-gradient-acoes {
-                background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-                border: none;
-                color: #fff;
-                font-weight: 600;
-                transition: background 0.2s, box-shadow 0.2s;
-                box-shadow: 0 2px 12px rgba(67,233,123,0.10);
-            }
-            .btn-gradient-acoes:hover, .btn-gradient-acoes:focus {
-                background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
-                color: #fff;
-                box-shadow: 0 4px 16px rgba(56,249,215,0.18);
-            }
-            .btn-gradient-acoes .bi-three-dots-vertical {
-                vertical-align: middle;
-            }
-
-            /* Remove seta padrão do Bootstrap */
-            .dropdown-acoes .dropdown-toggle::after {
-                display: none;
-            }
-
-            /* Dropdown menu estiloso */
-            .dropdown-menu-acoes {
-                background: rgba(255,255,255,0.95);
-                backdrop-filter: blur(6px);
-                border-radius: 1.2rem;
-                box-shadow: 0 8px 32px rgba(56,249,215,0.10), 0 1.5px 8px rgba(0,0,0,0.08);
-                border: none;
-                padding: 0.5rem 0;
-                min-width: 260px;
-                opacity: 1; /* Sempre visível */
-                transform: translateY(0); /* Sem animação */
-                transition: none; /* Transições removidas */
-            }
-            .dropdown-menu-acoes.show {
-                opacity: 1;
-                transform: translateY(0);
-            }
-
-            /* Itens do dropdown */
-            .dropdown-menu-acoes .dropdown-item {
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.7rem 1.2rem;
-                font-size: 1.08rem;
-                font-weight: 500;
-                color: #495057;
-                border-radius: 0.7rem;
-                transition: background 0.18s, color 0.18s, transform 0.18s;
-                background: transparent;
-                margin: 0.1rem 0.2rem;
-                box-shadow: none;
-                transition: none; /* Transições removidas */
-            }
-            .dropdown-menu-acoes .dropdown-item:hover, .dropdown-menu-acoes .dropdown-item:focus {
-                background: linear-gradient(90deg, #e0fff7 0%, #e6ffe6 100%);
-                color: #11998e;
-                transform: scale(1.04);
-                box-shadow: 0 2px 8px rgba(56,249,215,0.07);
-            }
-            .dropdown-menu-acoes .dropdown-item .bi {
-                font-size: 1.25rem;
-                min-width: 1.7rem;
-                text-align: center;
-            }
-
-            /* Separadores visuais opcionais */
-            .dropdown-menu-acoes li:not(:last-child) {
-                border-bottom: 1px solid #f1f3f7;
-            }
-            .dropdown-menu-acoes li:last-child {
-                margin-bottom: 0.1rem;
-            }
-
-            /* Responsivo */
-            @media (max-width: 600px) {
-                .dropdown-menu-acoes {
-                    min-width: 90vw !important;
-                }
-            }
 
             .filter-section {
                 background: #f8f9fa;
@@ -559,79 +476,128 @@ document.addEventListener('DOMContentLoaded', setupDynamicSearch);
                             </a>
                         </div>
                         <div class="col-md-5 text-end">
-                            <!-- Dropdown para os Botões -->
-                            <div class="dropdown d-flex justify-content-end align-items-center gap-2 dropdown-acoes">
-                                <!-- Botão de Dropdown com ícone personalizado -->
-                                <button class="btn btn-gradient-acoes p-2 w-100 dropdown-toggle rounded-pill shadow"
-                                    type="button" id="dropdownMenuButton{{ $sale->id }}" data-bs-auto-close="outside" data-bs-toggle="dropdown"
-                                    aria-expanded="false">
-                                    <span class="fw-semibold">Ações</span>
-                                    <i class="bi bi-three-dots-vertical fs-4 ms-2"></i>
-                                </button>
+    <style>
+        /* CSS restrito ao dropdown de ações */
+        .dropdown-acoes-unico .dropdown {
+            min-width: 180px;
+        }
+        .dropdown-acoes-unico .btn-light.dropdown-toggle {
+             background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+                border: none;
+                color: #fff;
+                font-weight: 600;
+                transition: background 0.2s, box-shadow 0.2s;
+        }
+        .dropdown-acoes-unico .btn-light.dropdown-toggle:focus,
+        .dropdown-acoes-unico .btn-light.dropdown-toggle:hover {
+           background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+                color: #fff;
+                box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
+        }
+        .dropdown-acoes-unico .dropdown-menu {
+            padding: 0.25rem 0;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            font-size: 1rem;
+        }
+        .dropdown-acoes-unico .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.15s;
+            font-weight: 400;
+        }
+        .dropdown-acoes-unico .dropdown-item:focus,
+        .dropdown-acoes-unico .dropdown-item:hover {
+            background: #f1f3f4;
+            color: #222;
+        }
+        .dropdown-acoes-unico .dropdown-item a {
+            text-decoration: none;
+            color: inherit;
+        }
+        @media (max-width: 576px) {
+            .dropdown-acoes-unico .dropdown,
+            .dropdown-acoes-unico .dropdown-menu,
+            .dropdown-acoes-unico .btn-light.dropdown-toggle {
+                width: 100%;
+                min-width: unset;
+            }
+        }
+    </style>
+    <div class="dropdown-acoes-unico">
+        <div class="dropdown">
+            <button class="btn btn-light dropdown-toggle w-100"
+                type="button" id="dropdownMenuButton{{ $sale->id }}" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Ações
+                <i class="bi bi-three-dots-vertical ms-2"></i>
+            </button>
+            <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton{{ $sale->id }}">
+                <li>
+                    <button class="dropdown-item" data-bs-toggle="modal"
+                        data-bs-target="#paymentHistoryModal{{ $sale->id }}"
+                        title="Histórico de pagamento">
+                        <i class="bi bi-clock-history me-2 text-primary"></i>
+                        Histórico de Pagamento
+                    </button>
+                </li>
+                <li>
+                    <a href="{{ route('sales.export', $sale->id) }}" class="dropdown-item"
+                        title="Exportar PDF">
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
+                        Exportar PDF
+                    </a>
+                </li>
+                <li>
+                    <button class="dropdown-item" data-bs-toggle="modal"
+                        data-bs-target="#paymentModal{{ $sale->id }}" title="Adicionar Pagamento">
+                        <i class="bi bi-plus-square me-2 text-success"></i>
+                        Adicionar Pagamento
+                    </button>
+                </li>
+                <li>
+                    <a href="{{ route('sales.show', $sale->id) }}" class="dropdown-item"
+                        title="Ver Detalhes">
+                        <i class="bi bi-eye me-2 text-info"></i>
+                        Ver Detalhes
+                    </a>
+                </li>
+                <li>
+                    <button class="dropdown-item" data-bs-toggle="modal"
+                        data-bs-target="#modalEditSale{{ $sale->id }}" title="Editar Venda">
+                        <i class="bi bi-pencil-square me-2 text-warning"></i>
+                        Editar Venda
+                    </button>
+                </li>
+                <li>
+                    <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" style="display:inline;">
+                        @csrf
+                        @method('DELETE')
+                        <button type="button" class="dropdown-item"
+                            data-bs-toggle="modal" data-bs-target="#modalDeleteSale{{ $sale->id }}"
+                            title="Excluir Venda">
+                            <i class="bi bi-trash3 me-2 text-danger"></i>
+                            Excluir Venda
+                        </button>
+                    </form>
+                </li>
+                <li>
+                    <button class="dropdown-item" data-bs-toggle="modal"
+                        data-bs-target="#modalAddProductToSale{{ $sale->id }}"
+                        title="Adicionar Produto à Venda">
+                        <i class="bi bi-plus-square me-2 text-success"></i>
+                        Adicionar Produto
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-                                <!-- Itens do Dropdown -->
-                                <ul class="dropdown-menu dropdown-menu-acoes shadow-lg w-100 rounded-4"
-                                    aria-labelledby="dropdownMenuButton{{ $sale->id }}">
-                                    <li>
-                                        <button class="dropdown-item rounded-3" data-bs-toggle="modal"
-                                            data-bs-target="#paymentHistoryModal{{ $sale->id }}"
-                                            title="Histórico de pagamento">
-                                            <i class="bi bi-clock-history fs-5 me-2 text-primary"></i>
-                                            <span class="text-primary">Histórico de Pagamento</span>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('sales.export', $sale->id) }}" class="dropdown-item rounded-3"
-                                            title="Exportar PDF">
-                                            <i class="bi bi-file-earmark-pdf fs-5 me-2 text-danger"></i>
-                                            <span class="text-danger">Exportar PDF</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item rounded-3" data-bs-toggle="modal"
-                                            data-bs-target="#paymentModal{{ $sale->id }}" title="Adicionar Pagamento">
-                                            <i class="bi bi-plus-square fs-5 me-2 text-success"></i>
-                                            <span class="text-success">Adicionar Pagamento</span>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <a href="{{ route('sales.show', $sale->id) }}" class="dropdown-item rounded-3"
-                                            title="Ver Detalhes">
-                                            <i class="bi bi-eye fs-5 me-2 text-info"></i>
-                                            <span class="text-info">Ver Detalhes</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item rounded-3" data-bs-toggle="modal"
-                                            data-bs-target="#modalEditSale{{ $sale->id }}" title="Editar Venda">
-                                            <i class="bi bi-pencil-square fs-5 me-2 text-warning"></i>
-                                            <span class="text-warning">Editar Venda</span>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <form action="{{ route('sales.destroy', $sale->id) }}" method="POST"
-                                            style="display:inline;">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="dropdown-item text-danger rounded-3"
-                                                data-bs-toggle="modal" data-bs-target="#modalDeleteSale{{ $sale->id }}"
-                                                title="Excluir Venda">
-                                                <i class="bi bi-trash3 fs-5 me-2 text-danger"></i>
-                                                <span class="text-danger">Excluir Venda</span>
-                                            </button>
-                                        </form>
-                                    </li>
-                                    <li>
-                                        <button class="dropdown-item rounded-3" data-bs-toggle="modal"
-                                            data-bs-target="#modalAddProductToSale{{ $sale->id }}"
-                                            title="Adicionar Produto à Venda">
-                                            <i class="bi bi-plus-square fs-5 me-2 text-success"></i>
-                                            <span class="text-success">Adicionar Produto</span>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
