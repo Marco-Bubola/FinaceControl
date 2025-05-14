@@ -273,9 +273,9 @@
                 border: none;
                 padding: 0.5rem 0;
                 min-width: 260px;
-                opacity: 0;
-                transform: translateY(20px);
-                transition: opacity 0.25s, transform 0.25s;
+                opacity: 1; /* Sempre visível */
+                transform: translateY(0); /* Sem animação */
+                transition: none; /* Transições removidas */
             }
             .dropdown-menu-acoes.show {
                 opacity: 1;
@@ -296,6 +296,7 @@
                 background: transparent;
                 margin: 0.1rem 0.2rem;
                 box-shadow: none;
+                transition: none; /* Transições removidas */
             }
             .dropdown-menu-acoes .dropdown-item:hover, .dropdown-menu-acoes .dropdown-item:focus {
                 background: linear-gradient(90deg, #e0fff7 0%, #e6ffe6 100%);
@@ -482,8 +483,7 @@ function setupDynamicSearch() {
             const selectionStart = this.selectionStart;
             const selectionEnd = this.selectionEnd;
 
-            // Monta a URL apenas com o parâmetro de busca
-            const url = `{{ route('sales.index') }}?search=${encodeURIComponent(query)}&ajax=1`;
+            const url = `{{ route('sales.index') }}?search=${encodeURIComponent(query)}`;
 
             fetch(url)
                 .then(response => {
@@ -493,85 +493,28 @@ function setupDynamicSearch() {
                     return response.text();
                 })
                 .then(html => {
-                    // Atualiza apenas a lista de vendas
-                    document.getElementById('sales-list').innerHTML = html;
-                    
-                    // Reaplica eventos após atualização AJAX
-                    setupExpandButtons();
-                    setupDropdownAcoes();
-                    
-                    // Mantém o foco e o cursor no campo de busca
-                    searchInput.focus();
-                    searchInput.setSelectionRange(selectionStart, selectionEnd);
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const newContent = doc.querySelector('.container-fluid.py-4');
+                    if (newContent) {
+                        document.querySelector('.container-fluid.py-4').innerHTML = newContent.innerHTML;
+                        setupDynamicSearch();
+                        // Recupera o novo input e restaura foco/cursor
+                        const newSearchInput = document.getElementById('search-input');
+                        if (newSearchInput) {
+                            newSearchInput.focus();
+                            newSearchInput.setSelectionRange(selectionStart, selectionEnd);
+                        }
+                    }
                 })
                 .catch(error => console.error('Erro ao buscar dados:', error));
-        }, 300); // Debounce para evitar muitas requisições
+        }, 100); // Debounce mais rápido
     });
 }
+document.addEventListener('DOMContentLoaded', setupDynamicSearch);
 
-// Função para configurar os botões de expandir/colapsar produtos
-function setupExpandButtons() {
-    document.querySelectorAll('[id^="expandProducts-"]').forEach(button => {
-        const saleId = button.id.split('-')[1];
-        const collapseButton = document.getElementById(`collapseProducts-${saleId}`);
-        
-        button.addEventListener('click', function() {
-            document.querySelectorAll(`#sale-products-${saleId} .extra-product`).forEach(product => {
-                product.classList.remove('d-none');
-            });
-            button.classList.add('d-none');
-            collapseButton.classList.remove('d-none');
-        });
-        
-        if (collapseButton) {
-            collapseButton.addEventListener('click', function() {
-                document.querySelectorAll(`#sale-products-${saleId} .extra-product`).forEach(product => {
-                    product.classList.add('d-none');
-                });
-                collapseButton.classList.add('d-none');
-                button.classList.remove('d-none');
-            });
-        }
-    });
-}
 
-// Função para garantir que os dropdowns de ações funcionem corretamente após AJAX
-function setupDropdownAcoes() {
-    // Ativa tooltips do Bootstrap
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.forEach(function(tooltipTriggerEl) {
-        new bootstrap.Tooltip(tooltipTriggerEl)
-    });
-
-    // Corrige dropdowns de ações para fechar corretamente
-    document.querySelectorAll('.dropdown-acoes').forEach(function(dropdownEl) {
-        // Remove event listeners antigos para evitar duplicidade
-        const menu = dropdownEl.querySelector('.dropdown-menu');
-        if (menu) {
-            const newMenu = menu.cloneNode(true);
-            menu.parentNode.replaceChild(newMenu, menu);
-            
-            newMenu.addEventListener('mousedown', function(e) {
-                if (
-                    e.target.closest('button[type="submit"]') ||
-                    e.target.closest('a.btn-outline-secondary')
-                ) {
-                    // Permite o clique normal
-                } else {
-                    e.stopPropagation();
-                }
-            });
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function() {
-    setupDynamicSearch();
-    setupExpandButtons();
-    setupDropdownAcoes();
-});
 </script>
-
 
             <div class="col-md-5 mb-3 d-flex justify-content-end align-items-center">
                 <a href="#" class="btn bg-gradient-primary mb-0 d-flex align-items-center" data-bs-toggle="modal"
