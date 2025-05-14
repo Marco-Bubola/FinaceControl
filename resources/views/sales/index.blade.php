@@ -174,7 +174,7 @@
                 document.querySelectorAll('.dropdown-filtros').forEach(function(dropdownEl) {
                     // Impede o fechamento ao clicar em qualquer parte interna do dropdown, exceto nos botões
                     dropdownEl.querySelector('.dropdown-menu').addEventListener('mousedown', function(
-                    e) {
+                        e) {
                         if (
                             e.target.closest('button[type="submit"]') ||
                             e.target.closest('a.btn-outline-secondary')
@@ -240,7 +240,7 @@
                 font-weight: 600;
                 transition: background 0.2s, box-shadow 0.2s;
             }
-            
+
 
             .filter-section {
                 background: #f8f9fa;
@@ -329,109 +329,116 @@
             </style>
 
 
-           
-<div class="col-md-4 mb-3">
-    <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
-        <div class="input-group search-bar-sales w-100">
-            <span class="input-group-text search-bar-sales-icon" id="search-addon">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" name="search" id="search-input" class="form-control search-bar-sales-input"
-                placeholder="Pesquisar por cliente" value="{{ request('search') }}" aria-label="Pesquisar por cliente" aria-describedby="search-addon">
-        </div>
-    </form>
-</div>
 
-<style>
-/* Estilo exclusivo para o campo de pesquisa de vendas */
-.search-bar-sales {
-    border-radius: 2rem;
-    box-shadow: 0 2px 8px rgba(56, 249, 215, 0.08);
-    background: #fff;
-    transition: box-shadow 0.2s;
-}
-.search-bar-sales:focus-within {
-    box-shadow: 0 0 0 3px #38f9d7;
-}
-.search-bar-sales-icon {
-    background: transparent;
-    border: none;
-    color: #38f9d7;
-    font-size: 1.3rem;
-    border-radius: 2rem 0 0 2rem;
-    padding-left: 1rem;
-}
-.search-bar-sales-input {
-    border: none;
-    border-radius: 0 2rem 2rem 0;
-    background: transparent;
-    font-size: 1.1rem;
-    padding-left: 0.5rem;
-    box-shadow: none;
-    transition: background 0.2s;
-}
-.search-bar-sales-input:focus {
-    background: #f8f9fa;
-    outline: none;
-    box-shadow: none;
-}
-@media (max-width: 600px) {
-    .search-bar-sales-input {
-        font-size: 1rem;
-    }
-    .search-bar-sales-icon {
-        font-size: 1.1rem;
-        padding-left: 0.5rem;
-    }
-}
-</style>
+            <div class="col-md-4 mb-3">
+                <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
+                    <div class="input-group search-bar-sales w-100">
+                        <span class="input-group-text search-bar-sales-icon" id="search-addon">
+                            <i class="bi bi-search"></i>
+                        </span>
+                        <input type="text" name="search" id="search-input" class="form-control search-bar-sales-input"
+                            placeholder="Pesquisar por cliente" value="{{ request('search') }}"
+                            aria-label="Pesquisar por cliente" aria-describedby="search-addon">
+                    </div>
+                </form>
+            </div>
 
-<script>
-function setupDynamicSearch() {
-    const searchInput = document.getElementById('search-input');
-    if (!searchInput) return;
+            <style>
+            /* Estilo exclusivo para o campo de pesquisa de vendas */
+            .search-bar-sales {
+                border-radius: 2rem;
+                box-shadow: 0 2px 8px rgba(56, 249, 215, 0.08);
+                background: #fff;
+                transition: box-shadow 0.2s;
+            }
 
-    let timeout = null;
+            .search-bar-sales:focus-within {
+                box-shadow: 0 0 0 3px #38f9d7;
+            }
 
-    searchInput.addEventListener('input', function() {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-            const query = this.value;
-            const selectionStart = this.selectionStart;
-            const selectionEnd = this.selectionEnd;
+            .search-bar-sales-icon {
+                background: transparent;
+                border: none;
+                color: #38f9d7;
+                font-size: 1.3rem;
+                border-radius: 2rem 0 0 2rem;
+                padding-left: 1rem;
+            }
 
-            const url = `{{ route('sales.index') }}?search=${encodeURIComponent(query)}`;
+            .search-bar-sales-input {
+                border: none;
+                border-radius: 0 2rem 2rem 0;
+                background: transparent;
+                font-size: 1.1rem;
+                padding-left: 0.5rem;
+                box-shadow: none;
+                transition: background 0.2s;
+            }
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Erro ao buscar dados');
-                    }
-                    return response.text();
-                })
-                .then(html => {
-                    const parser = new DOMParser();
-                    const doc = parser.parseFromString(html, 'text/html');
-                    const newContent = doc.querySelector('.container-fluid.py-4');
-                    if (newContent) {
-                        document.querySelector('.container-fluid.py-4').innerHTML = newContent.innerHTML;
-                        setupDynamicSearch();
-                        // Recupera o novo input e restaura foco/cursor
-                        const newSearchInput = document.getElementById('search-input');
-                        if (newSearchInput) {
-                            newSearchInput.focus();
-                            newSearchInput.setSelectionRange(selectionStart, selectionEnd);
-                        }
-                    }
-                })
-                .catch(error => console.error('Erro ao buscar dados:', error));
-        }, 100); // Debounce mais rápido
-    });
-}
-document.addEventListener('DOMContentLoaded', setupDynamicSearch);
+            .search-bar-sales-input:focus {
+                background: #f8f9fa;
+                outline: none;
+                box-shadow: none;
+            }
 
+            @media (max-width: 600px) {
+                .search-bar-sales-input {
+                    font-size: 1rem;
+                }
 
-</script>
+                .search-bar-sales-icon {
+                    font-size: 1.1rem;
+                    padding-left: 0.5rem;
+                }
+            }
+            </style>
+
+            <script>
+            function setupDynamicSearch() {
+                const searchInput = document.getElementById('search-input');
+                if (!searchInput) return;
+
+                let timeout = null;
+
+                searchInput.addEventListener('input', function() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        const query = this.value;
+                        const selectionStart = this.selectionStart;
+                        const selectionEnd = this.selectionEnd;
+
+                        const url = `{{ route('sales.index') }}?search=${encodeURIComponent(query)}`;
+
+                        fetch(url)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Erro ao buscar dados');
+                                }
+                                return response.text();
+                            })
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const newContent = doc.querySelector('.container-fluid.py-4');
+                                if (newContent) {
+                                    document.querySelector('.container-fluid.py-4').innerHTML =
+                                        newContent.innerHTML;
+                                    setupDynamicSearch();
+                                    // Recupera o novo input e restaura foco/cursor
+                                    const newSearchInput = document.getElementById('search-input');
+                                    if (newSearchInput) {
+                                        newSearchInput.focus();
+                                        newSearchInput.setSelectionRange(selectionStart,
+                                            selectionEnd);
+                                    }
+                                }
+                            })
+                            .catch(error => console.error('Erro ao buscar dados:', error));
+                    }, 100); // Debounce mais rápido
+                });
+            }
+            document.addEventListener('DOMContentLoaded', setupDynamicSearch);
+            </script>
 
             <div class="col-md-5 mb-3 d-flex justify-content-end align-items-center">
                 <a href="#" class="btn bg-gradient-primary mb-0 d-flex align-items-center" data-bs-toggle="modal"
@@ -456,368 +463,405 @@ document.addEventListener('DOMContentLoaded', setupDynamicSearch);
         <div class="row teste mt-4">
             @foreach($sales as $sale)
             <div class="col-md-6 mb-4">
-            <div class="card shadow-sm rounded-lg h-100">
-                <div class="card-header bg-primary text-white">
-                    <!-- Exibir o nome do cliente, telefone, editar, excluir e adicionar produto -->
-                    <div class="row align-items-center">
-                        <div class="col-md-7">
-                            <!-- Link para redirecionar apenas ao clicar no nome do cliente e telefone -->
-                            <a href="{{ route('sales.show', $sale->id) }}" class="text-decoration-none text-dark"
-                                style="display: flex; align-items: center; gap: 10px;">
-                                <!-- Ícones e texto formatado -->
-                                <i class="bi bi-person-circle" style="font-size: 1.2rem; color: #007bff;"></i>
-                                <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
-                                    <strong>Nome:</strong> {{ ucwords($sale->client->name) }}
-                                </p>
-                                <i class="bi bi-telephone" style="font-size: 1.2rem; color: #28a745;"></i>
-                                <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
-                                    <strong>Telefone:</strong> {{ $sale->client->phone }}
-                                </p>
-                            </a>
+                <div class="card shadow-sm rounded-lg h-100">
+                    <div class="card-header bg-primary text-white">
+                        <!-- Exibir o nome do cliente, telefone, editar, excluir e adicionar produto -->
+                        <div class="row align-items-center">
+                            <div class="col-md-7">
+                                <!-- Link para redirecionar apenas ao clicar no nome do cliente e telefone -->
+                                <a href="{{ route('sales.show', $sale->id) }}" class="text-decoration-none text-dark"
+                                    style="display: flex; align-items: center; gap: 10px;">
+                                    <!-- Ícones e texto formatado -->
+                                    <i class="bi bi-person-circle" style="font-size: 1.2rem; color: #007bff;"></i>
+                                    <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
+                                        <strong>Nome:</strong> {{ ucwords($sale->client->name) }}
+                                    </p>
+                                    <i class="bi bi-telephone" style="font-size: 1.2rem; color: #28a745;"></i>
+                                    <p class="mb-0" style="font-size: 1rem; font-weight: 500; color: #333;">
+                                        <strong>Telefone:</strong> {{ $sale->client->phone }}
+                                    </p>
+                                </a>
+                            </div>
+                            <div class="col-md-5 text-end">
+                                <style>
+                                /* CSS restrito ao dropdown de ações */
+                                .dropdown-acoes-unico .dropdown {
+                                    min-width: 180px;
+                                }
+
+                                .dropdown-acoes-unico .btn-light.dropdown-toggle {
+                                    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+                                    border: none;
+                                    color: #fff;
+                                    font-weight: 600;
+                                    transition: background 0.2s, box-shadow 0.2s;
+                                }
+
+                                .dropdown-acoes-unico .btn-light.dropdown-toggle:focus,
+                                .dropdown-acoes-unico .btn-light.dropdown-toggle:hover {
+                                    background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+                                    color: #fff;
+                                    box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
+                                }
+
+                                .dropdown-acoes-unico .dropdown-menu {
+                                    padding: 0.25rem 0;
+                                    border-radius: 8px;
+                                    border: 1px solid #e0e0e0;
+                                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+                                    font-size: 1rem;
+                                }
+
+                                .dropdown-acoes-unico .dropdown-item {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 0.5rem;
+                                    padding: 0.5rem 1rem;
+                                    border-radius: 4px;
+                                    transition: background 0.15s;
+                                    font-weight: 400;
+                                }
+
+                                .dropdown-acoes-unico .dropdown-item:focus,
+                                .dropdown-acoes-unico .dropdown-item:hover {
+                                    background: #f1f3f4;
+                                    color: #222;
+                                }
+
+                                .dropdown-acoes-unico .dropdown-item a {
+                                    text-decoration: none;
+                                    color: inherit;
+                                }
+
+                                @media (max-width: 576px) {
+
+                                    .dropdown-acoes-unico .dropdown,
+                                    .dropdown-acoes-unico .dropdown-menu,
+                                    .dropdown-acoes-unico .btn-light.dropdown-toggle {
+                                        width: 100%;
+                                        min-width: unset;
+                                    }
+                                }
+                                </style>
+                                <div class="dropdown-acoes-unico">
+                                    <div class="dropdown">
+                                        <button class="btn btn-light dropdown-toggle w-100" type="button"
+                                            id="dropdownMenuButton{{ $sale->id }}" data-bs-toggle="dropdown"
+                                            aria-expanded="false">
+                                            Ações
+                                            <i class="bi bi-three-dots-vertical ms-2"></i>
+                                        </button>
+                                        <ul class="dropdown-menu w-100"
+                                            aria-labelledby="dropdownMenuButton{{ $sale->id }}">
+                                            <li>
+                                                <button class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#paymentHistoryModal{{ $sale->id }}"
+                                                    title="Histórico de pagamento">
+                                                    <i class="bi bi-clock-history me-2 text-primary"></i>
+                                                    Histórico de Pagamento
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('sales.export', $sale->id) }}" class="dropdown-item"
+                                                    title="Exportar PDF">
+                                                    <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
+                                                    Exportar PDF
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#paymentModal{{ $sale->id }}"
+                                                    title="Adicionar Pagamento">
+                                                    <i class="bi bi-plus-square me-2 text-success"></i>
+                                                    Adicionar Pagamento
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <a href="{{ route('sales.show', $sale->id) }}" class="dropdown-item"
+                                                    title="Ver Detalhes">
+                                                    <i class="bi bi-eye me-2 text-info"></i>
+                                                    Ver Detalhes
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#modalEditSale{{ $sale->id }}" title="Editar Venda">
+                                                    <i class="bi bi-pencil-square me-2 text-warning"></i>
+                                                    Editar Venda
+                                                </button>
+                                            </li>
+                                            <li>
+                                                <form action="{{ route('sales.destroy', $sale->id) }}" method="POST"
+                                                    style="display:inline;">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="dropdown-item" data-bs-toggle="modal"
+                                                        data-bs-target="#modalDeleteSale{{ $sale->id }}"
+                                                        title="Excluir Venda">
+                                                        <i class="bi bi-trash3 me-2 text-danger"></i>
+                                                        Excluir Venda
+                                                    </button>
+                                                </form>
+                                            </li>
+                                            <li>
+                                                <button class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#modalAddProductToSale{{ $sale->id }}"
+                                                    title="Adicionar Produto à Venda">
+                                                    <i class="bi bi-plus-square me-2 text-success"></i>
+                                                    Adicionar Produto
+                                                </button>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-                        <div class="col-md-5 text-end">
-    <style>
-        /* CSS restrito ao dropdown de ações */
-        .dropdown-acoes-unico .dropdown {
-            min-width: 180px;
-        }
-        .dropdown-acoes-unico .btn-light.dropdown-toggle {
-             background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-                border: none;
-                color: #fff;
-                font-weight: 600;
-                transition: background 0.2s, box-shadow 0.2s;
-        }
-        .dropdown-acoes-unico .btn-light.dropdown-toggle:focus,
-        .dropdown-acoes-unico .btn-light.dropdown-toggle:hover {
-           background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
-                color: #fff;
-                box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
-        }
-        .dropdown-acoes-unico .dropdown-menu {
-            padding: 0.25rem 0;
-            border-radius: 8px;
-            border: 1px solid #e0e0e0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            font-size: 1rem;
-        }
-        .dropdown-acoes-unico .dropdown-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            transition: background 0.15s;
-            font-weight: 400;
-        }
-        .dropdown-acoes-unico .dropdown-item:focus,
-        .dropdown-acoes-unico .dropdown-item:hover {
-            background: #f1f3f4;
-            color: #222;
-        }
-        .dropdown-acoes-unico .dropdown-item a {
-            text-decoration: none;
-            color: inherit;
-        }
-        @media (max-width: 576px) {
-            .dropdown-acoes-unico .dropdown,
-            .dropdown-acoes-unico .dropdown-menu,
-            .dropdown-acoes-unico .btn-light.dropdown-toggle {
-                width: 100%;
-                min-width: unset;
-            }
-        }
-    </style>
-    <div class="dropdown-acoes-unico">
-        <div class="dropdown">
-            <button class="btn btn-light dropdown-toggle w-100"
-                type="button" id="dropdownMenuButton{{ $sale->id }}" data-bs-toggle="dropdown"
-                aria-expanded="false">
-                Ações
-                <i class="bi bi-three-dots-vertical ms-2"></i>
-            </button>
-            <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton{{ $sale->id }}">
-                <li>
-                    <button class="dropdown-item" data-bs-toggle="modal"
-                        data-bs-target="#paymentHistoryModal{{ $sale->id }}"
-                        title="Histórico de pagamento">
-                        <i class="bi bi-clock-history me-2 text-primary"></i>
-                        Histórico de Pagamento
-                    </button>
-                </li>
-                <li>
-                    <a href="{{ route('sales.export', $sale->id) }}" class="dropdown-item"
-                        title="Exportar PDF">
-                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
-                        Exportar PDF
-                    </a>
-                </li>
-                <li>
-                    <button class="dropdown-item" data-bs-toggle="modal"
-                        data-bs-target="#paymentModal{{ $sale->id }}" title="Adicionar Pagamento">
-                        <i class="bi bi-plus-square me-2 text-success"></i>
-                        Adicionar Pagamento
-                    </button>
-                </li>
-                <li>
-                    <a href="{{ route('sales.show', $sale->id) }}" class="dropdown-item"
-                        title="Ver Detalhes">
-                        <i class="bi bi-eye me-2 text-info"></i>
-                        Ver Detalhes
-                    </a>
-                </li>
-                <li>
-                    <button class="dropdown-item" data-bs-toggle="modal"
-                        data-bs-target="#modalEditSale{{ $sale->id }}" title="Editar Venda">
-                        <i class="bi bi-pencil-square me-2 text-warning"></i>
-                        Editar Venda
-                    </button>
-                </li>
-                <li>
-                    <form action="{{ route('sales.destroy', $sale->id) }}" method="POST" style="display:inline;">
-                        @csrf
-                        @method('DELETE')
-                        <button type="button" class="dropdown-item"
-                            data-bs-toggle="modal" data-bs-target="#modalDeleteSale{{ $sale->id }}"
-                            title="Excluir Venda">
-                            <i class="bi bi-trash3 me-2 text-danger"></i>
-                            Excluir Venda
-                        </button>
-                    </form>
-                </li>
-                <li>
-                    <button class="dropdown-item" data-bs-toggle="modal"
-                        data-bs-target="#modalAddProductToSale{{ $sale->id }}"
-                        title="Adicionar Produto à Venda">
-                        <i class="bi bi-plus-square me-2 text-success"></i>
-                        Adicionar Produto
-                    </button>
-                </li>
-            </ul>
-        </div>
-    </div>
-</div>
-
                     </div>
-                </div>
-                
-<div class="card-body sale-products-section">
-    <!-- Produtos da venda -->
-    <div class="row" id="sale-products-{{ $sale->id }}">
-        @foreach($sale->saleItems as $index => $item)
-        <div class="col-md-3 sale-product {{ $index >= 4 ? 'd-none extra-product' : '' }}">
-            <div class="card sale-product-card h-100 shadow-sm border-0">
-                <div class="sale-product-img-wrapper">
-                    <img src="{{ asset('storage/products/' . $item->product->image) }}" class="card-img-top sale-product-img"
-                        alt="{{ $item->product->name }}">
-                </div>
-                <div class="card-body d-flex flex-column justify-content-between">
-                    <!-- Nome do produto com truncamento e tooltip -->
-                    <h6 class="card-title text-center sale-product-title"
-                        title="{{ $item->product->name }}">
-                        {{ $item->product->name }}
-                    </h6>
-                    <!-- Preço -->
-                    <p class="card-text text-center sale-product-price">
-                        <span class="badge bg-light text-dark fw-normal">Preço</span>
-                        <span class="fw-bold">R$ {{ number_format($item->product->price, 2, ',', '.') }}</span>
-                    </p>
-                    <!-- Preço de venda -->
-                    <p class="card-text text-center sale-product-saleprice">
-                        <span class="badge bg-primary bg-opacity-10 text-primary fw-normal">Venda</span>
-                        <span class="fw-bold ">R$ {{ number_format($item->price_sale, 2, ',', '.') }}</span>
-                    </p>
-                    <!-- Quantidade -->
-                    <p class="card-text text-center sale-product-qty">
-                        <span class="badge bg-success bg-opacity-10 text-success fw-normal">Qtd</span>
-                        <span class="fw-bold">{{ $item->quantity }}</span>
-                    </p>
+
+                    <div class="card-body sale-products-section">
+                        <!-- Produtos da venda -->
+                        <div class="row" id="sale-products-{{ $sale->id }}">
+                            @foreach($sale->saleItems as $index => $item)
+                            <div class="col-md-3 sale-product {{ $index >= 4 ? 'd-none extra-product' : '' }}">
+                                <div class="card sale-product-card h-100 shadow-sm border-0">
+                                    <div class="sale-product-img-wrapper">
+                                        <img src="{{ asset('storage/products/' . $item->product->image) }}"
+                                            class="card-img-top sale-product-img" alt="{{ $item->product->name }}">
+                                    </div>
+                                    <div class="card-body d-flex flex-column justify-content-between">
+                                        <!-- Nome do produto com truncamento e tooltip -->
+                                        <h6 class="card-title text-center sale-product-title"
+                                            title="{{ $item->product->name }}">
+                                            {{ $item->product->name }}
+                                        </h6>
+                                        <!-- Preço -->
+                                        <p class="card-text text-center sale-product-price">
+                                            <span class="badge bg-light text-dark fw-normal">Preço</span>
+                                            <span class="fw-bold">R$
+                                                {{ number_format($item->product->price, 2, ',', '.') }}</span>
+                                        </p>
+                                        <!-- Preço de venda -->
+                                        <p class="card-text text-center sale-product-saleprice">
+                                            <span
+                                                class="badge bg-primary bg-opacity-10 text-primary fw-normal">Venda</span>
+                                            <span class="fw-bold ">R$
+                                                {{ number_format($item->price_sale, 2, ',', '.') }}</span>
+                                        </p>
+                                        <!-- Quantidade -->
+                                        <p class="card-text text-center sale-product-qty">
+                                            <span
+                                                class="badge bg-success bg-opacity-10 text-success fw-normal">Qtd</span>
+                                            <span class="fw-bold">{{ $item->quantity }}</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            @endforeach
+                        </div>
+
+                        @if($sale->saleItems->count() > 4)
+                        <div class="text-center mt-3">
+                            <button class="btn btn-outline-primary sale-products-expand"
+                                id="expandProducts-{{ $sale->id }}">+{{ $sale->saleItems->count() - 4 }} mais</button>
+                            <button class="btn btn-outline-secondary sale-products-collapse d-none"
+                                id="collapseProducts-{{ $sale->id }}">Mostrar menos</button>
+                        </div>
+                        @endif
+
+                        <div class="row mt-4">
+                            <div class="col-md-12">
+                                <!-- Card único para informações adicionais -->
+                                <div class="card sale-totals-card p-4 shadow-lg rounded-4 border-0">
+                                    <div class="row d-flex justify-content-between align-items-center">
+                                        <!-- Coluna com Total -->
+                                        <div class="col-md-4 d-flex flex-column align-items-start">
+                                            <h6 class="sale-total-label mb-2">
+                                                <i class="bi bi-cash-coin me-1 text-primary"></i>
+                                                <span>Total:</span>
+                                            </h6>
+                                            <span class="sale-total-value">
+                                                R$ {{ number_format($sale->total_price, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        <!-- Coluna com Total Pago -->
+                                        <div class="col-md-4 d-flex flex-column align-items-center">
+                                            <h6 class="sale-total-label mb-2">
+                                                <i class="bi bi-wallet2 me-1 text-success"></i>
+                                                <span>Total Pago:</span>
+                                            </h6>
+                                            <span class="sale-total-paid">
+                                                R$ {{ number_format($sale->total_paid, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                        <!-- Coluna com Saldo Restante -->
+                                        <div class="col-md-4 d-flex flex-column align-items-end">
+                                            <h6 class="sale-total-label mb-2">
+                                                <i class="bi bi-exclamation-circle me-1 text-danger"></i>
+                                                <span>Saldo Restante:</span>
+                                            </h6>
+                                            <span class="badge sale-total-badge">
+                                                R$
+                                                {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        @include('sales.paymentHistory')
+                    </div>
+
+                    <style>
+                    /* Escopo exclusivo para a seção de produtos da venda */
+                    .sale-products-section {
+                        background: #fafdff;
+                        border-radius: 1.5rem;
+                        padding-bottom: 2rem;
+                    }
+
+                    .sale-products-section .sale-product-card {
+                        border-radius: 1.2rem;
+                        transition: box-shadow 0.18s, transform 0.18s;
+                        background: linear-gradient(135deg, #f8f9fa 80%, #e6fff7 100%);
+                        min-height: 370px;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+                    }
+
+                    .sale-products-section .sale-product-card:hover {
+                        box-shadow: 0 6px 24px rgba(56, 249, 215, 0.13);
+                        transform: translateY(-4px) scale(1.03);
+                    }
+
+                    .sale-products-section .sale-product-img-wrapper {
+                        background: #fff;
+                        border-radius: 1.2rem 1.2rem 0 0;
+                        overflow: hidden;
+                        height: 180px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .sale-products-section .sale-product-img {
+                        max-height: 170px;
+                        width: auto;
+                        object-fit: contain;
+                        transition: transform 0.2s;
+                    }
+
+                    .sale-products-section .sale-product-card:hover .sale-product-img {
+                        transform: scale(1.07) rotate(-2deg);
+                    }
+
+                    .sale-products-section .sale-product-title {
+                        font-weight: 600;
+                        font-size: 1.05rem;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        margin-bottom: 0.5rem;
+                        color: #222;
+                    }
+
+                    .sale-products-section .sale-product-price,
+                    .sale-products-section .sale-product-saleprice,
+                    .sale-products-section .sale-product-qty {
+                        margin-bottom: 0.3rem;
+                        font-size: 1rem;
+                    }
+
+                    .sale-products-section .sale-product-saleprice {
+                        color: #007bff;
+                    }
+
+                    .sale-products-section .sale-product-qty {
+                        color: #38b000;
+                    }
+
+                    .sale-products-section .badge {
+                        font-size: 0.85rem;
+                        border-radius: 0.7rem;
+                        padding: 0.3em 0.7em;
+                        font-weight: 500;
+                        letter-spacing: 0.01em;
+                    }
+
+                    .sale-products-section .sale-products-expand,
+                    .sale-products-section .sale-products-collapse {
+                        border-radius: 2rem;
+                        font-weight: 500;
+                        min-width: 120px;
+                        transition: background 0.18s, color 0.18s;
+                    }
+
+                    .sale-products-section .sale-products-expand:hover,
+                    .sale-products-section .sale-products-collapse:hover {
+                        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+                        color: #fff;
+                    }
+
+                    .sale-products-section .sale-totals-card {
+                        background: linear-gradient(120deg, #f8f9fa 80%, #e0fff7 100%);
+                        border-radius: 1.2rem;
+                        margin-top: 1.5rem;
+                    }
+
+                    .sale-products-section .sale-total-label {
+                        font-weight: 600;
+                        font-size: 1.1rem;
+                        color: #38b000;
+                        display: flex;
+                        align-items: center;
+                    }
+
+                    .sale-products-section .sale-total-value {
+                        font-size: 1.25rem;
+                        font-weight: 700;
+                        color: #222;
+                    }
+
+                    .sale-products-section .sale-total-paid {
+                        font-size: 1.15rem;
+                        font-weight: 600;
+                        color: #007bff;
+                    }
+
+                    .sale-products-section .sale-total-badge {
+                        background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
+                        color: #fff;
+                        font-size: 1.1rem;
+                        font-weight: 700;
+                        padding: 0.5em 1.1em;
+                        border-radius: 1.2rem;
+                        box-shadow: 0 2px 8px rgba(255, 88, 88, 0.08);
+                    }
+
+                    @media (max-width: 900px) {
+                        .sale-products-section .col-md-3 {
+                            flex: 0 0 50%;
+                            max-width: 50%;
+                        }
+                    }
+
+                    @media (max-width: 600px) {
+                        .sale-products-section .col-md-3 {
+                            flex: 0 0 100%;
+                            max-width: 100%;
+                        }
+
+                        .sale-products-section .sale-product-card {
+                            min-height: 320px;
+                        }
+                    }
+                    </style>
+
                 </div>
             </div>
-        </div>
-        @endforeach
-    </div>
-
-    @if($sale->saleItems->count() > 4)
-    <div class="text-center mt-3">
-        <button class="btn btn-outline-primary sale-products-expand"
-            id="expandProducts-{{ $sale->id }}">+{{ $sale->saleItems->count() - 4 }} mais</button>
-        <button class="btn btn-outline-secondary sale-products-collapse d-none" id="collapseProducts-{{ $sale->id }}">Mostrar menos</button>
-    </div>
-    @endif
-
-    <div class="row mt-4">
-        <div class="col-md-12">
-            <!-- Card único para informações adicionais -->
-            <div class="card sale-totals-card p-4 shadow-lg rounded-4 border-0">
-                <div class="row d-flex justify-content-between align-items-center">
-                    <!-- Coluna com Total -->
-                    <div class="col-md-4 d-flex flex-column align-items-start">
-                        <h6 class="sale-total-label mb-2">
-                            <i class="bi bi-cash-coin me-1 text-primary"></i>
-                            <span>Total:</span>
-                        </h6>
-                        <span class="sale-total-value">
-                            R$ {{ number_format($sale->total_price, 2, ',', '.') }}
-                        </span>
-                    </div>
-                    <!-- Coluna com Total Pago -->
-                    <div class="col-md-4 d-flex flex-column align-items-center">
-                        <h6 class="sale-total-label mb-2">
-                            <i class="bi bi-wallet2 me-1 text-success"></i>
-                            <span>Total Pago:</span>
-                        </h6>
-                        <span class="sale-total-paid">
-                            R$ {{ number_format($sale->total_paid, 2, ',', '.') }}
-                        </span>
-                    </div>
-                    <!-- Coluna com Saldo Restante -->
-                    <div class="col-md-4 d-flex flex-column align-items-end">
-                        <h6 class="sale-total-label mb-2">
-                            <i class="bi bi-exclamation-circle me-1 text-danger"></i>
-                            <span>Saldo Restante:</span>
-                        </h6>
-                        <span class="badge sale-total-badge">
-                            R$ {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    @include('sales.paymentHistory')
-</div>
-
-<style>
-/* Escopo exclusivo para a seção de produtos da venda */
-.sale-products-section {
-    background: #fafdff;
-    border-radius: 1.5rem;
-    padding-bottom: 2rem;
-}
-.sale-products-section .sale-product-card {
-    border-radius: 1.2rem;
-    transition: box-shadow 0.18s, transform 0.18s;
-    background: linear-gradient(135deg, #f8f9fa 80%, #e6fff7 100%);
-    min-height: 370px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-.sale-products-section .sale-product-card:hover {
-    box-shadow: 0 6px 24px rgba(56,249,215,0.13);
-    transform: translateY(-4px) scale(1.03);
-}
-.sale-products-section .sale-product-img-wrapper {
-    background: #fff;
-    border-radius: 1.2rem 1.2rem 0 0;
-    overflow: hidden;
-    height: 180px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.sale-products-section .sale-product-img {
-    max-height: 170px;
-    width: auto;
-    object-fit: contain;
-    transition: transform 0.2s;
-}
-.sale-products-section .sale-product-card:hover .sale-product-img {
-    transform: scale(1.07) rotate(-2deg);
-}
-.sale-products-section .sale-product-title {
-    font-weight: 600;
-    font-size: 1.05rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-bottom: 0.5rem;
-    color: #222;
-}
-.sale-products-section .sale-product-price,
-.sale-products-section .sale-product-saleprice,
-.sale-products-section .sale-product-qty {
-    margin-bottom: 0.3rem;
-    font-size: 1rem;
-}
-.sale-products-section .sale-product-saleprice {
-    color: #007bff;
-}
-.sale-products-section .sale-product-qty {
-    color: #38b000;
-}
-.sale-products-section .badge {
-    font-size: 0.85rem;
-    border-radius: 0.7rem;
-    padding: 0.3em 0.7em;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-}
-.sale-products-section .sale-products-expand,
-.sale-products-section .sale-products-collapse {
-    border-radius: 2rem;
-    font-weight: 500;
-    min-width: 120px;
-    transition: background 0.18s, color 0.18s;
-}
-.sale-products-section .sale-products-expand:hover,
-.sale-products-section .sale-products-collapse:hover {
-    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-    color: #fff;
-}
-.sale-products-section .sale-totals-card {
-    background: linear-gradient(120deg, #f8f9fa 80%, #e0fff7 100%);
-    border-radius: 1.2rem;
-    margin-top: 1.5rem;
-}
-.sale-products-section .sale-total-label {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #38b000;
-    display: flex;
-    align-items: center;
-}
-.sale-products-section .sale-total-value {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #222;
-}
-.sale-products-section .sale-total-paid {
-    font-size: 1.15rem;
-    font-weight: 600;
-    color: #007bff;
-}
-.sale-products-section .sale-total-badge {
-    background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
-    color: #fff;
-    font-size: 1.1rem;
-    font-weight: 700;
-    padding: 0.5em 1.1em;
-    border-radius: 1.2rem;
-    box-shadow: 0 2px 8px rgba(255,88,88,0.08);
-}
-@media (max-width: 900px) {
-    .sale-products-section .col-md-3 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-}
-@media (max-width: 600px) {
-    .sale-products-section .col-md-3 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    .sale-products-section .sale-product-card {
-        min-height: 320px;
-    }
-}
-</style>
-
-            </div>
-        </div>
-        @endforeach
+            @endforeach
         </div>
         @else
         <div class="alert alert-warning text-center">
@@ -827,53 +871,54 @@ document.addEventListener('DOMContentLoaded', setupDynamicSearch);
 
         <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
-        <nav>
-            <ul class="pagination">
-                <!-- Botão para a primeira página -->
-                @if ($sales->onFirstPage())
-                <li class="page-item disabled"><span class="page-link">&laquo;&laquo;</span></li>
-                @else
-                <li class="page-item"><a class="page-link" href="{{ $sales->url(1) }}">&laquo;&laquo;</a></li>
-                @endif
-
-                <!-- Botão para a página anterior -->
-                @if ($sales->onFirstPage())
-                <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
-                @else
-                <li class="page-item"><a class="page-link" href="{{ $sales->previousPageUrl() }}">&laquo;</a></li>
-                @endif
-
-                <!-- Página anterior -->
-                @if ($sales->currentPage() > 1)
-                <li class="page-item"><a class="page-link"
-                        href="{{ $sales->url($sales->currentPage() - 1) }}">{{ $sales->currentPage() - 1 }}</a></li>
-                @endif
-
-                <!-- Página atual -->
-                <li class="page-item active"><span class="page-link">{{ $sales->currentPage() }}</span></li>
-
-                <!-- Próxima página -->
-                @if ($sales->currentPage() < $sales->lastPage())
-                    <li class="page-item"><a class="page-link"
-                            href="{{ $sales->url($sales->currentPage() + 1) }}">{{ $sales->currentPage() + 1 }}</a></li>
-                    @endif
-
-                    <!-- Botão para a próxima página -->
-                    @if ($sales->hasMorePages())
-                    <li class="page-item"><a class="page-link" href="{{ $sales->nextPageUrl() }}">&raquo;</a></li>
+            <nav>
+                <ul class="pagination">
+                    <!-- Botão para a primeira página -->
+                    @if ($sales->onFirstPage())
+                    <li class="page-item disabled"><span class="page-link">&laquo;&laquo;</span></li>
                     @else
-                    <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                    <li class="page-item"><a class="page-link" href="{{ $sales->url(1) }}">&laquo;&laquo;</a></li>
                     @endif
 
-                    <!-- Botão para a última página -->
-                    @if ($sales->hasMorePages())
-                    <li class="page-item"><a class="page-link"
-                            href="{{ $sales->url($sales->lastPage()) }}">&raquo;&raquo;</a></li>
+                    <!-- Botão para a página anterior -->
+                    @if ($sales->onFirstPage())
+                    <li class="page-item disabled"><span class="page-link">&laquo;</span></li>
                     @else
-                    <li class="page-item disabled"><span class="page-link">&raquo;&raquo;</span></li>
+                    <li class="page-item"><a class="page-link" href="{{ $sales->previousPageUrl() }}">&laquo;</a></li>
                     @endif
-            </ul>
-        </nav>
+
+                    <!-- Página anterior -->
+                    @if ($sales->currentPage() > 1)
+                    <li class="page-item"><a class="page-link"
+                            href="{{ $sales->url($sales->currentPage() - 1) }}">{{ $sales->currentPage() - 1 }}</a></li>
+                    @endif
+
+                    <!-- Página atual -->
+                    <li class="page-item active"><span class="page-link">{{ $sales->currentPage() }}</span></li>
+
+                    <!-- Próxima página -->
+                    @if ($sales->currentPage() < $sales->lastPage())
+                        <li class="page-item"><a class="page-link"
+                                href="{{ $sales->url($sales->currentPage() + 1) }}">{{ $sales->currentPage() + 1 }}</a>
+                        </li>
+                        @endif
+
+                        <!-- Botão para a próxima página -->
+                        @if ($sales->hasMorePages())
+                        <li class="page-item"><a class="page-link" href="{{ $sales->nextPageUrl() }}">&raquo;</a></li>
+                        @else
+                        <li class="page-item disabled"><span class="page-link">&raquo;</span></li>
+                        @endif
+
+                        <!-- Botão para a última página -->
+                        @if ($sales->hasMorePages())
+                        <li class="page-item"><a class="page-link"
+                                href="{{ $sales->url($sales->lastPage()) }}">&raquo;&raquo;</a></li>
+                        @else
+                        <li class="page-item disabled"><span class="page-link">&raquo;&raquo;</span></li>
+                        @endif
+                </ul>
+            </nav>
         </div>
     </div>
 </div>
