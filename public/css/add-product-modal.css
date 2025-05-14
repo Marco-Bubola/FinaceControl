@@ -1,0 +1,206 @@
+:root {
+  --bs-blue: #63B3ED;
+  --bs-indigo: #596CFF;
+  --bs-purple: #6f42c1;
+  --bs-pink: #d63384;
+  --bs-red: #F56565;
+  --bs-orange: #fd7e14;
+  --bs-yellow: #FBD38D;
+  --bs-green: #81E6D9;
+  --bs-teal: #20c997;
+  --bs-cyan: #0dcaf0;
+  --bs-white: #fff;
+  --bs-gray: #8392AB;
+  --bs-gray-dark: #344767;
+  --bs-primary: #cb0c9f;
+  --bs-secondary: #8392AB;
+  --bs-success: #82d616;
+  --bs-info: #17c1e8;
+  --bs-warning: #fbcf33;
+  --bs-danger: #ea0606;
+  --bs-light: #e9ecef;
+  --bs-dark: #344767;
+  --bs-font-sans-serif: "Open Sans", Arial, sans-serif;
+  --bs-gradient: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0));
+}
+
+/* ESCOPANDO O CSS DO MODAL DE PRODUTOS */
+.add-product-modal .modal-content {
+    border-radius: 22px;
+    box-shadow: 0 12px 40px rgba(99, 179, 237, 0.18), 0 2px 8px rgba(52, 71, 103, 0.08);
+    border: none;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--bs-light) 70%, var(--bs-blue) 100%);
+    font-family: var(--bs-font-sans-serif);
+}
+
+.add-product-modal .modal-header {
+    background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+    color: var(--bs-white);
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    border-bottom: none;
+    padding: 2rem 1.5rem 1.2rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(99, 179, 237, 0.08);
+}
+
+.add-product-modal .modal-title {
+    font-weight: 800;
+    font-size: 2rem;
+    letter-spacing: 1.5px;
+    text-shadow: 0 2px 8px rgba(89, 108, 255, 0.12);
+    margin-bottom: 0;
+}
+
+.add-product-modal .modal-body {
+    background: linear-gradient(135deg, var(--bs-light) 80%, var(--bs-blue) 100%);
+    border-bottom-left-radius: 22px;
+    border-bottom-right-radius: 22px;
+    padding: 2rem 2rem 1.5rem 2rem;
+}
+
+.add-product-modal .product-list-container {
+    max-height: 60vh;
+    min-height: 60vh;
+    overflow-y: auto;
+    padding-right: 1rem;
+    margin-right: -1rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--bs-primary) var(--bs-light);
+    background: rgba(255,255,255,0.7);
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(99,179,237,0.04);
+}
+
+.add-product-modal .product-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.add-product-modal .product-list-container::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+    border-radius: 8px;
+}
+
+.add-product-modal .product-list-container::-webkit-scrollbar-track {
+    background: var(--bs-light);
+    border-radius: 8px;
+}
+
+.add-product-modal .product-card {
+    transition: box-shadow 0.2s, border 0.2s, transform 0.2s, background 0.2s;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(99, 179, 237, 0.07);
+    border: 2px solid transparent;
+    background: rgba(255,255,255,0.95);
+    position: relative;
+    margin-bottom: 1.2rem;
+}
+
+.add-product-modal .product-card.selected {
+    border: 2px solid var(--bs-primary);
+    box-shadow: 0 6px 24px rgba(203, 12, 159, 0.18);
+    transform: scale(1.03);
+    background: linear-gradient(90deg, var(--bs-light) 60%, var(--bs-primary) 100%);
+}
+
+.add-product-modal .product-card:hover {
+    box-shadow: 0 8px 28px rgba(89, 108, 255, 0.13);
+    border: 2px solid var(--bs-indigo);
+    background: rgba(99,179,237,0.04);
+}
+
+.add-product-modal .product-item {
+    border: none;
+    background: transparent;
+}
+
+.add-product-modal .product-card .form-check-input {
+    width: 1.5em;
+    height: 1.5em;
+    border: 2px solid var(--bs-primary);
+    background: var(--bs-white);
+    transition: border 0.2s, box-shadow 0.2s;
+}
+
+.add-product-modal .product-card .form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-indigo);
+    box-shadow: 0 0 0 2px var(--bs-light);
+}
+
+.add-product-modal .card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--bs-primary);
+    margin-bottom: 0.3rem;
+}
+
+.add-product-modal .table-sm th,
+.add-product-modal .table-sm td {
+    padding: 0.3rem 0.5rem;
+    font-size: 1rem;
+}
+
+.add-product-modal .product-quantity,
+.add-product-modal .product-price-sale,
+.add-product-modal .product-price-original {
+    max-width: 80px;
+    font-size: 1rem;
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    border: 1px solid var(--bs-light);
+    background: var(--bs-white);
+}
+
+.add-product-modal #productSearch {
+    border-radius: 10px;
+    border: 1.5px solid var(--bs-primary);
+    box-shadow: 0 1px 6px rgba(203, 12, 159, 0.07);
+    font-size: 1.1rem;
+    padding-left: 2.2rem;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="gray" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: 8px center;
+    margin-bottom: 1.2rem;
+}
+
+.add-product-modal .btn-primary,
+.add-product-modal .btn-add-product {
+    background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+    border: none;
+    color: var(--bs-white);
+    font-weight: 700;
+    font-size: 1.15rem;
+    padding: 0.7rem 2.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(203,12,159,0.08);
+    transition: background 0.2s, box-shadow 0.2s, transform 0.15s;
+}
+
+.add-product-modal .btn-primary:hover,
+.add-product-modal .btn-add-product:hover,
+.add-product-modal .btn-primary:focus,
+.add-product-modal .btn-add-product:focus {
+    background: linear-gradient(90deg, var(--bs-indigo) 0%, var(--bs-primary) 100%);
+    box-shadow: 0 4px 16px rgba(89,108,255,0.13);
+    transform: translateY(-2px) scale(1.03);
+    color: var(--bs-white);
+}
+
+@media (max-width: 768px) {
+    .add-product-modal .modal-content,
+    .add-product-modal .modal-header,
+    .add-product-modal .modal-body {
+        border-radius: 12px !important;
+        padding: 1rem !important;
+    }
+    .add-product-modal .product-card {
+        margin-bottom: 1rem;
+    }
+    .add-product-modal .modal-dialog {
+        max-width: 98vw;
+    }
+    .add-product-modal .product-list-container {
+        max-height: 45vh;
+    }
+}

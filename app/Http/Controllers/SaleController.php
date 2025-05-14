@@ -389,7 +389,7 @@ class SaleController extends Controller
         ]);
 
         $sale = Sale::findOrFail($id);
-        $sale->client_id = $request->client_id;
+        $sale->client_id = $request->client_id; // Atualiza o client_id
         $sale->user_id = auth()->id();
         $sale->status = 'pending'; // Caso queira manter o status 'pending' por padrão
         $sale->save();

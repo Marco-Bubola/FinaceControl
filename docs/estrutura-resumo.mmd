@@ -1,0 +1,8 @@
+graph TD
+    A[Controller] -->|dados| B[Blade Principal (index.blade.php)]
+    B --> C1[Componente: x-resumo.card]
+    B --> C2[Partial: lista de faturas]
+    B --> C3[Partial: lista de transferências]
+    B --> D[JS Externo: public/js/resumo.js]
+    B --> E[CSS Customizado: public/css/resumo.css]
+    D -->|usa| F[Chart.js]

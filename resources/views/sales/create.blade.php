@@ -29,7 +29,7 @@
                     <div class="tab-content" id="myTabContent">
                         <!-- Etapa 1: Cliente -->
                         <div class="tab-pane fade show active" id="step-1" role="tabpanel" aria-labelledby="step-1-tab">
-                            <div class="row mb-4">
+                            <div class="row mb-4" style="min-height: 45vh;">
                                 <!-- Pesquisa e Seleção de Cliente -->
                                 <div class="col-md-6">
                                     <div class="card shadow-sm border-0">
@@ -107,18 +107,17 @@
                                             style="opacity: 0.5;">
                                             <div class="card product-item" style="cursor: pointer;">
                                                 <!-- Checkbox sobre a imagem -->
-                                                <div class="form-check form-switch"
-                                                    style="position: absolute; top: 10px; left: 10px; z-index: 10;">
-                                                    <input class="form-check-input product-checkbox" type="checkbox"
-                                                        role="switch" id="flexSwitchCheckDefault{{ $product->id }}"
-                                                        data-product-id="{{ $product->id }}" />
-                                                </div>
-
-                                                <img src="{{ asset('storage/products/' . $product->image) }}"
-                                                    class="card-img-top" alt="{{ $product->name }}"
-                                                    style="height: 150px; object-fit: cover;">
+        <div class="form-check form-switch">
+            <input class="form-check-input product-checkbox" type="checkbox"
+                role="switch" id="flexSwitchCheckDefault{{ $product->id }}"
+                data-product-id="{{ $product->id }}" />
+        </div>
+        <img src="{{ asset('storage/products/' . $product->image) }}"
+            class="card-img-top" alt="{{ $product->name }}"
+            style="height: 200px; object-fit: cover;">
+     
                                                 <div class="card-body">
-                                                    <h5 class="card-title text-center">{{ $product->name }}</h5>
+                                                    <h5 class="card-title text-center text-truncate" title="{{ $product->name }}">{{ $product->name }}</h5>
                                                     <table class="table table-bordered table-sm">
                                                         <tr>
                                                             <th>Código</th>
@@ -167,10 +166,10 @@
                         </div>
 
                         <!-- Etapa 3: Resumo -->
-                        <div class="tab-pane fade" id="step-3" role="tabpanel" aria-labelledby="step-3-tab">
+                        <div class="tab-pane fade" id="step-3" role="tabpanel" aria-labelledby="step-3-tab" style="max-height: 65vh; overflow-y: auto;">
 
                             <!-- Resumo do Cliente -->
-                            <div class="row mb-4">
+                            <div class="row mb-4" >
                                 <div class="col-md-12">
                                     <div class="card shadow-sm">
                                         <div class="card-body">
@@ -420,7 +419,7 @@
                 <div class="card">
                     <img src="${productCard.querySelector('.card-img-top').src}" class="card-img-top" alt="${productName}" style="height: 150px; object-fit: cover;">
                     <div class="card-body">
-                        <h5 class="card-title">${productName}</h5>
+                        <h5 class="card-title text-truncate" title="${productName}">${productName}</h5>
                         <p><strong>Qtd:</strong> ${productQuantity}</p>
                         <p><strong>Preço:</strong> R$ ${parseFloat(productPriceSale).toFixed(2).replace('.', ',')}</p>
                     </div>
@@ -572,7 +571,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         showStep(currentStep);
     });
-    
+
     document.addEventListener("DOMContentLoaded", function () {
         // Encontrar todos os botões de expandir para cada venda
         document.querySelectorAll("[id^='expandProducts-']").forEach(function (expandBtn) {
@@ -628,6 +627,7 @@
         });
     });
 </script>
+<link rel="stylesheet" href="{{ asset('css/modal-sale-enhanced.css') }}">
 <style>
     .progress-container {
         position: relative;

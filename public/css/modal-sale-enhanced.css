@@ -1,0 +1,320 @@
+/* Modal geral */
+#modalAddSale .modal-content {
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(52, 71, 103, 0.18); /* --bs-dark */
+    border: none;
+    background: var(--bs-light);
+    padding-bottom: 0;
+    transition: box-shadow 0.3s;
+    border: 2px solid var(--bs-primary); /* Borda destacada */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Sombra mais intensa */
+}
+
+#modalAddSale .modal-header {
+    border-bottom: none;
+    background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+    border-top-left-radius: 18px;
+    border-top-right-radius: 18px;
+    padding: 1.5rem 2rem 1rem 2rem;
+    color: var(--bs-white);
+    box-shadow: 0 2px 8px rgba(203, 12, 159, 0.08); /* --bs-primary */
+}
+
+#modalAddSale .modal-header .btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+#modalAddSale .modal-body {
+    padding: 2rem 2.5rem 1.5rem 2.5rem;
+}
+
+#modalAddSale .modal-footer {
+    border-top: none;
+    background: var(--bs-light);
+    border-bottom-left-radius: 18px;
+    border-bottom-right-radius: 18px;
+}
+
+/* Progress bar e steps */
+#modalAddSale .progress-container {
+    margin-bottom: 1.5rem;
+}
+
+#modalAddSale .progress {
+    height: 7px;
+    border-radius: 4px;
+    background: var(--bs-light);
+}
+
+#modalAddSale .progress-bar {
+    background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+    border-radius: 4px;
+    transition: width 0.4s;
+}
+
+#modalAddSale .step-circle {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+    background: var(--bs-light);
+    color: var(--bs-primary);
+    border: 2px solid var(--bs-light);
+    box-shadow: 0 2px 6px rgba(203, 12, 159, 0.06); /* --bs-primary */
+    transition: background 0.3s, color 0.3s, border 0.3s;
+    border: 2px solid var(--bs-secondary); /* Borda leve */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}
+
+#modalAddSale .step-circle.active {
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    border: 2px solid var(--bs-primary);
+    border-color: var(--bs-primary); /* Destaque para o ativo */
+    box-shadow: 0 4px 10px rgba(52, 71, 103, 0.2); /* Sombra mais intensa */
+}
+
+/* Cards */
+#modalAddSale .card {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 2px 12px rgba(52, 71, 103, 0.10); /* --bs-dark */
+    background: var(--bs-white);
+    transition: box-shadow 0.2s;
+    border: 1px solid var(--bs-secondary); /* Borda leve */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+    transition: transform 0.3s, box-shadow 0.3s; /* Animação ao passar o mouse */
+}
+
+#modalAddSale .card-header {
+    border-radius: 14px 14px 0 0;
+    font-weight: 600;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    background: var(--bs-light);
+    color: var(--bs-primary);
+    border-bottom: 1px solid var(--bs-light);
+}
+
+#modalAddSale .card-body {
+    padding: 1.2rem 1.2rem 0.8rem 1.2rem;
+}
+
+#modalAddSale .product-card.selected .card {
+    border: 2px solid var(--bs-primary);
+    box-shadow: 0 4px 16px rgba(203, 12, 159, 0.10); /* --bs-primary */
+    border: 2px solid var(--bs-primary); /* Borda destacada */
+    box-shadow: 0 6px 16px rgba(52, 71, 103, 0.2); /* Sombra mais intensa */
+}
+
+#modalAddSale .product-card {
+    transition: opacity 0.2s, box-shadow 0.2s;
+}
+
+#modalAddSale .product-card:hover .card {
+    box-shadow: 0 6px 24px rgba(203, 12, 159, 0.12); /* --bs-primary */
+    border: 2px solid var(--bs-indigo);
+}
+
+#modalAddSale .card:hover {
+    transform: translateY(-5px); /* Elevação ao passar o mouse */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Sombra mais intensa */
+}
+
+/* Inputs e selects */
+#modalAddSale .form-control,
+#modalAddSale .form-select {
+    border-radius: 8px;
+    border: 1px solid var(--bs-light);
+    background: var(--bs-light);
+    font-size: 1rem;
+    transition: border 0.2s;
+    border: 1px solid var(--bs-secondary); /* Borda leve */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra interna */
+}
+
+#modalAddSale .form-control:focus,
+#modalAddSale .form-select:focus {
+    border-color: var(--bs-primary);
+    box-shadow: 0 0 0 2px rgba(203, 12, 159, 0.10); /* --bs-primary */
+    background: var(--bs-white);
+    border-color: var(--bs-primary); /* Destaque ao focar */
+    box-shadow: 0 0 5px rgba(52, 71, 103, 0.3); /* Sombra ao focar */
+}
+
+#modalAddSale .input-group-text {
+    background: var(--bs-primary);
+    color: var(--bs-white);
+    border: none;
+    border-radius: 0 8px 8px 0;
+}
+/* Garante que o .card é o contexto do absoluto */
+#modalAddSale .product-card .card {
+    position: relative !important; /* Serve de referência para o checkbox absoluto */
+}
+
+/* Posicionamento absoluto do checkbox no canto superior esquerdo do card */
+#modalAddSale .product-card .form-check {
+    position: absolute !important;
+    top: 10px;
+    left: 10px;
+    z-index: 10;
+    background: rgba(255,255,255,0.85);
+    border-radius: 50%;
+    padding: 0.2em;
+    margin: 0; /* Remove qualquer margem extra */
+    width: auto; /* Garante que o checkbox não seja afetado por outros estilos de largura */
+    height: auto; /* Garante que o checkbox não seja afetado por outros estilos de altura */
+}
+
+/* Reforça o estilo do checkbox dentro do card */
+#modalAddSale .product-card .card .form-check-input {
+    margin: 0;
+    position: relative !important; /* Garante que o input não seja afetado por outros posicionamentos */
+    opacity: 1;
+    visibility: visible;
+}
+#modalAddSale .form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+/* Botões */
+#modalAddSale .btn-primary {
+    background: linear-gradient(90deg, var(--bs-primary) 0%, var(--bs-indigo) 100%);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    padding: 0.6rem 2.2rem;
+    box-shadow: 0 2px 8px rgba(203, 12, 159, 0.10); /* --bs-primary */
+    transition: background 0.2s, box-shadow 0.2s;
+    border: 2px solid var(--bs-primary); /* Borda destacada */
+    box-shadow: 0 4px 10px rgba(52, 71, 103, 0.2); /* Sombra suave */
+}
+
+#modalAddSale .btn-primary:hover, 
+#modalAddSale .btn-primary:focus {
+    background: linear-gradient(90deg, #a2087a 0%, #596CFF 100%);
+    box-shadow: 0 4px 16px rgba(203, 12, 159, 0.14); /* --bs-primary */
+    border-color: #a2087a; /* Cor da borda ao passar o mouse */
+    box-shadow: 0 6px 15px rgba(52, 71, 103, 0.3); /* Sombra mais intensa */
+}
+
+#modalAddSale .btn-secondary {
+    border-radius: 8px;
+    font-weight: 500;
+    padding: 0.6rem 2.2rem;
+    background: var(--bs-light);
+    color: var(--bs-primary);
+    border: none;
+    transition: background 0.2s, color 0.2s;
+}
+
+#modalAddSale .btn-secondary:hover, 
+#modalAddSale .btn-secondary:focus {
+    background: var(--bs-secondary);
+    color: var(--bs-white);
+}
+
+/* Tabela de produtos */
+#modalAddSale .table {
+    background: transparent;
+    margin-bottom: 0.5rem;
+}
+
+#modalAddSale .table th, 
+#modalAddSale .table td {
+    border: none;
+    padding: 0.3rem 0.5rem;
+    font-size: 0.95rem;
+    border: 1px solid var(--bs-light); /* Borda leve */
+}
+
+#modalAddSale .table th {
+    color: var(--bs-secondary);
+    font-weight: 500;
+    background: var(--bs-light);
+}
+
+#modalAddSale .table td {
+    color: var(--bs-dark);
+}
+
+/* Responsividade */
+@media (max-width: 991.98px) {
+    #modalAddSale .modal-body {
+        padding: 1.2rem 0.5rem;
+    }
+    #modalAddSale .modal-header,
+    #modalAddSale .modal-footer {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    #modalAddSale .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #modalAddSale .modal-content {
+        border-radius: 8px;
+    }
+    #modalAddSale .modal-header,
+    #modalAddSale .modal-footer {
+        border-radius: 8px 8px 0 0;
+    }
+    #modalAddSale .modal-footer {
+        border-radius: 0 0 8px 8px;
+    }
+}
+
+/* Pequenos detalhes */
+#modalAddSale .sticky-top {
+    z-index: 2;
+    background: var(--bs-light) !important;
+    border-bottom: 1px solid var(--bs-light);
+    margin-bottom: 1rem;
+}
+
+#modalAddSale .product-card.selected {
+    opacity: 1 !important;
+}
+
+#modalAddSale .product-card {
+    opacity: 0.7;
+}
+
+#modalAddSale .product-card.selected .card {
+    background: var(--bs-light);
+}
+
+#modalAddSale .product-card .form-check-input {
+    border-radius: 50%;
+    width: 1.2em;
+    height: 1.2em;
+    margin-top: 0.2em;
+    position: static !important; /* Evita que o input seja afetado por posicionamentos externos */
+    display: block !important; /* Garante que o checkbox seja sempre visível */
+}
+
+#modalAddSale .product-card .form-check-input:checked {
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary);
+}
+
+#modalAddSale .product-card .card-img-top {
+    display: block;
+    width: 100%;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid var(--bs-light);
+    position: relative;
+    z-index: 1;
+}
+
+/* Estilização das bordas dos dropdowns */
+#modalAddSale .dropdown-menu {
+    border: 1px solid var(--bs-secondary); /* Borda leve */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+}

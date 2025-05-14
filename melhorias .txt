@@ -1,0 +1,6 @@
+fazer divisão do valor total da venda ate 5 vs
+arrumar o campo de pequisa de cliente na index 
+arrumar para perguntar se quer com o histórico e as outras inforamcoes 
+fazer função de se já estiver pago 
+add fuancao de excluir o card de pagamento se n for usar
+exportar relatório de todos as venda restante para receber 

@@ -1,6 +1,6 @@
 @foreach($sales as $sale)
     <!-- Modal de Adicionar Produto à Venda -->
-    <div class="modal fade" id="modalAddProductToSale{{ $sale->id }}" tabindex="-1"
+    <div class="modal fade add-product-modal" id="modalAddProductToSale{{ $sale->id }}" tabindex="-1"
         aria-labelledby="modalAddProductToSaleLabel{{ $sale->id }}" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -28,7 +28,7 @@
                         </div>
 
                         <!-- Produtos Disponíveis -->
-                        <div class="row mb-4" id="productList{{ $sale->id }}">
+                        <div class="row mb-4 product-list-container" id="productList{{ $sale->id }}">
                             @foreach($products as $product)
                                 @if($product->stock_quantity > 0)
                                     <div class="col-md-3 mb-4 product-card" data-product-id="{{ $product->id }}"
@@ -45,7 +45,7 @@
                                             <img src="{{ asset('storage/products/' . $product->image) }}" class="card-img-top"
                                                 alt="{{ $product->name }}" style="height: 150px; object-fit: cover;">
                                             <div class="card-body">
-                                                <h5 class="card-title text-center">{{ $product->name }}</h5>
+                                                <h5 class="card-title text-center text-truncate" title="{{ $product->name }}">{{ $product->name }}</h5>
                                                 <table class="table table-bordered table-sm">
                                                     <tr>
                                                         <th>Código</th>
@@ -233,4 +233,5 @@
             });
         });
     </script>
+    <link rel="stylesheet" href="{{ asset('css/add-product-modal.css') }}">
 @endforeach

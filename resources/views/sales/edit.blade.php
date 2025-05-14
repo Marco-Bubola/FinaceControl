@@ -26,7 +26,8 @@
                     @csrf
                     @method('PUT')
 
-                    <!-- Produtos -->
+                    <input type="hidden" name="client_id" value="{{ $sale->client_id }}">
+                    
                     <div class="row" style="max-height: 65vh; overflow-y: auto;">
                         @foreach($sale->saleItems as $item)
                         <div class="col-md-3 mb-3">
