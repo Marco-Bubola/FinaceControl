@@ -1,0 +1,181 @@
+
+
+    /* Garantir que o conteúdo da descrição também seja truncado corretamente */
+    .card-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 250px;
+        /* Ajuste de largura */
+    }
+
+
+    /* Definir largura fixa para os botões e garantir que eles ocupem toda a largura do card */
+    .card-body button {
+        width: 100%;
+        padding: 10px;
+        font-size: 1.2em;
+    }
+
+    /* Manter uma proporção de layout consistente dentro do card */
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+        /* Assegura que o card se expanda para preencher o espaço */
+    }
+
+    /* Ajuste de altura das colunas para garantir que elas não se sobreponham */
+    .col-md-3 {
+        height: 100%;
+    }
+
+    /* Ajuste do card para que a altura total seja compatível */
+    .card-body .row {
+        margin-bottom: 10px;
+    }
+    .card-hover:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+    transform: scale(1.02);
+    z-index: 2;
+}
+
+.card-hover {
+    transition: all 0.2s ease-in-out;
+}
+
+/* Filtros e Dropdowns */
+.btn-gradient-primary {
+    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.btn-gradient-primary:hover,
+.btn-gradient-success:hover {
+    background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
+}
+.btn-gradient-success {
+    background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.filter-section {
+    background: #f8f9fa;
+    border-radius: 0.75rem;
+    padding: 0.75rem 1rem;
+    box-shadow: 0 1px 4px rgba(56, 249, 215, 0.04);
+    margin-bottom: 0.5rem;
+    transition: box-shadow 0.2s;
+}
+.filter-section:focus-within,
+.filter-section:focus {
+    box-shadow: 0 0 0 2px #38f9d7;
+    outline: none;
+}
+.form-check-custom .form-check-input:checked {
+    background-color: #38f9d7;
+    border-color: #38f9d7;
+    box-shadow: 0 0 0 0.15rem rgba(56, 249, 215, .25);
+}
+.form-check-custom .form-check-input {
+    cursor: pointer;
+    border-radius: 50%;
+    width: 1.1em;
+    height: 1.1em;
+    margin-top: 0.15em;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-check-custom .form-check-label {
+    cursor: pointer;
+    font-weight: 500;
+    margin-left: 0.3em;
+    color: #333;
+    transition: color 0.2s;
+}
+.form-check-custom .form-check-input:focus {
+    box-shadow: 0 0 0 0.15rem rgba(56, 249, 215, .25);
+}
+.form-check-inline {
+    margin-right: 0.5rem;
+}
+.dropdown-menu .form-check-custom:hover {
+    background: #e9f7f7;
+    border-radius: 0.5rem;
+}
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+}
+.dropdown-header {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+}
+.btn-outline-secondary {
+    border: 1.5px solid #adb5bd;
+    color: #495057;
+    background: #fff;
+    font-weight: 600;
+    transition: background 0.2s, color 0.2s;
+}
+.btn-outline-secondary:hover {
+    background: #f8f9fa;
+    color: #0d6efd;
+}
+@media (max-width: 600px) {
+    .dropdown-menu {
+        min-width: 95vw !important;
+    }
+    .filter-section {
+        padding: 0.5rem 0.5rem;
+    }
+}
+
+/* Barra de Pesquisa */
+.search-bar-sales {
+    border-radius: 2rem;
+    box-shadow: 0 2px 8px rgba(56, 249, 215, 0.08);
+    background: #fff;
+    transition: box-shadow 0.2s;
+}
+.search-bar-sales:focus-within {
+    box-shadow: 0 0 0 3px #38f9d7;
+}
+.search-bar-sales-icon {
+    background: transparent;
+    border: none;
+    color: #38f9d7;
+    font-size: 1.3rem;
+    border-radius: 2rem 0 0 2rem;
+    padding-left: 1rem;
+}
+.search-bar-sales-input {
+    border: none;
+    border-radius: 0 2rem 2rem 0;
+    background: transparent;
+    font-size: 1.1rem;
+    padding-left: 0.5rem;
+    box-shadow: none;
+    transition: background 0.2s;
+}
+.search-bar-sales-input:focus {
+    background: #f8f9fa;
+    outline: none;
+    box-shadow: none;
+}
+@media (max-width: 600px) {
+    .search-bar-sales-input {
+        font-size: 1rem;
+    }
+    .search-bar-sales-icon {
+        font-size: 1.1rem;
+        padding-left: 0.5rem;
+    }
+}

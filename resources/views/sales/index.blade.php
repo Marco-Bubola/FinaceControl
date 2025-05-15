@@ -37,8 +37,8 @@
                                     <div class="d-flex flex-wrap gap-2">
                                         @php
                                         $filters = [
-                                        'created_at' => 'Adicionados',
-                                        'updated_at' => 'Atualizados',
+                                        'created_at' => 'Últimos Adicionados',
+                                        'updated_at' => 'Últimos Atualizados',
                                         'name_asc' => 'Nome A-Z',
                                         'name_desc' => 'Nome Z-A',
                                         'price_asc' => 'Preço A-Z',
@@ -59,28 +59,30 @@
                                     </div>
                                 </div>
                             </li>
-                            <li>
-                                <div class="filter-section mb-3" tabindex="0">
-                                    <div class="d-flex align-items-center mb-2">
-                                        <i class="bi bi-list-ol text-success me-2"></i>
-                                        <h6 class="mb-0 text-success" style="font-size:1rem;">Qtd. Itens</h6>
-                                    </div>
-                                    <div class="d-flex flex-wrap gap-2">
-                                        @php $perPages = [9, 25, 50, 100]; @endphp
-                                        @foreach($perPages as $num)
-                                        <div class="form-check form-check-inline form-check-custom">
-                                            <input class="form-check-input" type="radio" name="per_page"
-                                                id="per_page_{{ $num }}" value="{{ $num }}"
-                                                {{ request('per_page') == $num ? 'checked' : '' }}>
-                                            <label class="form-check-label small" for="per_page_{{ $num }}"
-                                                data-bs-toggle="tooltip" title="{{ $num }} itens">
-                                                {{ $num }}
-                                            </label>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            </li>
+                            
+    <li>
+        <div class="filter-section mb-3" tabindex="0">
+            <div class="d-flex align-items-center mb-2">
+                <i class="bi bi-list-ol text-success me-2"></i>
+                <h6 class="mb-0 text-success" style="font-size:1rem;">Qtd. Itens</h6>
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+                @php $perPages = [10, 24, 50, 100, -1]; @endphp
+                @foreach($perPages as $num)
+                    <div class="form-check form-check-inline form-check-custom">
+                        <input class="form-check-input" type="radio" name="per_page"
+                            id="per_page_{{ $num == -1 ? 'all' : $num }}" value="{{ $num }}"
+                            {{ request('per_page') == $num || (is_null(request('per_page')) && $num == 10) ? 'checked' : '' }}>
+                        <label class="form-check-label small" for="per_page_{{ $num == -1 ? 'all' : $num }}"
+                            data-bs-toggle="tooltip" title="{{ $num == -1 ? 'Todos os itens' : $num . ' itens' }}">
+                            {{ $num == -1 ? 'Todos' : $num }}
+                        </label>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </li>
+
                             <li>
                                 <div class="filter-section mb-3" tabindex="0">
                                     <div class="d-flex align-items-center mb-2">
@@ -214,7 +216,7 @@
                     new bootstrap.Tooltip(tooltipTriggerEl)
                 });
             });
-  </script>
+            </script>
             <div class="col-md-4 mb-3">
                 <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <div class="input-group search-bar-sales w-100">
@@ -315,7 +317,7 @@
                                 </a>
                             </div>
                             <div class="col-md-5 text-end">
-                            
+
                                 <div class="dropdown-acoes-unico">
                                     <div class="dropdown">
                                         <button class="btn btn-light dropdown-toggle w-100" type="button"
@@ -391,35 +393,30 @@
                         </div>
                     </div>
                     <div class="card-body sale-products-section">
-                        <!-- Produtos da venda -->
                         <div class="row" id="sale-products-{{ $sale->id }}">
                             @foreach($sale->saleItems as $index => $item)
-                            <div class="col-md-3 sale-product {{ $index >= 4 ? 'd-none extra-product' : '' }}">
+                            <div class="col-md-3 mb-3 sale-product {{ $index >= 4 ? 'd-none extra-product' : '' }}">
                                 <div class="card sale-product-card h-100 shadow-sm border-0">
                                     <div class="sale-product-img-wrapper">
                                         <img src="{{ asset('storage/products/' . $item->product->image) }}"
                                             class="card-img-top sale-product-img" alt="{{ $item->product->name }}">
                                     </div>
                                     <div class="card-body d-flex flex-column justify-content-between">
-                                        <!-- Nome do produto com truncamento e tooltip -->
                                         <h6 class="card-title text-center sale-product-title"
                                             title="{{ $item->product->name }}">
                                             {{ $item->product->name }}
                                         </h6>
-                                        <!-- Preço -->
                                         <p class="card-text text-center sale-product-price">
                                             <span class="badge bg-light text-dark fw-normal">Preço</span>
                                             <span class="fw-bold">R$
                                                 {{ number_format($item->product->price, 2, ',', '.') }}</span>
                                         </p>
-                                        <!-- Preço de venda -->
                                         <p class="card-text text-center sale-product-saleprice">
                                             <span
                                                 class="badge bg-primary bg-opacity-10 text-primary fw-normal">Venda</span>
                                             <span class="fw-bold ">R$
                                                 {{ number_format($item->price_sale, 2, ',', '.') }}</span>
                                         </p>
-                                        <!-- Quantidade -->
                                         <p class="card-text text-center sale-product-qty">
                                             <span
                                                 class="badge bg-success bg-opacity-10 text-success fw-normal">Qtd</span>
@@ -431,19 +428,17 @@
                             @endforeach
                         </div>
                         @if($sale->saleItems->count() > 4)
-                        <div class="text-center mt-3">
+                        <div class="text-center ">
                             <button class="btn btn-outline-primary sale-products-expand"
                                 id="expandProducts-{{ $sale->id }}">+{{ $sale->saleItems->count() - 4 }} mais</button>
                             <button class="btn btn-outline-secondary sale-products-collapse d-none"
                                 id="collapseProducts-{{ $sale->id }}">Mostrar menos</button>
                         </div>
                         @endif
-                        <div class="row mt-4">
+                        <div class="row ">
                             <div class="col-md-12">
-                                <!-- Card único para informações adicionais -->
                                 <div class="card sale-totals-card p-4 shadow-lg rounded-4 border-0">
                                     <div class="row d-flex justify-content-between align-items-center">
-                                        <!-- Coluna com Total -->
                                         <div class="col-md-4 d-flex flex-column align-items-start">
                                             <h6 class="sale-total-label mb-2">
                                                 <i class="bi bi-cash-coin me-1 text-primary"></i>
@@ -463,17 +458,18 @@
                                                 R$ {{ number_format($sale->total_paid, 2, ',', '.') }}
                                             </span>
                                         </div>
-                                        <!-- Coluna com Saldo Restante ou Pago -->
                                         <div class="col-md-4 d-flex flex-column align-items-end">
                                             <h6 class="sale-total-label mb-2">
-                                                <i class="bi {{ $sale->status === 'pago' ? 'bi-check-circle' : 'bi-exclamation-circle' }} me-1 text-{{ $sale->status === 'pago' ? 'success' : 'danger' }}"></i>
+                                                <i
+                                                    class="bi {{ $sale->status === 'pago' ? 'bi-check-circle' : 'bi-exclamation-circle' }} me-1 text-{{ $sale->status === 'pago' ? 'success' : 'danger' }}"></i>
                                                 <span>{{ $sale->status === 'pago' ? 'Status:' : 'Saldo Restante:' }}</span>
                                             </h6>
                                             <span class="badge sale-total-badge">
                                                 @if($sale->status === 'pago')
-                                                    Pago
+                                                Pago
                                                 @else
-                                                    R$ {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
+                                                R$
+                                                {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
                                                 @endif
                                             </span>
                                         </div>
@@ -492,7 +488,7 @@
             Nenhuma venda encontrada.
         </div>
         @endif
-        <!-- Paginação -->
+       <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
             <nav>
                 <ul class="pagination">

@@ -156,67 +156,43 @@
                 <div class="card">
                     <div class="card-title">Informações do Cliente</div>
                     <p><strong>Nome:</strong> {{ $sale->client->name }}</p>
-                                        <p><strong>Total Pago:</strong> R$ {{ number_format($sale->amount_paid, 2, ',', '.') }}</p>
                     <p><strong>Total da Venda:</strong> R$ {{ number_format($sale->total_price, 2, ',', '.') }}</p>
-                    <p><strong>Restante:</strong> R$ {{ number_format($sale->total_price - $sale->amount_paid, 2, ',', '.') }}</p>
-                </div>
-            </div>
 
-            <div class="card-section">
-                <div class="card">
-                    <div class="card-title">Histórico de Pagamentos</div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Valor</th>
-                                <th>Método</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($sale->payments as $payment)
-                            <tr>
-                                <td>{{ $payment->created_at->format('d/m/Y') }}</td>
-                                <td>R$ {{ number_format($payment->amount_paid, 2, ',', '.') }}</td>
-                                <td>{{ $payment->payment_method }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
                 </div>
             </div>
-        </div>
+                    </div>
 
         <!-- Produtos da Venda -->
         <div class="section">
             <div class="section-title">Produtos da Venda</div>
             <div class="product-grid">
                 @foreach($sale->saleItems as $item)
-                <div class="product-card">
-                    @php
-                        $imagePath = public_path('storage/products/' . $item->product->image);
-                        $imageData = null;
+                                <div class="product-card">
+                                    @php
+                                        $imagePath = public_path('storage/products/' . $item->product->image);
+                                        $imageData = null;
 
-                        if (file_exists($imagePath)) {
-                            $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
-                            if ($extension === 'webp' && function_exists('imagecreatefromwebp')) {
-                                $imageData = base64_encode(file_get_contents($imagePath));
-                            } elseif ($extension !== 'webp') {
-                                $imageData = base64_encode(file_get_contents($imagePath));
-                            }
-                        }
+                                        if (file_exists($imagePath)) {
+                                            $extension = pathinfo($imagePath, PATHINFO_EXTENSION);
+                                            if ($extension === 'webp' && function_exists('imagecreatefromwebp')) {
+                                                $imageData = base64_encode(file_get_contents($imagePath));
+                                            } elseif ($extension !== 'webp') {
+                                                $imageData = base64_encode(file_get_contents($imagePath));
+                                            }
+                                        }
 
-                        $imageSrc = $imageData ? 'data:image/' . ($extension ?? 'jpeg') . ';base64,' . $imageData : asset('images/default-product.png');
-                    @endphp
-                    <img src="{{ $imageSrc }}" alt="{{ $item->product->name }}">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ $item->product->name }}</h5>
-                        <p class="card-text">{{ $item->product->description }}</p>
-                        <p><strong>Quantidade:</strong> {{ $item->quantity }}</p>
-                        <p><strong>Preço Unitário:</strong> R$ {{ number_format($item->price_sale, 2, ',', '.') }}</p>
-                        <p><strong>Preço Total:</strong> R$ {{ number_format($item->price_sale * $item->quantity, 2, ',', '.') }}</p>
-                    </div>
-                </div>
+                                        $imageSrc = $imageData ? 'data:image/' . ($extension ?? 'jpeg') . ';base64,' . $imageData : asset('images/default-product.png');
+                                    @endphp
+                                    <img src="{{ $imageSrc }}" alt="{{ $item->product->name }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{ $item->product->name }}</h5>
+                                        <p class="card-text">{{ $item->product->description }}</p>
+                                        <p><strong>Quantidade:</strong> {{ $item->quantity }}</p>
+                                        <p><strong>Preço Unitário:</strong> R$ {{ number_format($item->price_sale, 2, ',', '.') }}</p>
+                                        <p><strong>Preço Total:</strong> R$
+                                            {{ number_format($item->price_sale * $item->quantity, 2, ',', '.') }}</p>
+                                    </div>
+                                </div>
                 @endforeach
             </div>
         </div>
