@@ -1,13 +1,14 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
+@section('title', 'tes')
+<link rel="stylesheet" href="{{ asset('css/sales.css') }}">
+
 <div class="container-fluid py-4">
     @include('message.alert')
     <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Filtros e Pesquisa -->
         <div class="row w-100">
-
-
             {{-- Troque id="customDropdown" por class="dropdown-filtros" em todos os dropdowns de filtro --}}
             <div class="col-md-3 mb-3">
                 <form action="{{ route('sales.index') }}" method="GET" class="w-100" id="filtersForm">
@@ -215,120 +216,6 @@
                     new bootstrap.Tooltip(tooltipTriggerEl)
                 });
             });
-            </script>
-
-            <style>
-            .btn-gradient-primary {
-                background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-                border: none;
-                color: #fff;
-                font-weight: 600;
-                transition: background 0.2s, box-shadow 0.2s;
-            }
-
-            .btn-gradient-primary:hover,
-            .btn-gradient-success:hover {
-                background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
-                color: #fff;
-                box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
-            }
-
-            .btn-gradient-success {
-                background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
-                border: none;
-                color: #fff;
-                font-weight: 600;
-                transition: background 0.2s, box-shadow 0.2s;
-            }
-
-
-            .filter-section {
-                background: #f8f9fa;
-                border-radius: 0.75rem;
-                padding: 0.75rem 1rem;
-                box-shadow: 0 1px 4px rgba(56, 249, 215, 0.04);
-                margin-bottom: 0.5rem;
-                transition: box-shadow 0.2s;
-            }
-
-            .filter-section:focus-within,
-            .filter-section:focus {
-                box-shadow: 0 0 0 2px #38f9d7;
-                outline: none;
-            }
-
-            .form-check-custom .form-check-input:checked {
-                background-color: #38f9d7;
-                border-color: #38f9d7;
-                box-shadow: 0 0 0 0.15rem rgba(56, 249, 215, .25);
-            }
-
-            .form-check-custom .form-check-input {
-                cursor: pointer;
-                border-radius: 50%;
-                width: 1.1em;
-                height: 1.1em;
-                margin-top: 0.15em;
-                transition: border-color 0.2s, box-shadow 0.2s;
-            }
-
-            .form-check-custom .form-check-label {
-                cursor: pointer;
-                font-weight: 500;
-                margin-left: 0.3em;
-                color: #333;
-                transition: color 0.2s;
-            }
-
-            .form-check-custom .form-check-input:focus {
-                box-shadow: 0 0 0 0.15rem rgba(56, 249, 215, .25);
-            }
-
-            .form-check-inline {
-                margin-right: 0.5rem;
-            }
-
-            .dropdown-menu .form-check-custom:hover {
-                background: #e9f7f7;
-                border-radius: 0.5rem;
-            }
-
-            .dropdown-menu {
-                border: none;
-                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
-            }
-
-            .dropdown-header {
-                font-size: 1rem;
-                font-weight: 600;
-                letter-spacing: 0.02em;
-            }
-
-            .btn-outline-secondary {
-                border: 1.5px solid #adb5bd;
-                color: #495057;
-                background: #fff;
-                font-weight: 600;
-                transition: background 0.2s, color 0.2s;
-            }
-
-            .btn-outline-secondary:hover {
-                background: #f8f9fa;
-                color: #0d6efd;
-            }
-
-            @media (max-width: 600px) {
-                .dropdown-menu {
-                    min-width: 95vw !important;
-                }
-
-                .filter-section {
-                    padding: 0.5rem 0.5rem;
-                }
-            }
-            </style>
-
-
 
             <div class="col-md-4 mb-3">
                 <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
@@ -342,56 +229,6 @@
                     </div>
                 </form>
             </div>
-
-            <style>
-            /* Estilo exclusivo para o campo de pesquisa de vendas */
-            .search-bar-sales {
-                border-radius: 2rem;
-                box-shadow: 0 2px 8px rgba(56, 249, 215, 0.08);
-                background: #fff;
-                transition: box-shadow 0.2s;
-            }
-
-            .search-bar-sales:focus-within {
-                box-shadow: 0 0 0 3px #38f9d7;
-            }
-
-            .search-bar-sales-icon {
-                background: transparent;
-                border: none;
-                color: #38f9d7;
-                font-size: 1.3rem;
-                border-radius: 2rem 0 0 2rem;
-                padding-left: 1rem;
-            }
-
-            .search-bar-sales-input {
-                border: none;
-                border-radius: 0 2rem 2rem 0;
-                background: transparent;
-                font-size: 1.1rem;
-                padding-left: 0.5rem;
-                box-shadow: none;
-                transition: background 0.2s;
-            }
-
-            .search-bar-sales-input:focus {
-                background: #f8f9fa;
-                outline: none;
-                box-shadow: none;
-            }
-
-            @media (max-width: 600px) {
-                .search-bar-sales-input {
-                    font-size: 1rem;
-                }
-
-                .search-bar-sales-icon {
-                    font-size: 1.1rem;
-                    padding-left: 0.5rem;
-                }
-            }
-            </style>
 
             <script>
             function setupDynamicSearch() {
@@ -483,66 +320,7 @@
                                 </a>
                             </div>
                             <div class="col-md-5 text-end">
-                                <style>
-                                /* CSS restrito ao dropdown de ações */
-                                .dropdown-acoes-unico .dropdown {
-                                    min-width: 180px;
-                                }
-
-                                .dropdown-acoes-unico .btn-light.dropdown-toggle {
-                                    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-                                    border: none;
-                                    color: #fff;
-                                    font-weight: 600;
-                                    transition: background 0.2s, box-shadow 0.2s;
-                                }
-
-                                .dropdown-acoes-unico .btn-light.dropdown-toggle:focus,
-                                .dropdown-acoes-unico .btn-light.dropdown-toggle:hover {
-                                    background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
-                                    color: #fff;
-                                    box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
-                                }
-
-                                .dropdown-acoes-unico .dropdown-menu {
-                                    padding: 0.25rem 0;
-                                    border-radius: 8px;
-                                    border: 1px solid #e0e0e0;
-                                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
-                                    font-size: 1rem;
-                                }
-
-                                .dropdown-acoes-unico .dropdown-item {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 0.5rem;
-                                    padding: 0.5rem 1rem;
-                                    border-radius: 4px;
-                                    transition: background 0.15s;
-                                    font-weight: 400;
-                                }
-
-                                .dropdown-acoes-unico .dropdown-item:focus,
-                                .dropdown-acoes-unico .dropdown-item:hover {
-                                    background: #f1f3f4;
-                                    color: #222;
-                                }
-
-                                .dropdown-acoes-unico .dropdown-item a {
-                                    text-decoration: none;
-                                    color: inherit;
-                                }
-
-                                @media (max-width: 576px) {
-
-                                    .dropdown-acoes-unico .dropdown,
-                                    .dropdown-acoes-unico .dropdown-menu,
-                                    .dropdown-acoes-unico .btn-light.dropdown-toggle {
-                                        width: 100%;
-                                        min-width: unset;
-                                    }
-                                }
-                                </style>
+                            
                                 <div class="dropdown-acoes-unico">
                                     <div class="dropdown">
                                         <button class="btn btn-light dropdown-toggle w-100" type="button"
@@ -712,153 +490,6 @@
 
                         @include('sales.paymentHistory')
                     </div>
-
-                    <style>
-                    /* Escopo exclusivo para a seção de produtos da venda */
-                    .sale-products-section {
-                        background: #fafdff;
-                        border-radius: 1.5rem;
-                        padding-bottom: 2rem;
-                    }
-
-                    .sale-products-section .sale-product-card {
-                        border-radius: 1.2rem;
-                        transition: box-shadow 0.18s, transform 0.18s;
-                        background: linear-gradient(135deg, #f8f9fa 80%, #e6fff7 100%);
-                        min-height: 370px;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-                    }
-
-                    .sale-products-section .sale-product-card:hover {
-                        box-shadow: 0 6px 24px rgba(56, 249, 215, 0.13);
-                        transform: translateY(-4px) scale(1.03);
-                    }
-
-                    .sale-products-section .sale-product-img-wrapper {
-                        background: #fff;
-                        border-radius: 1.2rem 1.2rem 0 0;
-                        overflow: hidden;
-                        height: 180px;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-
-                    .sale-products-section .sale-product-img {
-                        max-height: 170px;
-                        width: auto;
-                        object-fit: contain;
-                        transition: transform 0.2s;
-                    }
-
-                    .sale-products-section .sale-product-card:hover .sale-product-img {
-                        transform: scale(1.07) rotate(-2deg);
-                    }
-
-                    .sale-products-section .sale-product-title {
-                        font-weight: 600;
-                        font-size: 1.05rem;
-                        white-space: nowrap;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        margin-bottom: 0.5rem;
-                        color: #222;
-                    }
-
-                    .sale-products-section .sale-product-price,
-                    .sale-products-section .sale-product-saleprice,
-                    .sale-products-section .sale-product-qty {
-                        margin-bottom: 0.3rem;
-                        font-size: 1rem;
-                    }
-
-                    .sale-products-section .sale-product-saleprice {
-                        color: #007bff;
-                    }
-
-                    .sale-products-section .sale-product-qty {
-                        color: #38b000;
-                    }
-
-                    .sale-products-section .badge {
-                        font-size: 0.85rem;
-                        border-radius: 0.7rem;
-                        padding: 0.3em 0.7em;
-                        font-weight: 500;
-                        letter-spacing: 0.01em;
-                    }
-
-                    .sale-products-section .sale-products-expand,
-                    .sale-products-section .sale-products-collapse {
-                        border-radius: 2rem;
-                        font-weight: 500;
-                        min-width: 120px;
-                        transition: background 0.18s, color 0.18s;
-                    }
-
-                    .sale-products-section .sale-products-expand:hover,
-                    .sale-products-section .sale-products-collapse:hover {
-                        background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
-                        color: #fff;
-                    }
-
-                    .sale-products-section .sale-totals-card {
-                        background: linear-gradient(120deg, #f8f9fa 80%, #e0fff7 100%);
-                        border-radius: 1.2rem;
-                        margin-top: 1.5rem;
-                    }
-
-                    .sale-products-section .sale-total-label {
-                        font-weight: 600;
-                        font-size: 1.1rem;
-                        color: #38b000;
-                        display: flex;
-                        align-items: center;
-                    }
-
-                    .sale-products-section .sale-total-value {
-                        font-size: 1.25rem;
-                        font-weight: 700;
-                        color: #222;
-                    }
-
-                    .sale-products-section .sale-total-paid {
-                        font-size: 1.15rem;
-                        font-weight: 600;
-                        color: #007bff;
-                    }
-
-                    .sale-products-section .sale-total-badge {
-                        background: linear-gradient(90deg, #ff5858 0%, #f09819 100%);
-                        color: #fff;
-                        font-size: 1.1rem;
-                        font-weight: 700;
-                        padding: 0.5em 1.1em;
-                        border-radius: 1.2rem;
-                        box-shadow: 0 2px 8px rgba(255, 88, 88, 0.08);
-                    }
-
-                    @media (max-width: 900px) {
-                        .sale-products-section .col-md-3 {
-                            flex: 0 0 50%;
-                            max-width: 50%;
-                        }
-                    }
-
-                    @media (max-width: 600px) {
-                        .sale-products-section .col-md-3 {
-                            flex: 0 0 100%;
-                            max-width: 100%;
-                        }
-
-                        .sale-products-section .sale-product-card {
-                            min-height: 320px;
-                        }
-                    }
-                    </style>
-
                 </div>
             </div>
             @endforeach
