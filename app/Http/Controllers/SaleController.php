@@ -63,6 +63,9 @@ class SaleController extends Controller
             }
         }
 
+        // Ordenar por status: "pendente" e outros primeiro, "pago" por último
+        $sales->orderByRaw("CASE WHEN status = 'pago' THEN 1 ELSE 0 END");
+
         // Controle do número de itens por página (valor padrão é 10)
         $perPage = $request->input('per_page', 4);  // Pega o valor de 'per_page' ou usa 10 como padrão
 
@@ -208,8 +211,8 @@ class SaleController extends Controller
         $sale = Sale::create([
             'client_id' => $data['client_id'],
             'user_id' => auth()->id(),
-            'status' => 'pending', // A venda começa com o status 'pending'
-            'total_price' => $total_price, // Adicionando o preço total ao criar a venda
+            'status' => 'pendente', 
+            'total_price' => $total_price, 
         ]);
 
         // Registrar os itens da venda
@@ -266,6 +269,11 @@ class SaleController extends Controller
 
     $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
     $sale->amount_paid = $totalPaid;
+
+    // Verifica se o total pago é igual ao total_price e atualiza o status
+    if ($totalPaid >= $sale->total_price) {
+        $sale->status = 'pago';
+    }
     $sale->save();
 
     $redirectTo = request()->input('from') === 'show'
@@ -327,6 +335,13 @@ class SaleController extends Controller
         // Atualizando o total pago na venda
         $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
         $sale->amount_paid = $totalPaid;
+
+        // Verifica se o total pago é igual ao total_price e atualiza o status
+        if ($totalPaid >= $sale->total_price) {
+            $sale->status = 'pago';
+        } else {
+            $sale->status = 'pendente'; 
+        }
         $sale->save();
 
         // Verificar a origem da requisição para o redirecionamento
@@ -348,6 +363,13 @@ class SaleController extends Controller
         // Atualizando o total pago na venda
         $totalPaid = ModelsSalePayment::where('sale_id', $sale->id)->sum('amount_paid');
         $sale->amount_paid = $totalPaid;
+
+        // Verifica se o total pago é igual ao total_price e atualiza o status
+        if ($totalPaid >= $sale->total_price) {
+            $sale->status = 'pago';
+        } else {
+            $sale->status = 'pendente'; 
+        }
         $sale->save();
 
         // Verificar a origem da requisição para o redirecionamento
@@ -381,17 +403,17 @@ class SaleController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'client_id' => 'required|exists:clients,id',  // Verifica se o cliente existe
-            'products' => 'required|array', // Verifica se os produtos foram selecionados
-            'products.*.product_id' => 'required|exists:products,id', // Verifica se o produto existe
-            'products.*.quantity' => 'required|integer|min:1', // Verifica se a quantidade é válida
-            'products.*.price_sale' => 'required|numeric|min:0', // Verifica se o preço de venda é válido
+            'client_id' => 'required|exists:clients,id', 
+            'products' => 'required|array', 
+            'products.*.product_id' => 'required|exists:products,id', 
+            'products.*.quantity' => 'required|integer|min:1',
+            'products.*.price_sale' => 'required|numeric|min:0', 
         ]);
 
         $sale = Sale::findOrFail($id);
-        $sale->client_id = $request->client_id; // Atualiza o client_id
+        $sale->client_id = $request->client_id;
         $sale->user_id = auth()->id();
-        $sale->status = 'pending'; // Caso queira manter o status 'pending' por padrão
+        $sale->status = 'pendente'; 
         $sale->save();
 
         $total_price = 0;

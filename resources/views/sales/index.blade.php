@@ -1,7 +1,6 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-@section('title', 'tes')
 <link rel="stylesheet" href="{{ asset('css/sales.css') }}">
 
 <div class="container-fluid py-4">
@@ -168,7 +167,6 @@
                     </div>
                 </form>
             </div>
-
             <script>
             document.addEventListener('DOMContentLoaded', function() {
                 // Para cada dropdown de filtro na página
@@ -216,7 +214,7 @@
                     new bootstrap.Tooltip(tooltipTriggerEl)
                 });
             });
-
+  </script>
             <div class="col-md-4 mb-3">
                 <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <div class="input-group search-bar-sales w-100">
@@ -276,7 +274,6 @@
             }
             document.addEventListener('DOMContentLoaded', setupDynamicSearch);
             </script>
-
             <div class="col-md-5 mb-3 d-flex justify-content-end align-items-center">
                 <a href="#" class="btn bg-gradient-primary mb-0 d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#modalAddSale">
@@ -290,10 +287,8 @@
                     Adicionar Venda
                 </a>
             </div>
-
         </div>
     </div>
-
     <!-- Exibir todas as vendas -->
     <div id="sales-list">
         @if(isset($sales) && $sales->isNotEmpty())
@@ -393,10 +388,8 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </div>
-
                     <div class="card-body sale-products-section">
                         <!-- Produtos da venda -->
                         <div class="row" id="sale-products-{{ $sale->id }}">
@@ -437,7 +430,6 @@
                             </div>
                             @endforeach
                         </div>
-
                         @if($sale->saleItems->count() > 4)
                         <div class="text-center mt-3">
                             <button class="btn btn-outline-primary sale-products-expand"
@@ -446,7 +438,6 @@
                                 id="collapseProducts-{{ $sale->id }}">Mostrar menos</button>
                         </div>
                         @endif
-
                         <div class="row mt-4">
                             <div class="col-md-12">
                                 <!-- Card único para informações adicionais -->
@@ -472,22 +463,24 @@
                                                 R$ {{ number_format($sale->total_paid, 2, ',', '.') }}
                                             </span>
                                         </div>
-                                        <!-- Coluna com Saldo Restante -->
+                                        <!-- Coluna com Saldo Restante ou Pago -->
                                         <div class="col-md-4 d-flex flex-column align-items-end">
                                             <h6 class="sale-total-label mb-2">
-                                                <i class="bi bi-exclamation-circle me-1 text-danger"></i>
-                                                <span>Saldo Restante:</span>
+                                                <i class="bi {{ $sale->status === 'pago' ? 'bi-check-circle' : 'bi-exclamation-circle' }} me-1 text-{{ $sale->status === 'pago' ? 'success' : 'danger' }}"></i>
+                                                <span>{{ $sale->status === 'pago' ? 'Status:' : 'Saldo Restante:' }}</span>
                                             </h6>
                                             <span class="badge sale-total-badge">
-                                                R$
-                                                {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
+                                                @if($sale->status === 'pago')
+                                                    Pago
+                                                @else
+                                                    R$ {{ number_format($sale->total_price - $sale->total_paid, 2, ',', '.') }}
+                                                @endif
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
                         @include('sales.paymentHistory')
                     </div>
                 </div>
@@ -499,7 +492,6 @@
             Nenhuma venda encontrada.
         </div>
         @endif
-
         <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
             <nav>
