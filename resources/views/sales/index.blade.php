@@ -337,7 +337,8 @@
                                                 </button>
                                             </li>
                                             <li>
-                                                <a href="{{ route('sales.export', $sale->id) }}" class="dropdown-item"
+                                                <a href="#" class="dropdown-item export-pdf-btn"
+                                                    data-export-url="{{ route('sales.export', $sale->id) }}"
                                                     title="Exportar PDF">
                                                     <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
                                                     Exportar PDF

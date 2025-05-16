@@ -65,7 +65,7 @@
     @yield('guest')
     @endguest
     @include('message.alert')
-
+   @include('message.download')
     <!-- JS Bibliotecas Base -->
     <script src="../assets/js/core/popper.min.js"></script>
     <script src="../assets/js/core/bootstrap.min.js"></script>

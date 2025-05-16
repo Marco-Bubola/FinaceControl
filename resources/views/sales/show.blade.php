@@ -6,7 +6,8 @@
         <div class="row align-items-center mb-4">
             <h1 class="col-md-10 text-center">Detalhes da Venda #{{ $sale->id }}</h1>
             <div class="col-md-2 text-center">
-                <a href="{{ route('sales.export', $sale->id) }}" class="btn btn-secondary">
+                <a href="#" class=" export-pdf-btn btn btn-secondary"
+                                                    data-export-url="{{ route('sales.export', $sale->id) }}">
                     <i class="bi bi-file-earmark-pdf"></i> Exportar Relatório PDF
                 </a>
             </div>
