@@ -304,26 +304,41 @@
                 </div>
             </div>
         </div>
-        <!-- Modal de confirmação para exclusão do produto -->
+      <!-- Modal de confirmação para exclusão do produto (Estilo Amigável e Grande) -->
         <div class="modal fade" id="modalDeleteProduct" tabindex="-1" aria-labelledby="modalDeleteProductLabel"
             aria-hidden="true">
-            <div class="modal-dialog modal-sm">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalDeleteProductLabel">Confirmar Exclusão</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="modal-dialog modal-dialog-centered modal-lg">
+                <div class="modal-content border-0 shadow-lg rounded-4">
+                    <div class="modal-header bg-light border-0 rounded-top-4">
+                        <div class="d-flex align-items-center w-100">
+                            <i class="bi bi-box-seam text-warning fs-1 me-3"></i>
+                            <div>
+                                <h5 class="modal-title mb-1 fw-semibold text-warning" id="modalDeleteProductLabel">
+                                    Excluir produto?
+                                </h5>
+                                <small class="text-muted">Você está prestes a remover um produto desta venda. Tudo certo?</small>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                     </div>
-                    <div class="modal-body">
+                    <div class="modal-body text-center">
                         <!-- Espaço para inserir dinamicamente a mensagem -->
-                        <p id="modal-delete-message"></p>
+                        <p class="mb-2 fs-5" id="modal-delete-message"></p>
+                        <div class="alert alert-info py-2 px-3 mb-0 small rounded-pill" role="alert">
+                            Não se preocupe, você pode adicionar outro produto à venda a qualquer momento!
+                        </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer border-0 justify-content-center bg-light rounded-bottom-4">
                         <form id="form-delete-product" action="" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-danger">Excluir</button>
+                            <button type="submit" class="btn btn-outline-danger px-4 rounded-pill">
+                                <i class="bi bi-trash me-1"></i> Excluir produto
+                            </button>
                         </form>
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary px-4 rounded-pill ms-2" data-bs-dismiss="modal">
+                            Manter produto
+                        </button>
                     </div>
                 </div>
             </div>
@@ -339,9 +354,9 @@
                         var productName = this.getAttribute('data-product-name');
                         var productPrice = this.getAttribute('data-product-price');
 
-                        // Atualiza a mensagem do modal
-                        var message = "Tem certeza de que deseja excluir o produto <strong>" +
-                            productName + "</strong>?<br>Preço do produto: <strong>R$ " +
+                        // Atualiza a mensagem do modal com formato mais amigável
+                        var message = "Tem certeza de que deseja excluir o produto <strong class=\"text-warning\">" +
+                            productName + "</strong>?<br><br>Preço do produto: <strong class=\"text-success\">R$ " +
                             productPrice + "</strong>";
                         document.getElementById('modal-delete-message').innerHTML = message;
 
@@ -832,337 +847,5 @@
             });
         </script>
 
-        <style>
-            .modal-body {
-                max-height: calc(100vh - 150px);
-                overflow-y: auto;
-                padding-right: 20px;
-                /* Para a barra de rolagem */
-            }
-
-            .product-list-container {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px;
-                overflow-y: scroll;
-            }
-
-            .product-item {
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                height: 100%;
-                border: 1px solid #e0e0e0;
-                border-radius: 10px;
-                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                transition: transform 0.3s ease;
-                background-color: #fff;
-            }
-
-
-            .card-title {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                max-width: 250px;
-                text-align: center;
-                position: relative;
-            }
-
-            /* Tooltip para o nome completo do produto */
-            .card-title[data-bs-toggle="tooltip"]:hover::after {
-                content: attr(data-bs-original-title);
-                position: absolute;
-                top: 100%;
-                left: 0;
-                padding: 5px;
-                background-color: rgba(0, 0, 0, 0.7);
-                color: white;
-                font-size: 12px;
-                border-radius: 3px;
-                width: 100%;
-                z-index: 10;
-            }
-
-            .product-item:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            }
-
-            .card-body {
-                padding: 15px;
-                flex-grow: 1;
-            }
-
-            .form-check-input {
-                margin-top: 12px;
-            }
-
-            .modal-dialog {
-                max-width: 90%;
-                margin: 30px auto;
-            }
-
-            /* Estilo do botão de fechar */
-            .custom-close-btn {
-                background-color: transparent;
-                border: none;
-                font-size: 1.5rem;
-                color: #999;
-                cursor: pointer;
-                transition: color 0.3s;
-            }
-
-            .custom-close-btn:hover {
-                color: #333;
-            }
-
-            /* Ajustes para melhor responsividade */
-            @media (max-width: 768px) {
-                .product-item {
-                    flex: 0 0 48%;
-                }
-            }
-
-            /* Estilos gerais */
-            .card {
-                border-radius: 12px;
-                overflow: hidden;
-                background-color: #f8f9fa;
-            }
-
-            .card-body {
-                padding: 20px;
-            }
-
-            .custom-table th,
-            .custom-table td {
-                font-size: 1rem;
-                text-align: center;
-                padding: 10px;
-            }
-
-            .custom-table th {
-                background-color: #f1f1f1;
-                font-weight: bold;
-                color: #333;
-            }
-
-            .custom-table td {
-                color: #555;
-            }
-
-            .custom-list-item {
-                background-color: #f9f9f9;
-                border: 1px solid #e0e0e0;
-                border-radius: 8px;
-                padding: 10px;
-                transition: background-color 0.3s ease;
-            }
-
-            .custom-list-item:hover {
-                background-color: #e9ecef;
-            }
-
-            /* Histórico de Pagamentos */
-            .list-group-item {
-                border: none;
-                padding: 12px;
-            }
-
-            .btn-success,
-            .btn-warning,
-            .btn-danger {
-                transition: transform 0.3s ease, background-color 0.3s ease;
-            }
-
-            .btn-success:hover,
-            .btn-warning:hover,
-            .btn-danger:hover {
-                transform: scale(1.1);
-                background-color: #0056b3;
-                /* Uma cor mais vibrante */
-            }
-
-            /* Ajustes no título e no botão */
-            .card-title {
-                font-size: 1.7rem;
-                font-weight: bold;
-                color: #007bff;
-            }
-
-            .card-title.text-primary {
-                font-size: 1.5rem;
-            }
-
-            .card-title.text-center {
-                font-size: 1.6rem;
-            }
-
-            /* Estilo de botão */
-            button.btn {
-                border-radius: 8px;
-                padding: 8px 16px;
-            }
-
-            /* Responsividade */
-            @media (max-width: 768px) {
-                .custom-table {
-                    font-size: 0.9rem;
-                }
-
-                .card-body {
-                    padding: 15px;
-                }
-
-                .card-title {
-                    font-size: 1.5rem;
-                }
-
-                .custom-list-item {
-                    font-size: 0.9rem;
-                }
-            }
-
-            .custom-card {
-                border-radius: 15px;
-                /* Bordas arredondadas */
-                transition: transform 0.3s ease, box-shadow 0.3s ease;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-                /* Sombra sutil */
-            }
-
-            .custom-card:hover {
-                transform: translateY(-5px);
-                /* Leve elevação no hover */
-                box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-                /* Sombra mais forte no hover */
-            }
-
-            .card-title {
-                font-size: 1.2rem;
-                font-weight: bold;
-                text-transform: capitalize;
-            }
-
-            .card-text {
-                font-size: 0.9rem;
-                color: #555;
-            }
-
-            .custom-card-body {
-                background-color: #f9f9f9;
-                /* Cor de fundo mais suave */
-                border-radius: 15px;
-                padding: 20px;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-                /* Sombra suave */
-                transition: box-shadow 0.3s ease;
-            }
-
-            .custom-card-body:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                /* Sombra mais forte no hover */
-            }
-
-            .card-title {
-                font-size: 1.5rem;
-                /* Tamanho de fonte maior */
-                font-weight: 600;
-                /* Negrito no título */
-                color: #333;
-                text-transform: capitalize;
-                margin-bottom: 10px;
-            }
-
-            .product-description {
-                font-size: 1rem;
-                color: #555;
-                margin-bottom: 15px;
-                max-width: 250px;
-                margin: 0 auto;
-            }
-
-            .product-info p {
-                font-size: 1rem;
-                margin: 5px 0;
-                color: #666;
-            }
-
-            .product-info .price {
-                font-weight: bold;
-                color: #2c3e50;
-            }
-
-            .product-info p strong {
-                color: #34495e;
-                /* Cor de destaque para os títulos das informações */
-            }
-
-            /* Efeito de hover para os preços */
-            .product-info .price:hover {
-                color: #e74c3c;
-                /* Cor vibrante para o hover */
-                cursor: pointer;
-                transition: color 0.3s ease;
-            }
-
-            /* Para dispositivos menores */
-            @media (max-width: 768px) {
-                .custom-card-body {
-                    padding: 15px;
-                }
-
-                .card-title {
-                    font-size: 1.2rem;
-                    /* Ajuste no título */
-                }
-
-                .product-description {
-                    max-width: 100%;
-                    /* Deixe a descrição se ajustar melhor em telas menores */
-                }
-
-                .product-info p {
-                    font-size: 0.9rem;
-                    /* Fontes menores para telas pequenas */
-                }
-            }
-
-
-            .btn-primary,
-            .btn-danger {
-                transition: background-color 0.3s ease, transform 0.3s ease;
-            }
-
-            .btn-sm {
-                font-size: 0.8rem;
-            }
-
-            .card-img-top {
-                border-radius: 15px 15px 0 0;
-                object-fit: cover;
-                height: 200px;
-            }
-
-            .position-absolute {
-                top: 10px;
-                right: 10px;
-            }
-
-            .text-center {
-                text-align: center;
-            }
-
-            .text-truncate {
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .card-body .card-title {
-                margin-bottom: 10px;
-            }
-        </style>
 
 @endsection
