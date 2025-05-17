@@ -1,136 +1,292 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container-fluid" style="padding-top: 0; margin-top: 0;">
+<div class="container-fluid px-2 px-md-4 py-3" style="background: #f8fafc; min-height: 100vh;">
     @include('message.alert')
-    <div class="row">
-        <div class="col-md-12">
-            <!-- Cartão com Informações à Esquerda -->
-            <div class="card shadow-none" style="background-color: transparent; border: none; padding-top: 0; margin-top: 0;">
-                <div class="overflow-hidden position-relative"
-                    style="background-color: transparent; border: none; margin-top: 0;">
-                    <div class="card-body position-relative" style="margin-top: 0; padding-top: 0;">
-                        <!-- Informações do Banco -->
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-wifi p-2 me-3" style="font-size: 28px;"></i>
-                                <h5 class="mb-0 me-4">{{ $bank->description }}</h5>
-                                <p class="text-sm opacity-8 mb-0 me-3">Titular do Cartão:</p>
-                                <h6 class="mb-0 me-3">{{ $bank->name }}</h6>
-                                <p class="text-sm opacity-8 mb-0 me-3">Validade:</p>
-                                <h6 class="mb-0 me-3">
-                                    {{ \Carbon\Carbon::parse($bank->start_date)->format('d/m') }} -
-                                    {{ \Carbon\Carbon::parse($bank->end_date)->format('d/m') }}
-                                </h6>
-                            </div>
-                            <img class="w-10 border-radius-lg" src="../assets/img/logos/mastercard.png"
-                                alt="logo">
+
+    <!-- HEADER: Banco + Navegação de Mês + Resumo -->
+    <div class="mx-auto" >
+        <div class="rounded-4 shadow-sm px-4 py-4 mb-4" style="background: linear-gradient(90deg, #f8fafc 60%, #e7f1ff 100%);">
+            <!-- Banco e ações -->
+            <div class="d-flex flex-wrap align-items-center gap-3 mb-3">
+                <span class="d-flex align-items-center justify-content-center rounded-circle" style="background: #e7f1ff; width: 54px; height: 54px;">
+                    <i class="fas fa-wifi text-primary" style="font-size: 2rem;"></i>
+                </span>
+                <div class="flex-grow-1">
+                    <div class="fw-bold fs-5 text-dark mb-1 d-flex align-items-center gap-2">
+                        {{ $bank->description }}
+                        <img class="ms-2" src="../assets/img/logos/mastercard.png" alt="logo" style="height: 32px; filter: drop-shadow(0 2px 6px rgba(13,110,253,0.10));">
+                    </div>
+                    <div class="text-secondary small d-flex flex-wrap gap-3">
+                        <span><i class="bi bi-person-badge me-1"></i><strong>Titular:</strong> {{ $bank->name }}</span>
+                        <span><i class="bi bi-calendar-range me-1"></i><strong>Validade:</strong> {{ \Carbon\Carbon::parse($bank->start_date)->format('d/m') }} - {{ \Carbon\Carbon::parse($bank->end_date)->format('d/m') }}</span>
+                    </div>
+                </div>
+                <div class="card-group gap-4" >
+                    <!-- Card Mês Anterior -->
+                    <div class="card text-center border-0 shadow-sm bg-white" style="min-width: 200px;" id="card-previous-month">
+                        <div class="card-body py-3">
+                            <div class="mb-1 text-muted small">Mês Anterior</div>
+                            <h5 class="card-title mb-2">
+                                <i class="fas fa-chevron-left me-1"></i>
+                                <span id="previous-month-name">{{ $previousMonthName }}</span>
+                            </h5>
+                            <a href="#" id="previous-month"
+                                class="btn btn-outline-secondary btn-sm btn-change-month rounded-pill"
+                                data-month="{{ $previousMonth }}">
+                                Ver <span id="previous-month-btn-name">{{ $previousMonthName }}</span>
+                            </a>
                         </div>
-
-                        <!-- Navegação de Mês -->
-                        <div class="row mt-2">
-                            <div class="col-md-3">
-                                <h6 class="mb-0 text-primary">
-                                    <i class="fas fa-wallet me-2"></i> Suas Transações
-                                </h6>
-                            </div>
-                            <div class="col-md-6 d-flex justify-content-between align-items-center">
-                                <a href="#" id="previous-month"
-                                    class="btn btn-outline-secondary btn-sm btn-change-month"
-                                    data-month="{{ $previousMonth }}">
-                                    <i class="fas fa-chevron-left me-1"></i> Mês Anterior
-                                </a>
-                                <h6 id="current-month-title"
-                                    class="text-uppercase text-body text-xs font-weight-bolder mb-3">
-                                    {{ $currentMonthName }} ({{ $currentStartDate->format('d/m/Y') }} -
-                                    {{ $currentEndDate->format('d/m/Y') }})
-                                </h6>
-                                <a href="#" id="next-month" class="btn btn-outline-secondary btn-sm btn-change-month"
-                                    data-month="{{ $nextMonth }}">
-                                    Próximo Mês <i class="fas fa-chevron-right ms-1"></i>
-                                </a>
-                            </div>
-
-                            <div class="col-md-3 d-flex justify-content-end align-items-center">
-                                <button class="btn btn-outline-primary btn-sm me-2" data-bs-toggle="modal"
-                                    data-bs-target="#addTransactionModal">
-                                    Adicionar
-                                </button>
-                                <button class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#uploadModal">
-                                    Upload
-                                </button>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-dark text-white ">
-                                    <div class="card-body">
-                                        <p class="text-sm mb-1">Preço Total:</p>
-                                        <h6 class="text-success font-weight-bold" id="total-invoices">R$
-                                            {{ number_format($totalInvoices, 2) }}
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-dark text-white ">
-                                    <div class="card-body">
-                                        <p class="text-sm mb-1">Maior Fatura:</p>
-                                        <h6 class="text-danger font-weight-bold" id="highest-invoice">
-                                            R$
-                                            {{ $highestInvoice ? number_format($highestInvoice->value, 2) : '0,00' }}
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-dark text-white ">
-                                    <div class="card-body">
-                                        <p class="text-sm mb-1">Menor Fatura:</p>
-                                        <h6 class="text-warning font-weight-bold" id="lowest-invoice">
-                                            R$
-                                            {{ $lowestInvoice ? number_format($lowestInvoice->value, 2) : '0,00' }}
-                                        </h6>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="card bg-dark text-white ">
-                                    <div class="card-body">
-                                        <p class="text-sm mb-1">Total de Transações:</p>
-                                        <h6 class="text-info font-weight-bold" id="total-transactions">
-                                            {{ $totalTransactions }}
-                                        </h6>
-                                    </div>
-                                </div>
+                    </div>
+                    <!-- Card Mês Atual -->
+                    <div class="card text-center border-0 shadow bg-primary text-white" style="min-width: 200px;" id="card-current-month">
+                        <div class="card-body py-3">
+                            <div class="mb-1 small">Mês Atual</div>
+                            <h5 class="card-title mb-2" id="current-month-title">
+                                <i class="bi bi-calendar3"></i>
+                                <span id="current-month-name">{{ $currentMonthName }}</span>
+                            </h5>
+                            <div class="card-text small">
+                                <span id="current-month-range">
+                                    {{ $currentStartDate->format('d/m/Y') }} - {{ $currentEndDate->format('d/m/Y') }}
+                                </span>
                             </div>
                         </div>
+                    </div>
+                    <!-- Card Próximo Mês -->
+                    <div class="card text-center border-0 shadow-sm bg-white" style="min-width: 200px;" id="card-next-month">
+                        <div class="card-body py-3">
+                            <div class="mb-1 text-muted small">Próximo Mês</div>
+                            <h5 class="card-title mb-2">
+                                <span id="next-month-name">{{ $nextMonthName }}</span>
+                                <i class="fas fa-chevron-right ms-1"></i>
+                            </h5>
+                            <a href="#" id="next-month"
+                                class="btn btn-outline-secondary btn-sm btn-change-month rounded-pill"
+                                data-month="{{ $nextMonth }}">
+                                Ver <span id="next-month-btn-name">{{ $nextMonthName }}</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
 
+           
+        </div>
+    </div>
 
+    <!-- CONTEÚDO PRINCIPAL: Transações e Gráficos -->
+    <div class="row " >
+        <div class="col-lg-8">
+            
+            <!-- Área de Resumo e Ações -->
+            <div class="summary-cards-area mb-4">
+                <div class="d-flex flex-wrap gap-3 justify-content-center align-items-stretch">
+                    <!-- Card: Preço Total -->
+                    <div class="summary-card d-flex align-items-center flex-grow-1">
+                        <span class="summary-icon summary-total">
+                            <i class="bi bi-cash-coin"></i>
+                        </span>
+                        <div>
+                            <div class="summary-label">Preço Total</div>
+                            <div class="summary-value text-success" id="total-invoices">
+                                R$ {{ number_format($totalInvoices, 2) }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card: Maior Fatura -->
+                    <div class="summary-card d-flex align-items-center flex-grow-1">
+                        <span class="summary-icon summary-high">
+                            <i class="bi bi-arrow-up-circle-fill"></i>
+                        </span>
+                        <div>
+                            <div class="summary-label">Maior Fatura</div>
+                            <div class="summary-value text-danger" id="highest-invoice">
+                                R$ {{ $highestInvoice ? number_format($highestInvoice->value, 2) : '0,00' }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card: Menor Fatura -->
+                    <div class="summary-card d-flex align-items-center flex-grow-1">
+                        <span class="summary-icon summary-low">
+                            <i class="bi bi-arrow-down-circle-fill"></i>
+                        </span>
+                        <div>
+                            <div class="summary-label">Menor Fatura</div>
+                            <div class="summary-value text-warning" id="lowest-invoice">
+                                R$ {{ $lowestInvoice ? number_format($lowestInvoice->value, 2) : '0,00' }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card: Total de Transações -->
+                    <div class="summary-card d-flex align-items-center flex-grow-1">
+                        <span class="summary-icon summary-count">
+                            <i class="bi bi-list-ol"></i>
+                        </span>
+                        <div>
+                            <div class="summary-label">Total de Transações</div>
+                            <div class="summary-value text-info" id="total-transactions">
+                                {{ $totalTransactions }}
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Bloco de Botões de Ação -->
+                    <div class="summary-actions d-flex flex-column justify-content-center align-items-center ms-2">
+                        <button class="btn btn-primary mb-2 shadow-sm" data-bs-toggle="modal" data-bs-target="#addTransactionModal" title="Adicionar transação">
+                            <i class="bi bi-plus-circle fs-5"></i>
+                        </button>
+                        <button class="btn btn-outline-secondary shadow-sm" data-bs-toggle="modal" data-bs-target="#uploadModal" title="Upload">
+                            <i class="bi bi-upload fs-5"></i>
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Transações -->
-        <div class=" row col-md-12  pt-2">
-            <div class="col-md-8">
-                <div id="transactions-container">
-                    <!-- Inclui a view de transações e passa a variável $clients -->
-                    @include('invoice.transactions', ['eventsGroupedByMonth' => $eventsGroupedByMonth, 'clients' =>
-                    $clients])
-                </div>
+      
+            <div id="transactions-container">
+                <!-- Inclui a view de transações e passa a variável $clients -->
+                @include('invoice.transactions', ['eventsGroupedByMonth' => $eventsGroupedByMonth, 'clients' => $clients])
             </div>
-            <!-- Gráfico à Direita -->
-            <div class="col-md-4">
+        </div>
+        <!-- Gráfico à Direita -->
+        <div class="col-lg-4">
+            <div >
                 <!-- Exibe mensagem se não houver dados -->
                 <span id="no-data-message" style="display: none;">Sem dados</span>
                 <canvas id="updateCategoryChart"></canvas>
-                <canvas id="lineChart" class="mt-4"></canvas> <!-- Gráfico de linha -->
+            </div>
+            <div >
+                <canvas id="lineChart"></canvas> <!-- Gráfico de linha -->
             </div>
         </div>
     </div>
 </div>
 @include('invoice.uploadInvoice')
 
+<style>
+/* Estilos para os cards de resumo */
+.summary-cards-area {
+  
+    border-radius: 1.2em;
+    padding: 1.5em 1.2em 1.2em 1.2em;
+    margin-bottom: 2em;
+}
+.summary-card {
+    background: #fff;
+    border-radius: 1em;
+
+    padding: 0.8em 1.1em;
+    min-width: 200px;
+    max-width: 180px;
+    flex: 0 0 170px;
+    display: flex;
+    align-items: center;
+    gap: 0.7em;
+    margin-bottom: 0.5em;
+    border-left: 4px solid #e7f1ff;
+    transition: box-shadow 0.2s, border-color 0.2s, transform 0.18s;
+}
+.summary-card:hover {
+    box-shadow: 0 4px 18px rgba(13,110,253,0.13);
+    border-left: 4px solid #0d6efd;
+    transform: translateY(-2px) scale(1.03);
+}
+.summary-icon {
+    font-size: 1.5em;
+    border-radius: 50%;
+    padding: 0.25em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2em;
+    min-height: 2em;
+    box-shadow: 0 1px 6px rgba(13,110,253,0.07);
+}
+.summary-total { color: #198754; background: #eafbee; }
+.summary-high { color: #dc3545; background: #fdeaea; }
+.summary-low { color: #ffc107; background: #fffbe6; }
+.summary-count { color: #0dcaf0; background: #e7f1ff; }
+.summary-label {
+    font-size: 0.97em;
+    color: #6c757d;
+    margin-bottom: 0.1em;
+}
+.summary-value {
+    font-size: 1.09em;
+    font-weight: 700;
+    margin-bottom: 0;
+    white-space: nowrap;
+}
+.summary-actions {
+    background: #fff;
+    border-radius: 1em;
+    box-shadow: 0 1px 8px rgba(13,110,253,0.08);
+    padding: 0.8em 0.6em;
+    min-width: 65px;
+    min-height: 110px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5em;
+    margin-left: 0.5em;
+}
+.summary-actions .btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.15em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
+}
+.summary-actions .btn-primary {
+    background: linear-gradient(90deg, #0d6efd 80%, #6ea8fe 100%);
+    border: none;
+    color: #fff;
+}
+.summary-actions .btn-primary:hover {
+    background: #0b5ed7;
+    color: #fff;
+    box-shadow: 0 2px 10px rgba(13,110,253,0.13);
+}
+.summary-actions .btn-outline-secondary:hover {
+    background: #e7f1ff;
+    color: #0d6efd;
+    border-color: #0d6efd;
+    box-shadow: 0 2px 10px rgba(13,110,253,0.13);
+}
+@media (max-width: 991px) {
+    .summary-cards-area {
+        padding: 1em 0.5em 0.8em 0.5em;
+    }
+    .summary-card {
+        min-width: 120px;
+        max-width: 100%;
+        padding: 0.6em 0.7em;
+        flex: 0 0 140px;
+    }
+    .summary-actions {
+        min-width: 70px;
+        min-height: 90px;
+        padding: 0.7em 0.5em;
+    }
+}
+
+/* Estilos para os cards de mês */
+.card-group .card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.card-group .card:hover:not(.bg-primary) {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(13,110,253,0.15) !important;
+}
+
+/* Estilo para o fundo da página */
+body {
+    background: #f8fafc !important;
+}
+</style>
 <script>
 $(document).ready(function() {
     // Dados de categorias enviados pelo backend
@@ -183,29 +339,52 @@ $(document).ready(function() {
                 $('#lowest-invoice').text(`R$ ${response.lowestInvoice}`);
                 $('#total-transactions').text(response.totalTransactions);
 
-                // Atualiza o título do mês
-                $('#current-month-title').text(response.currentMonthTitle);
-
+                // Atualiza os títulos e nomes dos meses
+                $('#current-month-name').text(response.currentMonthName);
+                $('#previous-month-name').text(response.previousMonthName);
+                $('#next-month-name').text(response.nextMonthName);
+                $('#previous-month-btn-name').text(response.previousMonthName);
+                $('#next-month-btn-name').text(response.nextMonthName);
+                $('#current-month-range').text(response.currentMonthRange);
+  $('#current-month-title').text(response.currentMonthTitle);
                 // Atualiza os botões de navegação
                 $('#previous-month').data('month', response.previousMonth);
                 $('#next-month').data('month', response.nextMonth);
+  // Atualiza as transações
+            $('#transactions-container').html(response.transactionsHtml);
 
-                // Atualiza o gráfico de categorias
-                updateCategoryChart(response.categories, response.totalInvoices);
+            // Reativa o script de expansão dos invoices
+            initInvoiceExpanders();
 
-                // Atualiza o gráfico de linha com dados reais
-                addLineChart({
-                    labels: response.dailyLabels, // Dias do mês
-                    values: response.dailyValues // Valores reais das faturas por dia
-                });
-            },
-            error: function(xhr, status, error) {
+            // Atualiza o gráfico de categorias
+            updateCategoryChart(response.categories, response.totalInvoices);
+
+            // Atualiza o gráfico de linha com dados reais
+            addLineChart({
+                labels: response.dailyLabels, // Dias do mês
+                values: response.dailyValues // Valores reais das faturas por dia
+            });
+        },
+        error: function(xhr, status, error) {
                 console.error('Erro na requisição AJAX:', xhr.responseText);
                 alert('Erro ao carregar os dados do mês. Verifique os logs para mais detalhes.');
             }
         });
     }
-
+function initInvoiceExpanders() {
+    document.querySelectorAll('.show-more-invoices-btn').forEach(function(btn) {
+        var monthKey = btn.getAttribute('data-month');
+        var extraInvoices = document.querySelectorAll('.extra-invoice-' + monthKey);
+        btn.onclick = function() {
+            var expanded = btn.classList.toggle('expanded');
+            extraInvoices.forEach(function(el) {
+                el.classList.toggle('d-none', !expanded);
+            });
+            btn.querySelector('.show-more-label').classList.toggle('d-none', expanded);
+            btn.querySelector('.show-less-label').classList.toggle('d-none', !expanded);
+        };
+    });
+}
     // Função para atualizar o gráfico de categorias
     function updateCategoryChart(categories, totalInvoices) {
         // Converte o objeto de categorias em um array, se necessário
