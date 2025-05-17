@@ -3,323 +3,485 @@
 @section('content')
 <div class="container-fluid py-4">
 
-    <div class="row align-items-center mb-4">
-        <div class="col-md-8">
-            <h1 class="text-center mb-0">Detalhes da Venda #{{ $sale->id }}</h1>
-        </div>
-        <div class="col-md-4">
-            <div class="d-flex justify-content-end gap-2">
-                <a href="#" class="export-pdf-btn btn btn-secondary"
-                    data-export-url="{{ route('sales.export', $sale->id) }}">
-                    <i class="bi bi-file-earmark-pdf"></i> Exportar Relatório PDF
-                </a>
-                <button class="btn btn-outline-danger" data-bs-toggle="modal"
-                    data-bs-target="#modalDeleteSale{{ $sale->id }}">
-                    <i class="bi bi-trash"></i> Excluir Venda
-                </button>
+ <!-- Área de destaque para o header da venda -->
+<div class="card shadow-sm border-0 mb-4">
+    <div class="card-body py-4">
+        <div class="row align-items-center">
+            <div class="col-md-8 mb-3 mb-md-0">
+                <h1 class="mb-1 fw-bold d-flex align-items-center gap-2">
+                    <i class="bi bi-receipt-cutoff text-primary fs-2"></i>
+                    Detalhes da Venda <span class="text-muted">#{{ $sale->id }}</span>
+                </h1>
+                <p class="mb-0 text-secondary">Veja abaixo todas as informações e ações disponíveis para esta venda.</p>
             </div>
-        </div>
-    </div>
-
-    <div class="row">
-        <!-- Informações da Venda - Layout Melhorado -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-lg rounded-lg h-100">
-                <div class="card-body">
-                    <h5 class="card-title mb-4 text-primary">Informações da Venda</h5>
-                    <!-- Bloco de Informações -->
-                    <div class="row">
-                        <!-- Cliente -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-person-fill text-primary me-2"></i>
-                                    <h6 class="mb-0">Cliente:</h6>
-                                </div>
-                                <span>{{ $sale->client->name ?? 'Nenhum cliente cadastrado' }}</span>
-                            </div>
-                        </div>
-                        <!-- Email -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-envelope-fill text-primary me-2"></i>
-                                    <h6 class="mb-0">Email:</h6>
-                                </div>
-                                <span>{{ $sale->client->email ?? 'Nenhum email cadastrado' }}</span>
-                            </div>
-                        </div>
-                        <!-- Telefone -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-telephone-fill text-primary me-2"></i>
-                                    <h6 class="mb-0">Telefone:</h6>
-                                </div>
-                                <span>{{ $sale->client->phone ?? 'Nenhum telefone cadastrado' }}</span>
-                            </div>
-                        </div>
-                        <!-- Endereço -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-house-door-fill text-primary me-2"></i>
-                                    <h6 class="mb-0">Endereço:</h6>
-                                </div>
-                                <span>{{ $sale->client->address ?? 'Nenhum endereço cadastrado' }}</span>
-                            </div>
-                        </div>
-                        <!-- Status -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block status-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-check-circle-fill text-success me-2"></i>
-                                    <h6 class="mb-0">Status:</h6>
-                                </div><br>
-                                <span class="badge bg-{{ $sale->status == 'Paga' ? 'success' : 'danger' }}">
-                                    {{ $sale->status }}
-                                </span>
-                            </div>
-                        </div>
-                        <!-- Total Pago -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-cash-stack text-primary me-2"></i>
-                                    <h6 class="mb-0">Total Pago:</h6>
-                                </div>
-                                <span>R$ {{ number_format($sale->amount_paid, 2, ',', '.') }}</span>
-                            </div>
-                        </div>
-                        <!-- Total da Venda -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-cash-coin text-primary me-2"></i>
-                                    <h6 class="mb-0">Total da Venda:</h6>
-                                </div>
-                                <span>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</span>
-                            </div>
-                        </div>
-                        <!-- Total Restante -->
-                        <div class="col-md-4 mb-3">
-                            <div class="info-block">
-                                <div class="d-flex align-items-center justify-content-center">
-                                    <i class="bi bi-cash-coin text-warning me-2"></i>
-                                    <h6 class="mb-0">Total Restante:</h6>
-                                </div>
-                                <span>R$
-                                    {{ number_format($sale->total_price - $sale->amount_paid, 2, ',', '.') }}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <style>
-        /* Personalização do card */
-        .card {
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Bloco de informações */
-        .info-block {
-            background-color: #f7f8fa;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            transition: transform 0.3s, box-shadow 0.3s;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            text-align: center;
-            /* Centralizar texto */
-            max-height: 200px;
-            /* Tamanho fixo para os cards */
-        }
-
-        /* Efeito de hover no bloco de informações */
-        .info-block:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Ícones dentro dos blocos */
-        .info-block i {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        /* Spans dentro dos blocos */
-        .info-block span {
-            font-size: 1rem;
-            color: #333;
-            display: block;
-        }
-
-        /* Bloco de status */
-        .status-block {
-            display: flex;
-            align-items: center;
-        }
-
-        .status-block i {
-            margin-right: 10px;
-        }
-
-        /* Customização da badge de status */
-        .badge {
-            font-size: 1rem;
-            padding: 0.5rem 1rem;
-            border-radius: 10px;
-            text-transform: uppercase;
-        }
-
-        /* Badge 'success' para status pago */
-        .badge.bg-success {
-            background-color: #28a745;
-            color: white;
-        }
-
-        /* Badge 'danger' para status não pago */
-        .badge.bg-danger {
-            background-color: #dc3545;
-            color: white;
-        }
-        </style>
-        <!-- Histórico de Pagamentos -->
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm rounded-lg h-100">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="card-title text-center text-primary" style="font-size: 1.5rem;">Histórico de
-                            Pagamentos</h5>
-                        <button class="btn btn-success btn-sm" data-bs-toggle="modal"
-                            data-bs-target="#paymentModal{{ $sale->id }}">
-                            <i class="bi bi-wallet2"></i> Pagamento
-                        </button>
-                    </div>
-                    <div class="overflow-auto" style="max-height: 300px;">
-                        <div class="list-group">
-                            @foreach($sale->payments as $payment)
-                            <div
-                                class="list-group-item d-flex justify-content-between align-items-center mb-2 custom-list-item">
-                                <div>
-                                    <strong>{{ \Carbon\Carbon::parse($payment->payment_date)->format('d/m') }} | R$
-                                        {{ number_format($payment->amount_paid, 2, ',', '.') }} |
-                                        {{ $payment->payment_method }}</strong>
-                                </div>
-                                <div class="d-flex">
-                                    <button class="btn btn-warning btn-sm me-2" data-bs-toggle="modal"
-                                        data-bs-target="#editPaymentModal{{ $payment->id }}" title="Editar">
-                                        <i class="bi bi-pencil-square"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
-                                        data-bs-target="#modalDeletePayment{{ $payment->id }}" title="Excluir">
-                                        <i class="bi bi-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card col-md-12 mb-4">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center">
-                    <h3 class="card-title text-center w-75">Produtos da Venda</h3>
-                    <button class="btn btn-primary rounded-pill" data-bs-toggle="modal"
-                        data-bs-target="#modalAddProductToSale{{ $sale->id }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-plus-square" viewBox="0 0 16 16">
-                            <path
-                                d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z" />
-                            <path
-                                d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4" />
-                        </svg> Adicionar Produto
+            <div class="col-md-4">
+                <div class="d-flex justify-content-md-end gap-3">
+                    <a href="#" class="export-pdf-btn btn btn-outline-secondary d-flex align-items-center gap-2"
+                        data-export-url="{{ route('sales.export', $sale->id) }}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Exportar relatório em PDF">
+                        <i class="bi bi-file-earmark-pdf fs-4"></i>
+                        <span class="d-none d-md-inline">Exportar PDF</span>
+                    </a>
+                    <button class="btn btn-outline-danger d-flex align-items-center gap-2"
+                        data-bs-toggle="modal"
+                        data-bs-target="#modalDeleteSale{{ $sale->id }}"
+                        data-bs-toggle="tooltip" data-bs-placement="top" title="Excluir esta venda">
+                        <i class="bi bi-trash fs-4"></i>
+                        <span class="d-none d-md-inline">Excluir</span>
                     </button>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <div class="row mt-4">
-                    @foreach ($sale->saleItems as $item)
-                    <div class="col-md-2 mb-4">
-                        <div class="card custom-card shadow-lg rounded-lg">
-                            <img src="{{ asset('storage/products/' . $item->product->image) }}"
-                                data-product-id="{{ $item->id }}" class="card-img-top" alt="{{ $item->product->name }}">
+<!-- Ative tooltips do Bootstrap se ainda não estiverem ativos -->
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    });
+</script>
+@endpush
 
-                            <div class="position-absolute top-0 end-0 p-2">
-                                <a href="javascript:void(0)"
-                                    class="btn btn-primary btn-sm p-1 rounded-circle btn-edit-product"
-                                    data-product-id="{{ $item->id }}"
-                                    data-product-price="{{ number_format($item->price_sale, 2, '.', '') }}"
-                                    data-product-quantity="{{ $item->quantity }}" data-bs-toggle="modal"
-                                    data-bs-target="#modalEditProduct" title="Editar">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                        <path
-                                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                    </svg>
-                                </a>
-                                <button type="button"
-                                    class="btn btn-danger btn-sm p-1 rounded-circle btn-delete-product"
-                                    data-bs-toggle="modal" data-bs-target="#modalDeleteProduct"
-                                    data-sale-item-id="{{ $item->id }}" data-product-name="{{ $item->product->name }}"
-                                    data-product-price="{{ number_format($item->product->price, 2, ',', '.') }}">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                        class="bi bi-trash3" viewBox="0 0 16 16">
-                                        <path
-                                            d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                                    </svg>
-                                </button>
-                            </div>
+    <div class="row">
+        
+<!-- Estilos customizados para os blocos de informação -->
+<style>
+    .info-block {
+        background: #f8f9fa;
+        border-radius: 0.75rem;
+        padding: 1rem 0.75rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        text-align: center;
+        min-height: 90px;
+        margin-bottom: 0.5rem;
+        transition: box-shadow 0.2s;
+    }
+    .info-block:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    }
+    .info-block .bi {
+        font-size: 1.5rem;
+        margin-bottom: 0.25rem;
+    }
+    .status-block .bi {
+        font-size: 1.7rem;
+    }
+    .status-badge {
+        font-size: 1rem;
+        padding: 0.5em 1.2em;
+        border-radius: 1.5em;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+    @media (max-width: 767px) {
+        .info-block {
+            min-height: 70px;
+            padding: 0.75rem 0.5rem;
+        }
+    }
+</style>
 
-                            <div class="card-body d-flex flex-column justify-content-between custom-card-body">
-                                <h5 class="card-title text-center" data-bs-toggle="tooltip" data-bs-placement="top"
-                                    title="{{ $item->product->name }}">
-                                    {{ ucwords($item->product->name) }}
-                                </h5>
-
-                                <p class="card-text text-center text-truncate product-description">
-                                    {{ $item->product->description }}
-                                </p>
-
-                                <div class="product-info">
-                                    <p class="text-center"><strong>Quantidade:</strong> {{ $item->quantity }}</p>
-                                    <p class="text-center price">
-                                        <strong>Preço Unitário:</strong> <br>R$
-                                        {{ number_format($item->price_sale, 2, ',', '.') }}
-                                    </p>
-                                    <p class="text-center price"><strong>Preço Total:
-
-                                        </strong><br> R$
-                                        {{ number_format($item->price_sale * $item->quantity, 2, ',', '.') }}
-                                    </p>
-                                    <p class="text-center">
-                                        <strong>Código:</strong><br> {{ $item->product->product_code }}
-                                    </p>
-                                </div>
-                            </div>
-
-                        </div>
+<!-- Informações da Venda - Layout Moderno -->
+<div class="col-md-6 mb-4">
+    <div class="card shadow-lg rounded-lg h-100 border-0">
+        <div class="card-body">
+            <h5 class="card-title mb-4 text-primary fw-bold">
+                <i class="bi bi-info-circle-fill me-2"></i>Informações da Venda
+            </h5>
+            <div class="row g-3">
+                <!-- Cliente -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-person-fill text-primary"></i>
+                        <div class="fw-semibold">Cliente</div>
+                        <span class="text-muted small">{{ $sale->client->name ?? 'Nenhum cliente cadastrado' }}</span>
                     </div>
-                    @endforeach
+                </div>
+                <!-- Email -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-envelope-fill text-primary"></i>
+                        <div class="fw-semibold">Email</div>
+                        <span class="text-muted small">{{ $sale->client->email ?? 'Nenhum email cadastrado' }}</span>
+                    </div>
+                </div>
+                <!-- Telefone -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-telephone-fill text-primary"></i>
+                        <div class="fw-semibold">Telefone</div>
+                        <span class="text-muted small">{{ $sale->client->phone ?? 'Nenhum telefone cadastrado' }}</span>
+                    </div>
+                </div>
+                <!-- Endereço -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-house-door-fill text-primary"></i>
+                        <div class="fw-semibold">Endereço</div>
+                        <span class="text-muted small">{{ $sale->client->address ?? 'Nenhum endereço cadastrado' }}</span>
+                    </div>
+                </div>
+                <!-- Status -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block status-block">
+                        @if($sale->status == 'Paga')
+                            <span class="status-badge bg-success text-white">
+                                <i class="bi bi-check-circle-fill"></i> Paga
+                            </span>
+                        @else
+                            <span class="status-badge bg-warning text-dark">
+                                <i class="bi bi-exclamation-triangle-fill"></i> Pendente
+                            </span>
+                        @endif
+                        <div class="fw-semibold mt-2">Status</div>
+                    </div>
+                </div>
+                <!-- Total Pago -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-cash-stack text-success"></i>
+                        <div class="fw-semibold">Total Pago</div>
+                        <span class="text-success">R$ {{ number_format($sale->amount_paid, 2, ',', '.') }}</span>
+                    </div>
+                </div>
+                <!-- Total da Venda -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-cash-coin text-primary"></i>
+                        <div class="fw-semibold">Total da Venda</div>
+                        <span>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</span>
+                    </div>
+                </div>
+                <!-- Total Restante -->
+                <div class="col-6 col-md-4">
+                    <div class="info-block">
+                        <i class="bi bi-cash-coin text-warning"></i>
+                        <div class="fw-semibold">Total Restante</div>
+                        <span class="text-warning">R$ {{ number_format($sale->total_price - $sale->amount_paid, 2, ',', '.') }}</span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+
+<!-- Estilos customizados para o histórico de pagamentos -->
+<style>
+    .payment-list-item {
+        background: #f8f9fa;
+        border-radius: 0.75rem;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        transition: box-shadow 0.2s, background 0.2s;
+        padding: 0.75rem 1rem;
+        margin-bottom: 0.5rem;
+        align-items: center;
+    }
+    .payment-list-item:hover {
+        background: #e9ecef;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+    }
+    .payment-badge {
+        font-size: 0.95em;
+        padding: 0.35em 0.9em;
+        border-radius: 1em;
+        font-weight: 500;
+        margin-left: 0.5em;
+    }
+    .payment-date {
+        font-weight: 600;
+        color: #0d6efd;
+        margin-right: 0.7em;
+    }
+    .payment-amount {
+        font-weight: 700;
+        color: #198754;
+        margin-right: 0.7em;
+    }
+    .payment-method-badge {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+    .payment-actions .btn {
+        margin-left: 0.3em;
+    }
+    @media (max-width: 767px) {
+        .payment-list-item {
+            flex-direction: column;
+            align-items: flex-start !important;
+            gap: 0.5em;
+        }
+        .payment-actions {
+            margin-top: 0.5em;
+        }
+    }
+</style>
+
+<!-- Histórico de Pagamentos - Visual Moderno -->
+<div class="col-md-6 mb-4">
+    <div class="card shadow-lg rounded-lg h-100 border-0">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="card-title text-primary fw-bold d-flex align-items-center gap-2 mb-0" style="font-size: 1.4rem;">
+                    <i class="bi bi-wallet2 me-2"></i> Histórico de Pagamentos
+                </h5>
+                <button class="btn btn-success btn-sm d-flex align-items-center gap-1"
+                    data-bs-toggle="modal"
+                    data-bs-target="#paymentModal{{ $sale->id }}"
+                    data-bs-toggle="tooltip"
+                    data-bs-placement="left"
+                    title="Adicionar novo pagamento">
+                    <i class="bi bi-plus-circle fs-5"></i>
+                    <span class="d-none d-md-inline">Pagamento</span>
+                </button>
+            </div>
+            <div class="overflow-auto" style="max-height: 300px;">
+                <div class="list-group">
+                    @forelse($sale->payments as $payment)
+                        <div class="list-group-item d-flex justify-content-between payment-list-item">
+                            <div class="d-flex flex-wrap align-items-center">
+                                <span class="payment-date">
+                                    <i class="bi bi-calendar-event"></i>
+                                    {{ \Carbon\Carbon::parse($payment->payment_date)->format('d/m') }}
+                                </span>
+                                <span class="payment-amount">
+                                    <i class="bi bi-cash-coin"></i>
+                                    R$ {{ number_format($payment->amount_paid, 2, ',', '.') }}
+                                </span>
+                                <span class="payment-badge payment-method-badge">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                    {{ $payment->payment_method }}
+                                </span>
+                            </div>
+                            <div class="payment-actions d-flex">
+                                <button class="btn btn-warning btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editPaymentModal{{ $payment->id }}"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Editar pagamento">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button type="button" class="btn btn-danger btn-sm"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#modalDeletePayment{{ $payment->id }}"
+                                    data-bs-toggle="tooltip"
+                                    data-bs-placement="top"
+                                    title="Excluir pagamento">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="alert alert-info text-center mb-0">
+                            Nenhum pagamento registrado para esta venda.
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Estilos customizados para os cards de produto -->
+<style>
+    .custom-card {
+        border: none;
+        border-radius: 1.1rem;
+        box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+        transition: box-shadow 0.2s, transform 0.2s;
+        position: relative;
+        overflow: hidden;
+        min-height: 420px;
+        background: #fff;
+    }
+    .custom-card:hover {
+        box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+        transform: translateY(-4px) scale(1.02);
+    }
+    .product-code-badge {
+        position: absolute;
+        top: 0.7rem;
+        left: 0.7rem;
+        z-index: 2;
+        background: rgba(13,110,253,0.92);
+        color: #fff;
+        font-size: 0.95em;
+        font-weight: 600;
+        padding: 0.35em 0.9em;
+        border-radius: 1.2em;
+        box-shadow: 0 2px 8px rgba(13,110,253,0.12);
+        letter-spacing: 0.03em;
+        pointer-events: none;
+    }
+    .custom-card .card-img-top {
+        height: 120px;
+        object-fit: cover;
+        border-top-left-radius: 1.1rem;
+        border-top-right-radius: 1.1rem;
+        background: #f8f9fa;
+        position: relative;
+    }
+    .custom-card-body {
+        padding: 1.1rem 0.7rem 0.7rem 0.7rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        height: 100%;
+    }
+    .btn-edit-product, .btn-delete-product {
+        box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        transition: background 0.15s, color 0.15s;
+    }
+    .btn-edit-product:hover {
+        background: #0d6efd !important;
+        color: #fff !important;
+    }
+    .btn-delete-product:hover {
+        background: #dc3545 !important;
+        color: #fff !important;
+    }
+    .product-description {
+        font-size: 0.98em;
+        color: #6c757d;
+        min-height: 2.2em;
+        max-height: 2.2em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        margin-bottom: 0.7em;
+    }
+    .product-info p {
+        margin-bottom: 0.3em;
+        font-size: 0.98em;
+    }
+    .product-info .price {
+        color: #198754;
+        font-weight: 600;
+    }
+    @media (max-width: 991px) {
+        .col-md-2 {
+            flex: 0 0 33.333333%;
+            max-width: 33.333333%;
+        }
+    }
+    @media (max-width: 767px) {
+        .col-md-2 {
+            flex: 0 0 50%;
+            max-width: 50%;
+        }
+        .custom-card {
+            min-height: 370px;
+        }
+    }
+    @media (max-width: 575px) {
+        .col-md-2 {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+        .custom-card {
+            min-height: 320px;
+        }
+    }
+</style>
+
+<div class="card col-md-12 mb-4 border-0 shadow-lg">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h3 class="card-title text-primary fw-bold d-flex align-items-center gap-2 mb-0" style="font-size: 1.35rem;">
+                <i class="bi bi-box-seam"></i> Produtos da Venda
+            </h3>
+            <button class="btn btn-primary rounded-pill d-flex align-items-center gap-1"
+                data-bs-toggle="modal"
+                data-bs-target="#modalAddProductToSale{{ $sale->id }}"
+                data-bs-toggle="tooltip"
+                data-bs-placement="left"
+                title="Adicionar novo produto à venda">
+                <i class="bi bi-plus-square fs-5"></i>
+                <span class="d-none d-md-inline">Adicionar Produto</span>
+            </button>
+        </div>
+
+        <div class="row mt-4">
+            @foreach ($sale->saleItems as $item)
+            <div class="col-md-2 mb-4 d-flex">
+                <div class="card custom-card shadow-lg rounded-lg flex-fill position-relative">
+                    <!-- Badge do código do produto -->
+                    <span class="product-code-badge" title="Código do Produto">
+                        {{ $item->product->product_code }}
+                    </span>
+                    <img src="{{ asset('storage/products/' . $item->product->image) }}"
+                        data-product-id="{{ $item->id }}" class="card-img-top" alt="{{ $item->product->name }}">
+
+                    <!-- Botões de ação -->
+                    <div class="position-absolute top-0 end-0 p-2 d-flex flex-column gap-1" style="z-index:3;">
+                        <a href="javascript:void(0)"
+                            class="btn btn-primary btn-sm p-1 rounded-circle btn-edit-product"
+                            data-product-id="{{ $item->id }}"
+                            data-product-price="{{ number_format($item->price_sale, 2, '.', '') }}"
+                            data-product-quantity="{{ $item->quantity }}" data-bs-toggle="modal"
+                            data-bs-target="#modalEditProduct" title="Editar Produto"
+                            data-bs-toggle="tooltip" data-bs-placement="left">
+                            <i class="bi bi-pencil-square fs-6"></i>
+                        </a>
+                        <button type="button"
+                            class="btn btn-danger btn-sm p-1 rounded-circle btn-delete-product"
+                            data-bs-toggle="modal" data-bs-target="#modalDeleteProduct"
+                            data-sale-item-id="{{ $item->id }}" data-product-name="{{ $item->product->name }}"
+                            data-product-price="{{ number_format($item->product->price, 2, ',', '.') }}"
+                            title="Excluir Produto" data-bs-toggle="tooltip" data-bs-placement="left">
+                            <i class="bi bi-trash3 fs-6"></i>
+                        </button>
+                    </div>
+
+                    <div class="card-body d-flex flex-column justify-content-between custom-card-body">
+                        <h5 class="card-title text-center text-truncate" data-bs-toggle="tooltip" data-bs-placement="top"
+                            title="{{ $item->product->name }}">
+                            {{ ucwords($item->product->name) }}
+                        </h5>
+
+                        <p class="card-text text-center text-truncate product-description" title="{{ $item->product->description }}">
+                            {{ $item->product->description }}
+                        </p>
+
+                        <div class="product-info">
+                            <p class="text-center"><strong>Quantidade:</strong> {{ $item->quantity }}</p>
+                            <p class="text-center price">
+                                <strong>Preço Unitário:</strong> <br>R$
+                                {{ number_format($item->price_sale, 2, ',', '.') }}
+                            </p>
+                            <p class="text-center price"><strong>Preço Total:</strong><br>
+                                R$ {{ number_format($item->price_sale * $item->quantity, 2, ',', '.') }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+    </div>
+</div>
+
+
+
+    </div>
+
     @include('sales.deletproduct')
     @include('sales.createPayament', ['sale' => $sale])
     @include('sales.editPayament', ['sale' => $sale])
     @include('sales.deletPayament', ['sale' => $sale])
     @include('sales.delet', ['sale' => $sale])
     @include('sales.addproduct', ['sale' => $sale])
-
     @include('sales.editproduct')
-    </div>
-
-    @endsection
+</div>
+@endsection
