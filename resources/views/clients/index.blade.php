@@ -5,6 +5,197 @@
 
 <link rel="stylesheet" href="{{ asset('css/clientes.css') }}">
 
+<style>
+    /* Estilos para o card do cliente */
+    .custom-card {
+        border-radius: 1.1em;
+        box-shadow: 0 2px 12px rgba(13,110,253,0.07);
+        transition: all 0.3s ease;
+        overflow: hidden;
+    }
+    /* Estilo para mensagem de nenhuma venda pendente */
+    .no-pending-sales-card {
+        background: #f8fafc;
+        border-radius: 0.9em;
+        box-shadow: 0 2px 12px rgba(13,110,253,0.04);
+        padding: 0.9em 1em;
+        margin: 0.5em auto;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1.5px solid #e3eafc;
+        transition: box-shadow 0.18s;
+    }
+    .no-pending-sales-card .no-pending-icon {
+        font-size: 1.8em;
+        color: #adb5bd;
+        margin-bottom: 0.2em;
+    }
+    .no-pending-sales-card .no-pending-text {
+        color: #6c757d;
+        font-size: 0.9em;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+    }
+    .custom-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 24px rgba(13,110,253,0.15);
+    }
+    .custom-card .card-title {
+        font-size: 1.35em;
+        font-weight: 700;
+        color: #0d6efd;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+        margin-bottom: 0.7em;
+        justify-content: center;
+    }
+    .custom-card .info-line {
+        font-size: 0.9em;
+        color: #495057;
+        margin-bottom: 0.25em;
+        display: flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+    .custom-card .info-line i {
+        color: #6ea8fe;
+        font-size: 1.1em;
+        min-width: 1.2em;
+        text-align: center;
+    }
+    .custom-card .card-img-top {
+        height: 120px;
+        object-fit: cover;
+        background: linear-gradient(45deg, #e9f2ff, #f8f9fa);
+    }
+    .icon-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        font-size: 0.8rem;
+    }
+    
+    /* Estilos para vendas pendentes */
+    .pending-sales-area {
+        margin-top: 0.5rem;
+    }
+    .pending-sale-card {
+        background: #fff;
+        border-radius: 0.7em;
+        box-shadow: 0 2px 12px rgba(220,53,69,0.07);
+        padding: 0.7em 0.9em;
+        margin-bottom: 0.5em;
+        display: flex;
+        align-items: center;
+        gap: 0.8em;
+        border-left: 4px solid #dc3545;
+        position: relative;
+        transition: box-shadow 0.18s;
+    }
+    .pending-sale-card:hover {
+        box-shadow: 0 4px 15px rgba(220,53,69,0.15);
+    }
+    .pending-sale-card:last-child {
+        margin-bottom: 0;
+    }
+    .pending-sale-icon {
+        font-size: 1.4em;
+        color: #dc3545;
+        background: #fdeaea;
+        border-radius: 50%;
+        padding: 0.3em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 2em;
+        min-height: 2em;
+    }
+    .pending-sale-info {
+        flex: 1 1 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 0.1em;
+    }
+    .pending-sale-total {
+        font-size: 1em;
+        font-weight: 700;
+        color: #dc3545;
+        display: flex;
+        align-items: center;
+        gap: 0.4em;
+    }
+    .pending-sale-status {
+        color: #fff;
+        background: #dc3545;
+        border-radius: 1.2em;
+        padding: 0.15em 0.7em;
+        font-size: 0.75em;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3em;
+        margin-top: 0.1em;
+    }
+    .pending-sale-actions {
+        min-width: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
+    /* Estilos para o botão Ver mais/Ver menos */
+    .btn-link {
+        color: #6c757d;
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+    .btn-link:hover {
+        color: #dc3545;
+    }
+    .ver-mais-label, .ver-menos-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.3em;
+    }
+    /* Estilos para o cabeçalho de vendas pendentes */
+    .pending-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1.1em;
+        margin-bottom: 0.5em;
+    }
+    .pending-title {
+        color: #dc3545;
+        font-size: 0.9em;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.4em;
+        letter-spacing: 0.01em;
+    }
+    .pending-badge {
+        background: #fdeaea;
+        color: #dc3545;
+        font-weight: 700;
+        font-size: 0.9em;
+        border-radius: 1.2em;
+        padding: 0.28em 0.8em;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        box-shadow: 0 1px 4px rgba(220,53,69,0.07);
+    }
+</style>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
         <!-- Filtros e Pesquisa -->
         <div class="row w-100">
@@ -210,43 +401,128 @@
 
                 <div class="card-body p-2 d-flex flex-column">
                     <h5 class="card-title text-center text-primary">
+                        <i class="bi bi-person-circle"></i>
                         {{ ucwords($client->name) }}
                     </h5>
-                    <div class="info-line"><strong>Email:</strong> {{ $client->email ?? 'N/A' }}</div>
-                    <div class="info-line"><strong>Fone:</strong> {{ $client->phone ?? 'N/A' }}</div>
-                    <div class="info-line"><strong>End.:</strong> {{ $client->address ?? 'N/A' }}</div>
+                    <div class="info-line">
+                        <i class="bi bi-envelope-at"></i>
+                        <strong>Email:</strong> {{ $client->email ?? 'N/A' }}
+                    </div>
+                    <div class="info-line">
+                        <i class="bi bi-telephone"></i>
+                        <strong>Fone:</strong> {{ $client->phone ?? 'N/A' }}
+                    </div>
+                    <div class="info-line">
+                        <i class="bi bi-geo-alt"></i>
+                        <strong>End.:</strong> {{ $client->address ?? 'N/A' }}
+                    </div>
 
                     <!-- Histórico de vendas pendentes -->
                     <div class="">
-                        <h6 class="text-primary mb-1" style="font-size: 0.8rem;">Vendas Pendentes</h6>
-                        <p style="font-size: 0.75rem;"><strong>Total:</strong>
-                            <span class="badge bg-warning text-dark">
+                        <div class="pending-header">
+                            <span class="pending-title">
+                                <i class="bi bi-exclamation-circle-fill"></i>
+                                Vendas Pendentes
+                            </span>
+                            <span class="pending-badge">
+                                <i class="bi bi-clock"></i>
                                 {{ $client->sales->where('status', 'pendente')->count() }}
                             </span>
-                        </p>
+                        </div>
 
-                        <div class="table-responsive">
-                            <table class="table table-sm table-bordered table-hover custom-table mb-0">
-                                <thead>
-                                    <tr>
-                                        <th>Total</th>
-                                        <th>Ação</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach($client->sales->where('status', 'pendente') as $sale)
-                                    <tr>
-                                        <td>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</td>
-                                        <td>
-                                            <a href="{{ route('sales.show', $sale->id) }}"
-                                                class="btn btn-outline-info btn-sm icon-btn" title="Ver">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <div class="pending-sales-area" id="pending-sales-area-{{ $client->id }}">
+                            @php
+                                $pendingSales = $client->sales->where('status', 'pendente')->values();
+                                $pendingCount = $pendingSales->count();
+                            @endphp
+
+                            @if($pendingCount === 0)
+                                <div class="no-pending-sales-card">
+                                    <span class="no-pending-icon">
+                                        <i class="bi bi-emoji-neutral"></i>
+                                    </span>
+                                    <span class="no-pending-text">
+                                        Nenhuma venda pendente
+                                    </span>
+                                </div>
+                            @else
+                                {{-- Primeira venda pendente --}}
+                                <div class="pending-sale-card">
+                                    <div class="pending-sale-icon">
+                                        <i class="bi bi-exclamation-circle-fill"></i>
+                                    </div>
+                                    <div class="pending-sale-info">
+                                        <div class="pending-sale-total">
+                                            <i class="bi bi-currency-dollar"></i>
+                                            R$ {{ number_format($pendingSales[0]->total_price, 2, ',', '.') }}
+                                        </div>
+                                        <span class="pending-sale-status">
+                                            <i class="bi bi-clock"></i> Pendente
+                                        </span>
+                                    </div>
+                                    <div class="pending-sale-actions">
+                                        <a href="{{ route('sales.show', $pendingSales[0]->id) }}"
+                                           class="btn btn-outline-info btn-sm icon-btn" title="Ver Detalhes">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                {{-- Demais vendas pendentes (escondidas inicialmente) --}}
+                                @if($pendingCount > 1)
+                                    <div class="collapse mt-1" id="pending-sales-collapse-{{ $client->id }}">
+                                        @foreach($pendingSales->slice(1) as $sale)
+                                            <div class="pending-sale-card">
+                                                <div class="pending-sale-icon">
+                                                    <i class="bi bi-exclamation-circle-fill"></i>
+                                                </div>
+                                                <div class="pending-sale-info">
+                                                    <div class="pending-sale-total">
+                                                        <i class="bi bi-currency-dollar"></i>
+                                                        R$ {{ number_format($sale->total_price, 2, ',', '.') }}
+                                                    </div>
+                                                    <span class="pending-sale-status">
+                                                        <i class="bi bi-clock"></i> Pendente
+                                                    </span>
+                                                </div>
+                                                <div class="pending-sale-actions">
+                                                    <a href="{{ route('sales.show', $sale->id) }}"
+                                                       class="btn btn-outline-info btn-sm icon-btn" title="Ver Detalhes">
+                                                        <i class="bi bi-eye"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="text-center">
+                                        <button class="btn btn-link p-0 mt-1" type="button"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#pending-sales-collapse-{{ $client->id }}"
+                                                aria-expanded="false"
+                                                aria-controls="pending-sales-collapse-{{ $client->id }}"
+                                                id="toggle-pending-sales-btn-{{ $client->id }}">
+                                            <span class="ver-mais-label"><i class="bi bi-chevron-down"></i> Ver mais ({{ $pendingCount - 1 }})</span>
+                                            <span class="ver-menos-label d-none"><i class="bi bi-chevron-up"></i> Ver menos</span>
+                                        </button>
+                                    </div>
+                                    <script>
+                                        document.addEventListener('DOMContentLoaded', function() {
+                                            var collapse = document.getElementById('pending-sales-collapse-{{ $client->id }}');
+                                            var btn = document.getElementById('toggle-pending-sales-btn-{{ $client->id }}');
+                                            if (collapse && btn) {
+                                                collapse.addEventListener('show.bs.collapse', function () {
+                                                    btn.querySelector('.ver-mais-label').classList.add('d-none');
+                                                    btn.querySelector('.ver-menos-label').classList.remove('d-none');
+                                                });
+                                                collapse.addEventListener('hide.bs.collapse', function () {
+                                                    btn.querySelector('.ver-mais-label').classList.remove('d-none');
+                                                    btn.querySelector('.ver-menos-label').classList.add('d-none');
+                                                });
+                                            }
+                                        });
+                                    </script>
+                                @endif
+                            @endif
                         </div>
                     </div>
                 </div>
