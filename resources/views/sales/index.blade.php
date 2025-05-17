@@ -2,6 +2,142 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/sales.css') }}">
+<style>
+.custom-card {
+    border: none;
+    border-radius: 1.1rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    transition: box-shadow 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+    min-height: 120px;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.custom-card:hover {
+    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
+    transform: translateY(-4px) scale(1.02);
+}
+.product-code-badge {
+    position: absolute;
+    top: 0.7rem;
+    left: 0.7rem;
+    z-index: 2;
+    background: rgba(52,58,64,0.9);
+    color: #fff;
+    font-size: 0.98em;
+    font-weight: 600;
+    padding: 0.32em 0.95em;
+    border-radius: 1.2em;
+    box-shadow: 0 2px 8px rgba(52,58,64,0.13);
+    letter-spacing: 0.03em;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+.custom-card .card-img-top {
+    height: 120px;
+    object-fit: cover;
+    border-top-left-radius: 1.1rem;
+    border-top-right-radius: 1.1rem;
+    background: #f8f9fa;
+    position: relative;
+}
+.custom-card-body {
+    padding: 1.1rem 0.7rem 0.7rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100%;
+}
+.product-title {
+    font-size: 1.13em;
+    font-weight: 700;
+    color: #0d6efd;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    margin-bottom: 0 !important;
+    text-align: center;
+    display: block;
+}
+.product-info {
+    margin-top: 0.1em;
+    margin-bottom: 0.1em;
+    gap: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.product-badge.quantity {
+    background: #e7f1ff;
+    color: #0d6efd;
+    font-size: 1em;
+    font-weight: 600;
+    border-radius: 1.2em;
+    padding: 0.35em 0.9em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+.product-badge.price {
+    background: #eafbee;
+    color: #198754;
+    font-size: 1em;
+    font-weight: 600;
+    border-radius: 1.2em;
+    padding: 0.35em 0.9em;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+}
+.product-description {
+    font-size: 0.98em;
+    color: #6c757d;
+    min-height: 1.8em;
+    max-height: 1.8em;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: 0.5em;
+    text-align: center;
+    display: block;
+}
+@media (max-width: 991px) {
+    .col-md-3 {
+        flex: 0 0 33.333333%;
+        max-width: 33.333333%;
+    }
+    .custom-card {
+        min-height: 300px;
+    }
+}
+@media (max-width: 767px) {
+    .col-md-3 {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    .custom-card {
+        min-height: 280px;
+    }
+}
+@media (max-width: 575px) {
+    .col-md-3 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+    .custom-card {
+        min-height: 260px;
+    }
+}
+</style>
 
 <div class="container-fluid py-4">
     @include('message.alert')
@@ -37,7 +173,7 @@
                                     <div class="d-flex flex-wrap gap-2">
                                         @php
                                         $filters = [
-                                        'created_at' => 'Últimos Adicionados',
+               'created_at' => 'Últimos Adicionados',
                                         'updated_at' => 'Últimos Atualizados',
                                         'name_asc' => 'Nome A-Z',
                                         'name_desc' => 'Nome Z-A',
@@ -396,33 +532,30 @@
                     <div class="card-body sale-products-section">
                         <div class="row" id="sale-products-{{ $sale->id }}">
                             @foreach($sale->saleItems as $index => $item)
-                            <div class="col-md-3 mb-3 sale-product {{ $index >= 4 ? 'd-none extra-product' : '' }}">
-                                <div class="card sale-product-card h-100 shadow-sm border-0">
-                                    <div class="sale-product-img-wrapper">
-                                        <img src="{{ asset('storage/products/' . $item->product->image) }}"
-                                            class="card-img-top sale-product-img" alt="{{ $item->product->name }}">
-                                    </div>
-                                    <div class="card-body d-flex flex-column justify-content-between">
-                                        <h6 class="card-title text-center sale-product-title"
-                                            title="{{ $item->product->name }}">
-                                            {{ $item->product->name }}
-                                        </h6>
-                                        <p class="card-text text-center sale-product-price">
-                                            <span class="badge bg-light text-dark fw-normal">Preço</span>
-                                            <span class="fw-bold">R$
-                                                {{ number_format($item->product->price, 2, ',', '.') }}</span>
-                                        </p>
-                                        <p class="card-text text-center sale-product-saleprice">
-                                            <span
-                                                class="badge bg-primary bg-opacity-10 text-primary fw-normal">Venda</span>
-                                            <span class="fw-bold ">R$
-                                                {{ number_format($item->price_sale, 2, ',', '.') }}</span>
-                                        </p>
-                                        <p class="card-text text-center sale-product-qty">
-                                            <span
-                                                class="badge bg-success bg-opacity-10 text-success fw-normal">Qtd</span>
-                                            <span class="fw-bold">{{ $item->quantity }}</span>
-                                        </p>
+                            <div class="col-md-3 mb-3 sale-product {{ $index >= 4 ? 'd-none extra-product' : '' }} d-flex">
+                                <div class="card custom-card shadow-lg rounded-lg flex-fill position-relative">
+                                    <!-- Badge do código do produto (modelo moderno) -->
+                                    <span class="product-code-badge" title="Código do Produto">
+                                        <i class="bi bi-upc-scan"></i> {{ $item->product->product_code ?? 'N/A' }}
+                                    </span>
+                                    <img src="{{ asset('storage/products/' . $item->product->image) }}"
+                                        class="card-img-top" alt="{{ $item->product->name }}">
+
+                                    <div class="card-body d-flex flex-column justify-content-between custom-card-body">
+                                        <!-- Nome do produto (abreviado, sem espaço extra) -->
+                                        <span class="product-title text-truncate" title="{{ $item->product->name }}">
+                                            {{ ucwords($item->product->name) }}
+                                        </span>
+                                        <!-- Quantidade e preço logo abaixo do nome -->
+                                        <div class="product-info d-flex justify-content-center align-items-center gap-2 mb-1">
+                                            <span class="product-badge quantity" title="Quantidade">
+                                                <i class="bi bi-stack"></i> {{ $item->quantity }}
+                                            </span>
+                                            <span class="product-badge price" title="Preço Unitário">
+                                                <i class="bi bi-currency-dollar"></i> {{ number_format($item->price_sale, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                   
                                     </div>
                                 </div>
                             </div>
