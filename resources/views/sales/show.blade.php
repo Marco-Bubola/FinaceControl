@@ -96,76 +96,76 @@
             <h5 class="card-title mb-4 text-primary fw-bold">
                 <i class="bi bi-info-circle-fill me-2"></i>Informações da Venda
             </h5>
-            <div class="row g-3">
-                <!-- Cliente -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-person-fill text-primary"></i>
-                        <div class="fw-semibold">Cliente</div>
-                        <span class="text-muted small">{{ $sale->client->name ?? 'Nenhum cliente cadastrado' }}</span>
+            
+            <!-- Card com todos os dados do cliente em uma linha -->
+            <div class="card mb-4">
+                <div class="card-body bg-light">
+                    <div class="row text-center">
+                        <!-- Cliente -->
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <i class="bi bi-person-fill text-primary fs-3"></i>
+                            <div class="fw-semibold">Cliente</div>
+                            <span class="text-muted small">{{ $sale->client->name ?? 'Nenhum cliente cadastrado' }}</span>
+                        </div>
+                        <!-- Email -->
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <i class="bi bi-envelope-fill text-primary fs-3"></i>
+                            <div class="fw-semibold">Email</div>
+                            <span class="text-muted small">{{ $sale->client->email ?? 'Nenhum email cadastrado' }}</span>
+                        </div>
+                        <!-- Telefone -->
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <i class="bi bi-telephone-fill text-primary fs-3"></i>
+                            <div class="fw-semibold">Telefone</div>
+                            <span class="text-muted small">{{ $sale->client->phone ?? 'Nenhum telefone cadastrado' }}</span>
+                        </div>
+                        <!-- Endereço -->
+                        <div class="col-12 col-md-3">
+                            <i class="bi bi-house-door-fill text-primary fs-3"></i>
+                            <div class="fw-semibold">Endereço</div>
+                            <span class="text-muted small">{{ $sale->client->address ?? 'Nenhum endereço cadastrado' }}</span>
+                        </div>
                     </div>
                 </div>
-                <!-- Email -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-envelope-fill text-primary"></i>
-                        <div class="fw-semibold">Email</div>
-                        <span class="text-muted small">{{ $sale->client->email ?? 'Nenhum email cadastrado' }}</span>
-                    </div>
-                </div>
-                <!-- Telefone -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-telephone-fill text-primary"></i>
-                        <div class="fw-semibold">Telefone</div>
-                        <span class="text-muted small">{{ $sale->client->phone ?? 'Nenhum telefone cadastrado' }}</span>
-                    </div>
-                </div>
-                <!-- Endereço -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-house-door-fill text-primary"></i>
-                        <div class="fw-semibold">Endereço</div>
-                        <span class="text-muted small">{{ $sale->client->address ?? 'Nenhum endereço cadastrado' }}</span>
-                    </div>
-                </div>
-                <!-- Status -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block status-block">
-                        @if($sale->status == 'Paga')
-                            <span class="status-badge bg-success text-white">
-                                <i class="bi bi-check-circle-fill"></i> Paga
-                            </span>
-                        @else
-                            <span class="status-badge bg-warning text-dark">
-                                <i class="bi bi-exclamation-triangle-fill"></i> Pendente
-                            </span>
-                        @endif
-                        <div class="fw-semibold mt-2">Status</div>
-                    </div>
-                </div>
-                <!-- Total Pago -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-cash-stack text-success"></i>
-                        <div class="fw-semibold">Total Pago</div>
-                        <span class="text-success">R$ {{ number_format($sale->amount_paid, 2, ',', '.') }}</span>
-                    </div>
-                </div>
-                <!-- Total da Venda -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-cash-coin text-primary"></i>
-                        <div class="fw-semibold">Total da Venda</div>
-                        <span>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</span>
-                    </div>
-                </div>
-                <!-- Total Restante -->
-                <div class="col-6 col-md-4">
-                    <div class="info-block">
-                        <i class="bi bi-cash-coin text-warning"></i>
-                        <div class="fw-semibold">Total Restante</div>
-                        <span class="text-warning">R$ {{ number_format($sale->total_price - $sale->amount_paid, 2, ',', '.') }}</span>
+            </div>
+            
+            <!-- Card com resumo do status da venda -->
+            <div class="card mb-4">
+                <div class="card-body bg-light">
+                    <div class="row text-center">
+                        <!-- Status -->
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <div>
+                                @if($sale->status == 'pago')
+                                    <span class="status-badge bg-success text-white">
+                                        <i class="bi bi-check-circle-fill"></i> Pago
+                                    </span>
+                                @else
+                                    <span class="status-badge bg-warning text-dark">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> Pendente
+                                    </span>
+                                @endif
+                            </div>
+                            <div class="fw-semibold mt-2">Status</div>
+                        </div>
+                        <!-- Total Pago -->
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <i class="bi bi-cash-stack text-success fs-3"></i>
+                            <div class="fw-semibold">Total Pago</div>
+                            <span class="text-success">R$ {{ number_format($sale->amount_paid, 2, ',', '.') }}</span>
+                        </div>
+                        <!-- Total da Venda -->
+                        <div class="col-12 col-md-3 mb-3 mb-md-0">
+                            <i class="bi bi-cash-coin text-primary fs-3"></i>
+                            <div class="fw-semibold">Total da Venda</div>
+                            <span>R$ {{ number_format($sale->total_price, 2, ',', '.') }}</span>
+                        </div>
+                        <!-- Total Restante -->
+                        <div class="col-12 col-md-3">
+                            <i class="bi bi-cash-coin text-warning fs-3"></i>
+                            <div class="fw-semibold">Total Restante</div>
+                            <span class="text-warning">R$ {{ number_format($sale->total_price - $sale->amount_paid, 2, ',', '.') }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -302,8 +302,11 @@
         transition: box-shadow 0.2s, transform 0.2s;
         position: relative;
         overflow: hidden;
-        min-height: 420px;
+        min-height: 120px;
         background: #fff;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
     .custom-card:hover {
         box-shadow: 0 8px 32px rgba(0,0,0,0.13);
@@ -311,21 +314,24 @@
     }
     .product-code-badge {
         position: absolute;
-        top: 0.7rem;
-        left: 0.7rem;
+        top: 0.7em;
+        left: 0.7em;
         z-index: 2;
-        background: rgba(13,110,253,0.92);
+        background: #343a40e6;
         color: #fff;
-        font-size: 0.95em;
+        font-size: 0.98em;
         font-weight: 600;
-        padding: 0.35em 0.9em;
+        padding: 0.32em 0.95em;
         border-radius: 1.2em;
-        box-shadow: 0 2px 8px rgba(13,110,253,0.12);
+        box-shadow: 0 2px 8px rgba(52,58,64,0.13);
         letter-spacing: 0.03em;
         pointer-events: none;
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
     }
     .custom-card .card-img-top {
-        height: 120px;
+        height: 200px;
         object-fit: cover;
         border-top-left-radius: 1.1rem;
         border-top-right-radius: 1.1rem;
@@ -336,7 +342,7 @@
         padding: 1.1rem 0.7rem 0.7rem 0.7rem;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: flex-start;
         height: 100%;
     }
     .btn-edit-product, .btn-delete-product {
@@ -351,23 +357,63 @@
         background: #dc3545 !important;
         color: #fff !important;
     }
+    .product-title {
+        font-size: 1.13em;
+        font-weight: 700;
+        color: #0d6efd;
+        letter-spacing: 0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+        margin-bottom: 0 !important;
+        text-align: center;
+        display: block;
+    }
     .product-description {
         font-size: 0.98em;
         color: #6c757d;
-        min-height: 2.2em;
-        max-height: 2.2em;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        margin-bottom: 0.7em;
+        text-align: center;
+        display: block;
+        margin-top: 0.3em;
     }
-    .product-info p {
-        margin-bottom: 0.3em;
-        font-size: 0.98em;
+    .product-info {
+        margin-top: 0.1em;
+        margin-bottom: 0.1em;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        gap: 0.5em;
+        align-items: center;
     }
-    .product-info .price {
-        color: #198754;
+    .product-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.3em;
+        font-size: 1em;
         font-weight: 600;
+        border-radius: 1.2em;
+        padding: 0.35em 0.9em;
+        box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        background: #f1f3f5;
+        color: #495057;
+        min-width: 90px;
+        justify-content: center;
+    }
+    .product-badge.quantity {
+        background: #e7f1ff;
+        color: #0d6efd;
+    }
+    .product-badge.price {
+        background: #eafbee;
+        color: #198754;
+    }
+    .product-badge .bi {
+        font-size: 1.1em;
+        margin-right: 0.2em;
     }
     @media (max-width: 991px) {
         .col-md-2 {
@@ -381,7 +427,7 @@
             max-width: 50%;
         }
         .custom-card {
-            min-height: 370px;
+            min-height: 340px;
         }
     }
     @media (max-width: 575px) {
@@ -390,7 +436,7 @@
             max-width: 100%;
         }
         .custom-card {
-            min-height: 320px;
+            min-height: 300px;
         }
     }
 </style>
@@ -418,7 +464,7 @@
                 <div class="card custom-card shadow-lg rounded-lg flex-fill position-relative">
                     <!-- Badge do código do produto -->
                     <span class="product-code-badge" title="Código do Produto">
-                        {{ $item->product->product_code }}
+                        <i class="bi bi-upc-scan"></i> {{ $item->product->product_code ?? 'N/A' }}
                     </span>
                     <img src="{{ asset('storage/products/' . $item->product->image) }}"
                         data-product-id="{{ $item->id }}" class="card-img-top" alt="{{ $item->product->name }}">
@@ -445,25 +491,20 @@
                     </div>
 
                     <div class="card-body d-flex flex-column justify-content-between custom-card-body">
-                        <h5 class="card-title text-center text-truncate" data-bs-toggle="tooltip" data-bs-placement="top"
-                            title="{{ $item->product->name }}">
+                        <!-- Nome do produto (abreviado, sem espaço extra) -->
+                        <span class="product-title text-truncate" title="{{ $item->product->name }}">
                             {{ ucwords($item->product->name) }}
-                        </h5>
-
-                        <p class="card-text text-center text-truncate product-description" title="{{ $item->product->description }}">
-                            {{ $item->product->description }}
-                        </p>
-
+                        </span>
+                        <!-- Quantidade e preço logo abaixo do nome -->
                         <div class="product-info">
-                            <p class="text-center"><strong>Quantidade:</strong> {{ $item->quantity }}</p>
-                            <p class="text-center price">
-                                <strong>Preço Unitário:</strong> <br>R$
-                                {{ number_format($item->price_sale, 2, ',', '.') }}
-                            </p>
-                            <p class="text-center price"><strong>Preço Total:</strong><br>
-                                R$ {{ number_format($item->price_sale * $item->quantity, 2, ',', '.') }}
-                            </p>
+                            <span class="product-badge quantity" title="Quantidade">
+                                <i class="bi bi-stack"></i> {{ $item->quantity }}
+                            </span>
+                            <span class="product-badge price" title="Preço Unitário">
+                                <i class="bi bi-currency-dollar"></i> {{ number_format($item->price_sale, 2, ',', '.') }}
+                            </span>
                         </div>
+                     
                     </div>
                 </div>
             </div>
