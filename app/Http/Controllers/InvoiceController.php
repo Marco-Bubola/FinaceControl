@@ -35,6 +35,8 @@ class InvoiceController extends Controller
             // Corrigindo a navegação para os meses anterior e próximo
             $previousMonth = $currentStartDate->copy()->subMonth()->startOfMonth()->format('Y-m-d');
             $nextMonth = $currentStartDate->copy()->addMonth()->startOfMonth()->format('Y-m-d');
+$previousMonthName = \Carbon\Carbon::parse($previousMonth)->locale('pt_BR')->isoFormat('MMMM ');
+$nextMonthName = \Carbon\Carbon::parse($nextMonth)->locale('pt_BR')->isoFormat('MMMM');
 
             // Filtra as faturas dentro do intervalo de datas
             $invoices = Invoice::where('id_bank', $bank->id_bank)
@@ -127,7 +129,10 @@ class InvoiceController extends Controller
                         'totalTransactions' => $totalTransactions,
                         'previousMonth' => $previousMonth,
                         'nextMonth' => $nextMonth,
-                        'currentMonthTitle' => "$currentMonthName ({$currentStartDate->format('d/m/Y')} - {$currentEndDate->format('d/m/Y')})",
+                        'previousMonthName' => $previousMonthName,
+                        'nextMonthName' => $nextMonthName,
+                        'currentMonthTitle' => "$currentMonthName",
+                        'currentMonthRange' => "({$currentStartDate->format('d/m/Y')} - {$currentEndDate->format('d/m/Y')})",
                         'categories' => $categoriesData,
                         'categoriesWithTransactions' => $categoriesWithTransactions,
                         'dailyLabels' => $dailyLabels, // Dias do mês
@@ -149,6 +154,7 @@ class InvoiceController extends Controller
                 'categoriesWithTransactions', // Apenas categorias com transações
                 'invoices',
                 'categories',
+                'previousMonthName', 'nextMonthName',
                 'currentStartDate',
                 'currentEndDate',
                 'previousMonth',
