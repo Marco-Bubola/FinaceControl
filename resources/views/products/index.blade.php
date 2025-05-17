@@ -169,84 +169,292 @@
         </div>
     </div>
 
+    <!-- Estilos para o card de produto moderno -->
+    <style>
+        .product-card-modern {
+            border: none;
+            border-radius: 1.2em;
+            box-shadow: 0 2px 12px rgba(13,110,253,0.07);
+            overflow: visible;
+            position: relative;
+            background: #fff;
+            transition: box-shadow 0.18s, transform 0.18s;
+            min-height: 390px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .product-card-modern:hover {
+            box-shadow: 0 8px 32px rgba(13,110,253,0.13);
+            transform: translateY(-2px) scale(1.01);
+        }
+        .product-card-modern .product-img-area {
+            position: relative;
+            background: #f8f9fa;
+            border-top-left-radius: 1.2em;
+            border-top-right-radius: 1.2em;
+            overflow: visible;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .product-card-modern .product-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-top-left-radius: 1.2em;
+            border-top-right-radius: 1.2em;
+            display: block;
+        }
+        .product-card-modern .badge-product-code {
+            position: absolute;
+            top: 0.7em;
+            left: 0.7em;
+            background: #343a40e6;
+            color: #fff;
+            font-size: 0.98em;
+            font-weight: 600;
+            padding: 0.32em 0.95em;
+            border-radius: 1.2em;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(52,58,64,0.13);
+            letter-spacing: 0.03em;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+        }
+        .product-card-modern .badge-quantity {
+            position: absolute;
+            bottom: 0.7em;
+            right: 0.7em;
+            background: #0dcaf0e6;
+            color: #0d6efd;
+            font-size: 1em;
+            font-weight: 700;
+            padding: 0.32em 1.1em;
+            border-radius: 1.2em;
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(13,202,240,0.13);
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+        }
+        .product-card-modern .category-icon-wrapper {
+            position: absolute;
+            left: 50%;
+            bottom: -28px;
+            transform: translateX(-50%);
+            z-index: 3;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 2px 12px rgba(13,110,253,0.10);
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #f8f9fa;
+        }
+        .product-card-modern .category-icon {
+            font-size: 2.1em;
+            color: inherit;
+        }
+        .product-card-modern .card-body {
+            padding: 2.2em 1em 1.1em 1em;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: stretch;
+            min-height: 180px;
+            position: relative;
+        }
+        .product-card-modern .product-title {
+            font-size: 1.13em;
+            font-weight: 700;
+            color: #0d6efd;
+            margin-bottom: 0.15em;
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            text-align: center;
+        }
+        .product-card-modern .product-description {
+            font-size: 0.98em;
+            color: #6c757d;
+            margin-bottom: 0.6em;
+            display: flex;
+            align-items: center;
+            gap: 0.4em;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            justify-content: center;
+        }
+        .product-card-modern .price-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2em;
+            margin-bottom: 0.7em;
+        }
+        .product-card-modern .badge-price {
+            background: #f1f3f5;
+            color: #495057;
+            font-size: 1.04em;
+            font-weight: 600;
+            border-radius: 1.2em;
+            padding: 0.32em 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+        }
+        .product-card-modern .badge-price-sale {
+            background: #eafbee;
+            color: #198754;
+            font-size: 1.09em;
+            font-weight: 700;
+            border-radius: 1.2em;
+            padding: 0.32em 1.1em;
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+            box-shadow: 0 1px 4px rgba(25,135,84,0.07);
+        }
+        .product-card-modern .btn-action-group {
+            position: absolute;
+            top: 0.7em;
+            right: 0.7em;
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            gap: 0.4em;
+        }
+        .product-card-modern .btn-action-group .btn {
+            border-radius: 50%;
+            width: 34px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            font-size: 1.1em;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+            border: none;
+        }
+        .product-card-modern .btn-action-group .btn-primary {
+            background: #0d6efd;
+            color: #fff;
+        }
+        .product-card-modern .btn-action-group .btn-danger {
+            background: #dc3545;
+            color: #fff;
+        }
+        .product-card-modern .out-of-stock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(220, 53, 69, 0.9);
+            color: #fff;
+            font-size: 0.98em;
+            font-weight: 600;
+            padding: 0.32em 0.95em;
+            border-top-left-radius: 1.2em;
+            border-bottom-right-radius: 1.2em;
+            z-index: 3;
+            display: flex;
+            align-items: center;
+            gap: 0.3em;
+        }
+        @media (max-width: 991px) {
+            .col-md-2 {
+                flex: 0 0 33.333333%;
+                max-width: 33.333333%;
+            }
+        }
+        @media (max-width: 767px) {
+            .col-md-2 {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+            .product-card-modern {
+                min-height: 340px;
+            }
+        }
+        @media (max-width: 575px) {
+            .col-md-2 {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+            .product-card-modern {
+                min-height: 300px;
+            }
+        }
+    </style>
+
     <!-- Tabela de Produtos -->
     <div id="productsContainer" class="row mt-4">
         @foreach($products as $product)
         <div class="col-md-2 mb-4">
-            <div
-                class="card h-100 position-relative border-0 shadow-sm rounded-4 overflow-hidden d-flex flex-column card-hover">
-                @if($product->stock_quantity == 0)
-                <div class="position-absolute top-0 start-0 bg-danger text-white px-2 py-1 rounded-end z-1">
-                    Fora de Estoque
-                </div>
-                @endif
-
+            <div class="product-card-modern position-relative d-flex flex-column h-100">
                 <!-- Botões flutuantes -->
-                <div class="position-absolute top-0 end-0 p-2">
-                    <a href="javascript:void(0)" class="btn btn-primary  p-1" data-bs-toggle="modal"
+                <div class="btn-action-group">
+                    <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal"
                         data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
-                        <!-- Ícone de editar -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path
-                                d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                        </svg>
+                        <i class="bi bi-pencil-square"></i>
                     </a>
-                    <!-- Botão de Exclusão -->
-                    <button type="button" class="btn btn-danger p-1" data-bs-toggle="modal"
-                        data-bs-target="#modalDeleteProduct{{ $product->id }}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-trash3" viewBox="0 0 16 16">
-                            <path
-                                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                        </svg>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#modalDeleteProduct{{ $product->id }}" title="Excluir">
+                        <i class="bi bi-trash3"></i>
                     </button>
                 </div>
 
-
-                <img src="{{ asset('storage/products/' . $product->image) }}" class="card-img-top object-fit-cover"
-                    alt="{{ $product->name }}" style="height: 200px; object-fit: cover;">
+                <!-- Área da imagem com badges -->
+                <div class="product-img-area">
+                    <img src="{{ asset('storage/products/' . $product->image) }}" class="product-img"
+                        alt="{{ $product->name }}">
+                    <!-- Código do produto -->
+                    <span class="badge-product-code" title="Código do Produto">
+                        <i class="bi bi-upc-scan"></i> {{ $product->product_code }}
+                    </span>
+                    <!-- Quantidade -->
+                    <span class="badge-quantity" title="Quantidade em Estoque">
+                        <i class="bi bi-stack"></i> {{ $product->stock_quantity }}
+                    </span>
+                    <!-- Ícone da categoria -->
+                    <div class="category-icon-wrapper" style="color: {{ $product->category->hexcolor_category }};">
+                        <i class="{{ $product->category->icone }} category-icon"></i>
+                    </div>
+                    @if($product->stock_quantity == 0)
+                    <div class="out-of-stock">
+                        <i class="bi bi-x-circle"></i> Fora de Estoque
+                    </div>
+                    @endif
+                </div>
 
                 <!-- Conteúdo -->
-                <div class="card-body d-flex flex-column justify-content-between text-center p-2">
-                    <div>
-                        <h6 class="card-title mb-1 text-truncate" title="{{ $product->name }}"
-                            style="font-size: 1rem; font-weight: 600;">
-                            {{ ucwords($product->name) }}
-                        </h6>
-                        <p class="text-muted text-truncate small" title="{{ $product->description }}">
-                            {{ ucwords($product->description) }}
-                        </p>
-                        <div class="my-2">
-                            <span class="badge bg-light text-muted d-block mb-1">
-                                PREÇO: R$ {{ number_format($product->price, 2, ',', '.') }}
-                            </span>
-                            <span class=" badge  text-success d-block">
-                                VENDA: R$ {{ number_format($product->price_sale, 2, ',', '.') }}
-                            </span>
-                        </div>
+                <div class="card-body">
+                    <div class="product-title" title="{{ $product->name }}">
+                        <i class="bi bi-box-seam"></i>
+                        {{ ucwords($product->name) }}
                     </div>
-
-                    <div class="mt-auto">
-                        <div class="d-flex justify-content-between px-2">
-                            <div>
-                                <small class="text-muted">Qtd</small><br>
-                                <span class="badge bg-info">{{ $product->stock_quantity }}</span>
-                            </div>
-                            <div>
-                                <small class="text-muted">Código</small><br>
-                                <span class="badge bg-secondary">{{ $product->product_code }}</span>
-                            </div>
-                            <button class="btn rounded-circle d-flex align-items-center justify-content-center" style="border: 2px solid {{ $product->category->hexcolor_category }};
-                                   background-color: {{ $product->category->hexcolor_category }}20;
-                                   width: 45px; height: 45px;" title="{{ $product->category->name }}"
-                                data-bs-toggle="tooltip">
-                                <i class="{{ $product->category->icone }}"
-                                    style="font-size: 1.2rem; color: {{ $product->category->hexcolor_category }};"></i>
-                            </button>
-                        </div>
-
-
+                    <div class="product-description" title="{{ $product->description }}">
+                        <i class="bi bi-card-text"></i>
+                        {{ ucwords($product->description) }}
+                    </div>
+                    <div class="price-area">
+                        <span class="badge-price" title="Preço de Custo">
+                            <i class="bi bi-tag"></i>
+                            R$ {{ number_format($product->price, 2, ',', '.') }}
+                        </span>
+                        <span class="badge-price-sale" title="Preço de Venda">
+                            <i class="bi bi-currency-dollar"></i>
+                            R$ {{ number_format($product->price_sale, 2, ',', '.') }}
+                        </span>
                     </div>
                 </div>
             </div>
