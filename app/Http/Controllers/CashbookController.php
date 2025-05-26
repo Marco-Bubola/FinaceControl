@@ -32,8 +32,8 @@ class CashbookController extends Controller
             'expense' => $transactions->where('type_id', 2)->sum('value'), // Despesas
             'balance' => $transactions->where('type_id', 1)->sum('value') - $transactions->where('type_id', 2)->sum('value'), // Saldo
         ];
-        $clients = Client::all();
-        $categories = Category::all();
+      $categories = Category::where('user_id', auth()->id())->where('type', 'transaction')->get();
+$clients = Client::where('user_id', auth()->id())->get();
         $types = Type::all();
         $segments = Segment::all();
 
