@@ -1,143 +1,324 @@
+
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload e Confirmação de Faturas</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+    <div class="modal-dialog modal-xl" style="max-width: 80vw;">
+        <div class="modal-content shadow-lg rounded-4 border-0" style="min-height: 60vh;">
+            <div class="modal-header bg-primary text-white rounded-top-4">
+                <h3 class="modal-title d-flex align-items-center gap-2" id="uploadModalLabel" style="font-size: 2rem;">
+                    <i class="fa-solid fa-cloud-arrow-up fa-lg"></i>
+                    Upload e Confirmação de Faturas
+                </h3>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body">
-                <!-- Barra de Progresso com Círculos e Títulos -->
+            <div class="modal-body px-5 py-4" style="background: #f8fafc;">
+                <!-- Step Indicator Compacto e Estiloso -->
                 <div class="mb-4" id="step-indicator">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-center">
-                            <div class="circle active" id="circle-step1">1</div>
+                    <div class="d-flex justify-content-between align-items-center" style="min-height: 48px;">
+                        <div class="text-center flex-grow-1">
+                            <div class="upload-modal-circle active" id="circle-step1">
+                                <i class="fa-solid fa-file-arrow-up"></i>
+                            </div>
                         </div>
                         <div class="flex-grow-1 mx-2">
-                            <div class="progress" style="height: 5px;">
+                            <div class="progress upload-modal-step-progress">
                                 <div class="progress-bar" id="step-progress-bar-inner" style="width: 50%;"></div>
                             </div>
                         </div>
-                        <div class="text-center">
-                            <div class="circle" id="circle-step2">2</div>
+                        <div class="text-center flex-grow-1">
+                            <div class="upload-modal-circle" id="circle-step2">
+                                <i class="fa-solid fa-list-check"></i>
+                            </div>
                         </div>
                     </div>
-                    <div class="d-flex justify-content-between mt-2">
+                    <div class="d-flex justify-content-between mt-1">
                         <div class="text-center flex-grow-1">
-                            <small>Upload de Faturas</small>
+                            <span class="upload-modal-step-label">Upload de Faturas</span>
                         </div>
                         <div class="text-center flex-grow-1">
-                            <small>Confirmação de Transações</small>
+                            <span class="upload-modal-step-label">Confirmação de Transações</span>
                         </div>
                     </div>
                 </div>
                 <div id="uploadSteps">
                     <!-- Step 1: Upload de Faturas -->
                     <div id="step1" class="step">
-                        <h5 class="text-center mb-3">Envio de Fatura em PDF ou CSV</h5>
+                        <h4 class="text-center mb-4 fw-bold" style="font-size: 1.6rem;">
+                            <i class="fa-solid fa-file-import me-2"></i>
+                            Envio de Fatura em PDF ou CSV
+                        </h4>
                         <form id="uploadForm" method="POST" action="{{ route('invoices.upload') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="form-group text-center mb-4">
-                                <label for="file-upload" class="btn btn-outline-primary">
-                                    <i class="fa fa-file"></i> Escolher arquivo PDF ou CSV
+                                <label for="file-upload" class="btn btn-outline-primary btn-lg px-5 py-3 fw-bold" style="font-size: 1.3rem;">
+                                    <i class="fa-solid fa-file-arrow-up fa-xl me-2"></i>
+                                    Escolher arquivo PDF ou CSV
                                 </label>
                                 <input type="file" id="file-upload" name="file" accept=".pdf, .csv"
                                     style="display: none;" required />
                                 <br>
-                                <small class="form-text text-muted mt-2">
+                                <small class="form-text text-muted mt-2" style="font-size: 1.1rem;">
+                                    <i class="fa-solid fa-circle-info me-1"></i>
                                     Somente arquivos PDF ou CSV são aceitos.
                                 </small>
                             </div>
 
                             <!-- Barra de Progresso -->
-                            <div class="progress" style="height: 25px; display: none;" id="upload-progress-bar">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                    style="width: 0%; background-color: #3498db;" aria-valuenow="0" aria-valuemin="0"
+                            <div class="progress mb-3" style="height: 30px; display: none;" id="upload-progress-bar">
+                                <div class="progress-bar progress-bar-striped progress-bar-animated fw-bold"
+                                    role="progressbar"
+                                    style="width: 0%; background-color: #3498db; font-size: 1.2rem;"
+                                    aria-valuenow="0" aria-valuemin="0"
                                     aria-valuemax="100">0%</div>
                             </div>
 
                             <div class="form-group text-center mt-4">
-                                <button type="button" class="btn btn-primary" id="nextStep1">
-                                    Próximo <i class="fa fa-arrow-right"></i>
+                                <button type="button" class="btn btn-primary btn-lg px-5 py-2 fw-bold" id="nextStep1" style="font-size: 1.3rem;">
+                                    Próximo <i class="fa-solid fa-arrow-right ms-2"></i>
                                 </button>
                             </div>
                         </form>
                     </div>
                     <!-- Step 2: Confirmar Transações -->
                     <div id="step2" class="step d-none">
-                        <h5 class="text-center mb-3">Confirmar Transações de Fatura</h5>
+                       
                         <form id="confirmationForm" method="POST" action="{{ route('invoices.confirm') }}">
                             @csrf
-                            <!-- Campo oculto para o banco -->
                             <input type="hidden" name="id_bank" value="{{ $bank->id_bank }}">
 
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered text-center">
-                                    <thead>
+                            <div class="upload-modal-table-area table-responsive" style="max-height: 45vh;">
+                                <table class="table table-striped table-bordered align-middle text-center mb-0 upload-modal-table">
+                                    <thead class="table-primary sticky-top">
                                         <tr>
-                                            <th>Remover </th>
-                                            <th>Data</th>
-                                            <th>Valor</th>
-                                            <th>Descrição</th>
-                                            <th>Parcelas</th>
-                                            <th>Categoria</th>
-                                            <th>Cliente</th>
+                                            <th><i class="fa-solid fa-trash"></i></th>
+                                            <th><i class="fa-solid fa-calendar-day"></i> Data</th>
+                                            <th><i class="fa-solid fa-money-bill-wave"></i> Valor</th>
+                                            <th><i class="fa-solid fa-align-left"></i> Descrição</th>
+                                            <th><i class="fa-solid fa-layer-group"></i> Parcelas</th>
+                                            <th><i class="fa-solid fa-tags"></i> Categoria</th>
+                                            <th><i class="fa-solid fa-user"></i> Cliente</th>
                                         </tr>
                                     </thead>
                                     <tbody id="transactionRows">
                                         <!-- As transações serão carregadas dinamicamente via JavaScript -->
-                                                                            </tbody>
+                                    </tbody>
                                 </table>
                             </div>
 
-                            <div class="form-group text-center mt-4">
-                                <button type="submit" class="btn btn-success">
-                                    Confirmar Transações <i class="fa fa-check"></i>
+                            <div class="form-group d-flex justify-content-center gap-3 mt-4 flex-wrap">
+                                <button type="button" class="btn btn-outline-secondary btn-lg px-5 py-2 fw-bold upload-modal-back-btn" id="backToStep1" style="font-size: 1.2rem;">
+                                    <i class="fa-solid fa-arrow-left me-2"></i>
+                                    Voltar
+                                </button>
+                                <button type="submit" class="btn btn-success btn-lg px-5 py-2 fw-bold upload-modal-confirm-btn">
+                                    <i class="fa-solid fa-circle-check me-2"></i>
+                                    Confirmar Transações
                                 </button>
                             </div>
                         </form>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
     </div>
 </div>
 
+<!-- CSS escopado para o modal -->
 <style>
-.circle {
-    width: 30px;
-    height: 30px;
+#uploadModal {
+    /* Garante que o escopo seja só do modal */
+}
+#uploadModal .modal-content {
+    background: linear-gradient(135deg, #f8fafc 80%, #e3f0fc 100%);
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.15);
+    border: none;
+}
+#uploadModal .modal-header {
+    background: linear-gradient(90deg, #3498db 60%, #1d72b8 100%);
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+    box-shadow: 0 2px 8px #b6d4fa;
+}
+#uploadModal .modal-title {
+    font-size: 2.2rem;
+    letter-spacing: 0.02em;
+}
+#uploadModal .btn-close {
+    filter: brightness(1.2);
+}
+#uploadModal .upload-modal-circle {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    background-color: #ddd;
-    color: #fff;
+    background: #e3eaf6;
+    color: #3498db;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
+    font-size: 1.25rem;
+    margin: 0 auto;
+    box-shadow: 0 1px 4px #e0e7ef;
+    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+    border: 2px solid #e3eaf6;
 }
-
-.circle.active {
-    background-color: #3498db;
+#uploadModal .upload-modal-circle.active {
+    background: linear-gradient(135deg, #3498db 60%, #1d72b8 100%);
+    color: #fff;
+    border-color: #3498db;
+    box-shadow: 0 2px 8px #b6d4fa;
 }
-
-.progress-bar {
-    background-color: #3498db;
+#uploadModal .upload-modal-step-label {
+    font-size: 0.98rem;
+    color: #1d3557;
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    opacity: 0.85;
+    margin-top: 0.1rem;
+    display: inline-block;
 }
-
-#step-indicator small {
-    font-size: 0.9rem;
-    color: #555;
+#uploadModal .upload-modal-step-progress {
+    height: 6px !important;
+    background: #e3eaf6 !important;
+    border-radius: 4px;
+    box-shadow: none;
+}
+#uploadModal .upload-modal-step-progress .progress-bar {
+    background: linear-gradient(90deg, #3498db 60%, #1d72b8 100%);
+    border-radius: 4px;
+    box-shadow: none;
+    font-size: 1.1rem;
+}
+@media (max-width: 600px) {
+    #uploadModal .upload-modal-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 1rem;
+    }
+    #uploadModal .upload-modal-step-label {
+        font-size: 0.85rem;
+    }
+}
+#uploadModal .upload-modal-confirm-title {
+    font-size: 1.7rem;
+    color: #1d3557;
+    background: linear-gradient(90deg, #e3f0fc 60%, #f8fafc 100%);
+    border-radius: 1rem;
+    padding: 0.7rem 0;
+    box-shadow: 0 2px 8px #e0e7ef;
+}
+#uploadModal .upload-modal-table-area {
+    background: #fff;
+    border-radius: 1.2rem;
+    box-shadow: 0 4px 24px 0 rgba(52, 152, 219, 0.10);
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border: 1px solid #e3f0fc;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #3498db #e0e7ef;
+}
+#uploadModal .upload-modal-table-area::-webkit-scrollbar {
+    width: 10px;
+    background: #e0e7ef;
+    border-radius: 8px;
+}
+#uploadModal .upload-modal-table-area::-webkit-scrollbar-thumb {
+    background: #3498db;
+    border-radius: 8px;
+}
+#uploadModal .upload-modal-table {
+    font-size: 1.18rem;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+#uploadModal .upload-modal-table thead th {
+    vertical-align: middle;
+    background: linear-gradient(90deg, #e3f0fc 60%, #f8fafc 100%);
+    color: #1d3557;
+    font-size: 1.18rem;
+    border-bottom: 2px solid #3498db;
+}
+#uploadModal .upload-modal-table tbody tr {
+    transition: background 0.2s;
+}
+#uploadModal .upload-modal-table tbody tr:hover {
+    background: #e3f0fc;
+    box-shadow: 0 2px 8px #e0e7ef;
+}
+#uploadModal .upload-modal-table td, 
+#uploadModal .upload-modal-table th {
+    vertical-align: middle !important;
+    border: none;
+}
+#uploadModal .upload-modal-table input,
+#uploadModal .upload-modal-table select {
+    border-radius: 0.7rem !important;
+    border: 1.5px solid #b6d4fa !important;
+    font-size: 1.1rem;
+    background: #f8fafc;
+    transition: border 0.2s;
+}
+#uploadModal .upload-modal-table input:focus,
+#uploadModal .upload-modal-table select:focus {
+    border-color: #3498db !important;
+    box-shadow: 0 0 0 2px #b6d4fa33;
+}
+#uploadModal .upload-modal-table .btn-danger {
+    border-radius: 50%;
+    padding: 0.5rem 0.7rem;
+    font-size: 1.1rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+#uploadModal .upload-modal-table .btn-danger:hover {
+    background: #e74c3c;
+    box-shadow: 0 2px 8px #e0e7ef;
+}
+#uploadModal .upload-modal-back-btn {
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 8px #b6d4fa;
+    padding: 0.8rem 3rem;
+    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+    border-width: 2px;
+    color: #1d3557;
+    background: #fff;
+}
+#uploadModal .upload-modal-back-btn:hover {
+    background: #e3f0fc !important;
+    color: #3498db !important;
+    box-shadow: 0 4px 16px #b6d4fa;
+    border-color: #3498db;
+}
+#uploadModal .upload-modal-confirm-btn {
+    font-size: 1.3rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 2px 8px #b6d4fa;
+    padding: 0.8rem 3rem;
+    transition: background 0.2s, box-shadow 0.2s;
+}
+#uploadModal .upload-modal-confirm-btn:hover {
+    background: #218838 !important;
+    box-shadow: 0 4px 16px #b6d4fa;
+}
+#uploadModal .form-group.d-flex {
+    gap: 1.5rem;
+}
+@media (max-width: 600px) {
+    #uploadModal .form-group.d-flex {
+        flex-direction: column;
+        gap: 0.7rem;
+    }
 }
 </style>
+
+<!-- FontAwesome 6 CDN (caso não esteja incluso no projeto) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const step1 = document.getElementById('step1');
     const step2 = document.getElementById('step2');
     const nextStep1 = document.getElementById('nextStep1');
+    const backToStep1 = document.getElementById('backToStep1');
     const uploadForm = document.getElementById('uploadForm');
     const fileInput = document.getElementById('file-upload');
     const progressBar = document.getElementById('upload-progress-bar');
@@ -149,7 +330,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fileInput.addEventListener('change', function() {
         const fileName = this.files[0] ? this.files[0].name : 'Escolher arquivo PDF ou CSV';
         document.querySelector('label[for="file-upload"]').innerHTML =
-            `<i class="fa fa-file"></i> ${fileName}`;
+            `<i class="fa-solid fa-file-arrow-up fa-xl me-2"></i> ${fileName}`;
     });
     // Ação do botão de "Próximo"
     nextStep1.addEventListener('click', function() {
@@ -205,7 +386,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr data-index="${index}">
                     <td>
                         <button type="button" class="btn btn-danger btn-sm remove-row" title="Remover">
-                            <i class="fa fa-trash"></i>
+                            <i class="fa-solid fa-trash"></i>
                         </button>
                     </td>
                     <td>
@@ -269,6 +450,18 @@ document.addEventListener('DOMContentLoaded', function() {
                             );
                         }
                     });
+                    
+                    // Botão de voltar para o Step 1
+                    if (backToStep1) {
+                        backToStep1.addEventListener('click', function() {
+                            step2.classList.add('d-none');
+                            step1.classList.remove('d-none');
+                            // Volta a barra de progresso e os círculos
+                            stepProgressBarInner.style.width = '50%';
+                            circleStep1.classList.add('active');
+                            circleStep2.classList.remove('active');
+                        });
+                    }
 
                 } else {
                     alert('Erro ao processar o arquivo. Por favor, tente novamente.');
