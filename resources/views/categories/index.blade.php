@@ -60,7 +60,29 @@
                                         </div>
                                     </li>
                                 @empty
-                                    <li class="list-group-item text-center">Nenhuma categoria adicionada</li>
+                                   
+    <div class="col-12">
+        <div class="d-flex flex-column align-items-center justify-content-center py-5">
+            <div class="animated-icon mb-4">
+                <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                    <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                    <rect x="40" y="60" width="50" height="30" rx="10" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
+                    <rect x="55" y="40" width="20" height="25" rx="6" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
+                    <rect x="50" y="95" width="30" height="8" rx="4" fill="#6ea8fe" opacity="0.18"/>
+                    <circle cx="65" cy="75" r="6" fill="#6ea8fe" opacity="0.15"/>
+                    <rect x="60" y="70" width="10" height="10" rx="3" fill="#6ea8fe" opacity="0.25"/>
+                </svg>
+            </div>
+            <h2 class="fw-bold mb-3 text-primary" style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                Nenhuma Categoria Encontrada
+            </h2>
+            <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
+                <span style="color:#0d6efd; font-weight:700;">Ops!</span> Você ainda não cadastrou nenhuma categoria.<br>
+                <span style="color:#6ea8fe;">Crie sua primeira categoria</span> para organizar melhor seus produtos e vendas!
+            </p>
+         
+        </div>
+    </div>
                                 @endforelse
                             @elseif ($type === 'transaction')
                                 @forelse ($transactionCategories as $category)
@@ -101,7 +123,58 @@
                                         </div>
                                     </li>
                                 @empty
-                                    <li class="list-group-item text-center">Nenhuma categoria adicionada</li>
+                                 
+
+    <div class="col-12">
+        <div class="d-flex flex-column align-items-center justify-content-center py-5">
+            <div class="animated-icon mb-4">
+                <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                    <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                    <rect x="40" y="60" width="50" height="30" rx="10" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
+                    <rect x="55" y="40" width="20" height="25" rx="6" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
+                    <rect x="50" y="95" width="30" height="8" rx="4" fill="#6ea8fe" opacity="0.18"/>
+                    <circle cx="65" cy="75" r="6" fill="#6ea8fe" opacity="0.15"/>
+                    <rect x="60" y="70" width="10" height="10" rx="3" fill="#6ea8fe" opacity="0.25"/>
+                </svg>
+            </div>
+            <h2 class="fw-bold mb-3 text-primary" style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                Nenhuma Categoria Encontrada
+            </h2>
+            <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
+                <span style="color:#0d6efd; font-weight:700;">Ops!</span> Você ainda não cadastrou nenhuma categoria.<br>
+                <span style="color:#6ea8fe;">Crie sua primeira categoria</span> para organizar melhor seus produtos e vendas!
+            </p>
+           
+        </div>
+    </div>
+    <style>
+    .animated-icon svg {
+        animation: floatIcon 2.5s ease-in-out infinite;
+        filter: drop-shadow(0 4px 16px #e3eafc);
+    }
+    @keyframes floatIcon {
+        0%, 100% { transform: translateY(0);}
+        50% { transform: translateY(-14px);}
+    }
+    .stylish-btn, .btn-xl {
+        background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
+        color: #fff;
+        border: none;
+        border-radius: 2.5em;
+        transition: background 0.2s, transform 0.15s;
+        box-shadow: 0 4px 24px rgba(13,110,253,0.12);
+        font-size: 1.25rem;
+        padding: 0.9em 2.5em;
+    }
+    .stylish-btn:hover, .stylish-btn:focus {
+        background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
+        color: #fff;
+        transform: translateY(-2px) scale(1.05);
+        box-shadow: 0 8px 32px rgba(13,110,253,0.18);
+    }
+    </style>
+
+
                                 @endforelse
                             @endif
                         </ul>
