@@ -30,10 +30,24 @@ class ProductUploadController extends Controller
     foreach ($request->products as $index => $product) {
         $imageName = null;
 
-        // Se o produto tiver uma imagem, faz o upload
+        // Se o produto tiver uma imagem enviada via input file, faz o upload normalmente
         if ($request->hasFile("products.{$index}.image")) {
             $imagePath = $request->file("products.{$index}.image")->store('products', 'public');
             $imageName = basename($imagePath);
+        }
+        // Se não tiver arquivo, mas tiver base64, salva o base64 como arquivo
+        elseif (!empty($product['image_base64'])) {
+            $imageData = $product['image_base64'];
+            $type = 'png'; // padrão caso não consiga detectar
+            if (preg_match('/^data:image\/(\w+);base64,/', $imageData, $matches)) {
+                $type = strtolower($matches[1]);
+                $imageData = substr($imageData, strpos($imageData, ',') + 1);
+            }
+            $imageData = base64_decode($imageData);
+            if ($imageData !== false) {
+                $imageName = 'product_' . uniqid() . '.' . $type;
+                Storage::disk('public')->put('products/' . $imageName, $imageData);
+            }
         }
 
         $imageName = $imageName ?? 'product-placeholder.png'; // Se a imagem não for fornecida, usa a imagem padrão.
