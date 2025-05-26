@@ -1,9 +1,9 @@
 
 @forelse ($eventsGroupedByMonth as $month => $monthlyInvoices)
-    <div class="invoice-month-section mb-4 p-2" id="invoice-month-section-{{ $month }}">
+    <div class="invoice-month-section my-4 p-2" id="invoice-month-section-{{ $month }}">
         <div class="row g-2">
             @foreach ($monthlyInvoices as $idx => $invoice)
-                <div class="col-md-4 {{ $idx >= 18 ? 'd-none extra-invoice-'.$month : '' }}">
+                <div class="col-md-4 {{ $idx >= 21 ? 'd-none extra-invoice-'.$month : '' }}">
                     <!-- Card de transação moderno e contido -->
                     <div class="modern-transaction-card shadow-sm border-1 h-100 d-flex flex-column">
                         <div class="modern-card-header d-flex align-items-center justify-content-between flex-wrap" style="background: {{ $invoice->category->hexcolor_category }}10;">
@@ -59,13 +59,13 @@
                 @include('invoice.copy')
             @endforeach
         </div>
-        @if(count($monthlyInvoices) > 18)
+        @if(count($monthlyInvoices) > 21)
             <div class="text-center mt-3">
                 <button class="btn btn-link p-0 show-more-invoices-btn"
                         type="button"
                         data-month="{{ $month }}"
                         id="show-more-invoices-btn-{{ $month }}">
-                    <span class="show-more-label"><i class="fas fa-chevron-down"></i> Mostrar tudo ({{ count($monthlyInvoices) - 18 }})</span>
+                    <span class="show-more-label"><i class="fas fa-chevron-down"></i> Mostrar tudo ({{ count($monthlyInvoices) - 21 }})</span>
                     <span class="show-less-label d-none"><i class="fas fa-chevron-up"></i> Mostrar menos</span>
                 </button>
             </div>
