@@ -22,7 +22,7 @@
 }
 .product-code-badge {
     position: absolute;
-    top: 0.7rem;
+    top: 9rem;
     left: 0.7rem;
     z-index: 2;
     background: rgba(52,58,64,0.9);
@@ -39,7 +39,7 @@
     gap: 0.3em;
 }
 .custom-card .card-img-top {
-    height: 120px;
+    height: 180px;
     object-fit: cover;
     border-top-left-radius: 1.1rem;
     border-top-right-radius: 1.1rem;
@@ -55,7 +55,7 @@
 }
 .product-title {
     font-size: 1.13em;
-    font-weight: 700;
+    font-weight: 800;
     color: #0d6efd;
     letter-spacing: 0.01em;
     white-space: nowrap;
@@ -618,9 +618,55 @@
             @endforeach
         </div>
         @else
-        <div class="alert alert-warning text-center">
-            Nenhuma venda encontrada.
+        <div class="col-12">
+            <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                <div class="animated-icon mb-4">
+                    <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                        <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                        <rect x="35" y="70" width="60" height="30" rx="12" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
+                        <rect x="50" y="40" width="30" height="35" rx="7" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
+                        <path d="M50 70 Q65 90 80 70" stroke="#6ea8fe" stroke-width="3" fill="none"/>
+                        <rect x="60" y="55" width="10" height="10" rx="3" fill="#6ea8fe" opacity="0.25"/>
+                        <circle cx="65" cy="60" r="6" fill="#6ea8fe" opacity="0.15"/>
+                        <polyline points="55,50 65,60 75,50" fill="none" stroke="#0d6efd" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <h2 class="fw-bold mb-3 text-primary" style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                    Nenhuma Venda Encontrada
+                </h2>
+                <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
+                    <span style="color:#0d6efd; font-weight:700;">Ops!</span> Você ainda não registrou nenhuma venda.<br>
+                    <span style="color:#6ea8fe;">Registre sua primeira venda</span> e acompanhe o crescimento do seu negócio!
+                </p>
+              
+            </div>
         </div>
+        <style>
+        .animated-icon svg {
+            animation: floatIcon 2.5s ease-in-out infinite;
+            filter: drop-shadow(0 4px 16px #e3eafc);
+        }
+        @keyframes floatIcon {
+            0%, 100% { transform: translateY(0);}
+            50% { transform: translateY(-14px);}
+        }
+        .stylish-btn, .btn-xl {
+            background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
+            color: #fff;
+            border: none;
+            border-radius: 2.5em;
+            transition: background 0.2s, transform 0.15s;
+            box-shadow: 0 4px 24px rgba(13,110,253,0.12);
+            font-size: 1.25rem;
+            padding: 0.9em 2.5em;
+        }
+        .stylish-btn:hover, .stylish-btn:focus {
+            background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
+            color: #fff;
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 32px rgba(13,110,253,0.18);
+        }
+        </style>
         @endif
        <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
