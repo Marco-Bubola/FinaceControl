@@ -62,8 +62,10 @@ Route::group(['middleware' => 'auth'], function () {
         Route::delete('/invoices/{id}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
         Route::post('/invoices/{id}/copy', [InvoiceController::class, 'copy'])->name('invoices.copy');
         Route::get('/client/{id}/resumo', [ClienteResumoController::class, 'index'])->name('clienteResumo.index');
-
-    });
+        // Nova rota para toggle dividida
+      
+Route::post('/invoices/{invoice}/toggle-dividida', [InvoiceController::class, 'toggleDividida'])->name('invoices.toggleDividida');  });
+   
     Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
     Route::post('/banks/change/{bank}', [BankController::class, 'changeCard'])->name('banks.change');
 
