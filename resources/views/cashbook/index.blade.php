@@ -227,7 +227,7 @@ function renderTransactionCard(transaction) {
                                     <button class="btn btn-warning d-flex align-items-center justify-content-center"
                                         style="width: 30px; height: 30px;"
                                         data-bs-toggle="modal" data-bs-target="#editTransactionModal"
-                                        onclick="loadEditModal(${transaction.id})">
+                                        onclick="loadEditModal(${transaction.id}); event.stopPropagation();">
                                         <i class="fas fa-edit"></i>
                                     </button>
                                     <button class="btn btn-danger  d-flex align-items-center justify-content-center"
