@@ -15,15 +15,24 @@ class ClienteResumoController extends Controller
     {
         // Buscar o cliente pelo ID
         $cliente = Client::findOrFail($clienteId);
-        $categories = DB::table('category')
-            ->join('invoice', 'category.id_category', '=', 'invoice.category_id') // Certifique-se de que os nomes das tabelas estão corretos
-            ->select('category.name as label', DB::raw('SUM(invoice.value) as value'))
-            ->where('invoice.client_id', $clienteId) // Filtra pelas faturas do cliente
+
+        // Buscar categorias e somar valores considerando 'dividida'
+        $categories = \DB::table('category')
+            ->join('invoice', 'category.id_category', '=', 'invoice.category_id')
+            ->select(
+                'category.name as label',
+                \DB::raw('SUM(CASE WHEN invoice.dividida = 1 THEN invoice.value / 2 ELSE invoice.value END) as value')
+            )
+            ->where('invoice.client_id', $clienteId)
             ->groupBy('category.name')
-            ->havingRaw('SUM(invoice.value) > 0') // Garante que apenas categorias com faturas sejam retornadas
+            ->havingRaw('SUM(CASE WHEN invoice.dividida = 1 THEN invoice.value / 2 ELSE invoice.value END) > 0')
             ->get();
-        // Calcular totais
-        $totalFaturas = Invoice::where('client_id', $clienteId)->sum('value');
+
+        // Calcular total de faturas considerando 'dividida'
+        $totalFaturas = Invoice::where('client_id', $clienteId)
+            ->selectRaw('SUM(CASE WHEN dividida = 1 THEN value / 2 ELSE value END) as total')
+            ->value('total');
+
         $totalRecebido = Cashbook::where('client_id', $clienteId)->where('type_id', 1)->sum('value');
         $totalEnviado = Cashbook::where('client_id', $clienteId)->where('type_id', 2)->sum('value');
         $saldoAtual = $totalRecebido - $totalEnviado - $totalFaturas;
@@ -35,9 +44,10 @@ class ClienteResumoController extends Controller
             'balance' => $saldoAtual,
         ];
 
-        // Listas detalhadas
+        // Listas detalhadas (mantém o valor original para exibição individual)
         $faturas = Invoice::where('client_id', $clienteId)
-            ->select('invoice_date', 'description', 'value','category_id')
+            ->select('id_invoice as id', 'invoice_date', 'description', 'value', 'category_id', 'dividida')
+            ->with('category') // Carrega o relacionamento category
             ->orderBy('invoice_date', 'desc')
             ->get();
 
