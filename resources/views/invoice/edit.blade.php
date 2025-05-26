@@ -279,7 +279,7 @@
                             <div class="input-group">
                                 <span class="input-group-text"><i class="bi bi-person"></i></span>
                                 <select class="form-select tom-select-custom"
-                                    id="client_id{{ $invoice->id_invoice }}" name="client_id" required>
+                                    id="client_id{{ $invoice->id_invoice }}" name="client_id" >
                                     <option value="" disabled {{ is_null($invoice->client_id) ? 'selected' : '' }}>Selecione um cliente</option>
                                     @foreach ($clients as $client)
                                         <option value="{{ $client->id }}"
