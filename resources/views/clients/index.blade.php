@@ -371,7 +371,8 @@
 
     <!-- Tabela de clientes -->
     <div class="row mt-4" id="client-list">
-        @foreach($clients as $client)
+        @if($clients->count() > 0)
+            @foreach($clients as $client)
 
 
         <div class="col-md-2 mb-4">
@@ -530,7 +531,60 @@
         </div>
 
         @include('clients.historico', ['client' => $client])
-        @endforeach
+            @endforeach
+        @else
+   {{-- Bloco ainda mais estilizado para nenhum cliente encontrado --}}
+<div class="col-12">
+    <div class="d-flex flex-column align-items-center justify-content-center py-5">
+        <div class="animated-icon mb-4">
+            <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                <path d="M95 95c0-16.57-13.43-30-30-30s-30 13.43-30 30" stroke="#6ea8fe" stroke-width="3" stroke-linecap="round"/>
+                <circle cx="65" cy="55" r="15" stroke="#6ea8fe" stroke-width="3" fill="#e9f2ff"/>
+                <path d="M50 55c0-8.28 6.72-15 15-15s15 6.72 15 15" stroke="#6ea8fe" stroke-width="3" stroke-linecap="round"/>
+                <line x1="40" y1="92" x2="90" y2="92" stroke="#adb5bd" stroke-width="3" stroke-linecap="round" opacity="0.5"/>
+            </svg>
+        </div>
+        <h2 class="fw-bold mb-3 text-primary" style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+            Nenhum Cliente Encontrado
+        </h2>
+        <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
+            <span style="color:#0d6efd; font-weight:700;">Ops!</span> Parece que você ainda não cadastrou nenhum cliente.<br>
+            <span style="color:#6ea8fe;">Que tal começar agora mesmo?</span><br>
+            Organize sua carteira e aproveite todos os recursos da plataforma!
+        </p>
+       
+    </div>
+</div>
+
+<style>
+.animated-icon svg {
+    animation: floatIcon 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 4px 16px #e3eafc);
+}
+@keyframes floatIcon {
+    0%, 100% { transform: translateY(0);}
+    50% { transform: translateY(-14px);}
+}
+.stylish-btn, .btn-xl {
+    background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
+    color: #fff;
+    border: none;
+    border-radius: 2.5em;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 4px 24px rgba(13,110,253,0.12);
+    font-size: 1.25rem;
+    padding: 0.9em 2.5em;
+}
+.stylish-btn:hover, .stylish-btn:focus {
+    background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
+    color: #fff;
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 32px rgba(13,110,253,0.18);
+}
+</style>
+
+        @endif
     </div>
 
 
