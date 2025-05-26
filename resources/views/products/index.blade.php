@@ -398,70 +398,121 @@
 
     <!-- Tabela de Produtos -->
     <div id="productsContainer" class="row mt-4">
-        @foreach($products as $product)
-        <div class="col-md-2 mb-4">
-            <div class="product-card-modern position-relative d-flex flex-column h-100">
-                <!-- Botões flutuantes -->
-                <div class="btn-action-group">
-                    <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal"
-                        data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
-                        <i class="bi bi-pencil-square"></i>
-                    </a>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                        data-bs-target="#modalDeleteProduct{{ $product->id }}" title="Excluir">
-                        <i class="bi bi-trash3"></i>
-                    </button>
+        {{-- Bloco estilizado para nenhum produto encontrado --}}
+        @if($products->isEmpty())
+            <div class="col-12">
+                <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                    <div class="animated-icon mb-4">
+                        <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                            <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                            <rect x="35" y="55" width="60" height="40" rx="12" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
+                            <rect x="50" y="40" width="30" height="25" rx="7" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
+                            <path d="M45 95c0-10 10-18 20-18s20 8 20 18" stroke="#6ea8fe" stroke-width="3" stroke-linecap="round"/>
+                            <circle cx="65" cy="75" r="6" fill="#6ea8fe" opacity="0.15"/>
+                            <rect x="60" y="65" width="10" height="10" rx="3" fill="#6ea8fe" opacity="0.25"/>
+                        </svg>
+                    </div>
+                    <h2 class="fw-bold mb-3 text-primary" style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                        Nenhum Produto Encontrado
+                    </h2>
+                    <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
+                        <span style="color:#0d6efd; font-weight:700;">Ops!</span> Sua prateleira está vazia.<br>
+                        <span style="color:#6ea8fe;">Cadastre seu primeiro produto</span> e comece a vender agora mesmo!
+                    </p>
+                
                 </div>
+            </div>
+            <style>
+            .animated-icon svg {
+                animation: floatIcon 2.5s ease-in-out infinite;
+                filter: drop-shadow(0 4px 16px #e3eafc);
+            }
+            @keyframes floatIcon {
+                0%, 100% { transform: translateY(0);}
+                50% { transform: translateY(-14px);}
+            }
+            .stylish-btn, .btn-xl {
+                background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
+                color: #fff;
+                border: none;
+                border-radius: 2.5em;
+                transition: background 0.2s, transform 0.15s;
+                box-shadow: 0 4px 24px rgba(13,110,253,0.12);
+                font-size: 1.25rem;
+                padding: 0.9em 2.5em;
+            }
+            .stylish-btn:hover, .stylish-btn:focus {
+                background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
+                color: #fff;
+                transform: translateY(-2px) scale(1.05);
+                box-shadow: 0 8px 32px rgba(13,110,253,0.18);
+            }
+            </style>
+        @else
+            @foreach($products as $product)
+            <div class="col-md-2 mb-4">
+                <div class="product-card-modern position-relative d-flex flex-column h-100">
+                    <!-- Botões flutuantes -->
+                    <div class="btn-action-group">
+                        <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </a>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            data-bs-target="#modalDeleteProduct{{ $product->id }}" title="Excluir">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </div>
 
-                <!-- Área da imagem com badges -->
-                <div class="product-img-area">
-                    <img src="{{ asset('storage/products/' . $product->image) }}" class="product-img"
-                        alt="{{ $product->name }}">
-                    <!-- Código do produto -->
-                    <span class="badge-product-code" title="Código do Produto">
-                        <i class="bi bi-upc-scan"></i> {{ $product->product_code }}
-                    </span>
-                    <!-- Quantidade -->
-                    <span class="badge-quantity" title="Quantidade em Estoque">
-                        <i class="bi bi-stack"></i> {{ $product->stock_quantity }}
-                    </span>
-                    <!-- Ícone da categoria -->
-                    <div class="category-icon-wrapper" style="color: {{ $product->category->hexcolor_category }};">
-                        <i class="{{ $product->category->icone }} category-icon"></i>
+                    <!-- Área da imagem com badges -->
+                    <div class="product-img-area">
+                        <img src="{{ asset('storage/products/' . $product->image) }}" class="product-img"
+                            alt="{{ $product->name }}">
+                        <!-- Código do produto -->
+                        <span class="badge-product-code" title="Código do Produto">
+                            <i class="bi bi-upc-scan"></i> {{ $product->product_code }}
+                        </span>
+                        <!-- Quantidade -->
+                        <span class="badge-quantity" title="Quantidade em Estoque">
+                            <i class="bi bi-stack"></i> {{ $product->stock_quantity }}
+                        </span>
+                        <!-- Ícone da categoria -->
+                        <div class="category-icon-wrapper" style="color: {{ $product->category->hexcolor_category }}; border: 2px solid {{ $product->category->hexcolor_category }};
+                                       background-color: {{ $product->category->hexcolor_category }}20;">
+                            <i class="{{ $product->category->icone }} category-icon"></i>
+                        </div>
+                        @if($product->stock_quantity == 0)
+                        <div class="out-of-stock">
+                            <i class="bi bi-x-circle"></i> Fora de Estoque
+                        </div>
+                        @endif
                     </div>
-                    @if($product->stock_quantity == 0)
-                    <div class="out-of-stock">
-                        <i class="bi bi-x-circle"></i> Fora de Estoque
-                    </div>
-                    @endif
-                </div>
 
-                <!-- Conteúdo -->
-                <div class="card-body">
-                    <div class="product-title" title="{{ $product->name }}">
-                        <i class="bi bi-box-seam"></i>
-                        {{ ucwords($product->name) }}
-                    </div>
-                    <div class="product-description" title="{{ $product->description }}">
-                        <i class="bi bi-card-text"></i>
-                        {{ ucwords($product->description) }}
-                    </div>
-                    <div class="price-area">
-                        <span class="badge-price" title="Preço de Custo">
-                            <i class="bi bi-tag"></i>
-                            R$ {{ number_format($product->price, 2, ',', '.') }}
-                        </span>
-                        <span class="badge-price-sale" title="Preço de Venda">
-                            <i class="bi bi-currency-dollar"></i>
-                            R$ {{ number_format($product->price_sale, 2, ',', '.') }}
-                        </span>
+                    <!-- Conteúdo -->
+                    <div class="card-body">
+                        <div class="product-title" title="{{ $product->name }}">
+                            <i class="bi bi-box-seam"></i>
+                            {{ ucwords($product->name) }}
+                        </div>
+                        <div class="product-description" title="{{ $product->description }}">
+                            <i class="bi bi-card-text"></i>
+                            {{ ucwords($product->description) }}
+                        </div>
+                        <div class="price-area">
+                            <span class="badge-price" title="Preço de Custo">
+                                <i class="bi bi-tag"></i>
+                                R$ {{ number_format($product->price, 2, ',', '.') }}
+                            </span>
+                            <span class="badge-price-sale" title="Preço de Venda">
+                                <i class="bi bi-currency-dollar"></i>
+                                R$ {{ number_format($product->price_sale, 2, ',', '.') }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-
-        @endforeach
+            @endforeach
+        @endif
     </div>
 
     <!-- Paginação -->
@@ -561,134 +612,9 @@
         });
     }
     document.addEventListener('DOMContentLoaded', setupDynamicSearch);
-    
-    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-    tooltipTriggerList.map(function(tooltipTriggerEl) {
-        return new bootstrap.Tooltip(tooltipTriggerEl)
-    })
 
-    document.addEventListener('DOMContentLoaded', function() {
-        // Botão de Aplicar Filtros
-        document.getElementById('applyFilterBtn').addEventListener('click', function() {
-            var selectedCategories = [];
+ 
 
-            // Obter todas as categorias selecionadas
-            document.querySelectorAll('.category-checkbox:checked').forEach(function(checkbox) {
-                selectedCategories.push(checkbox.value);
-            });
-
-            // Criar a URL com os filtros aplicados
-            var url = new URL(window.location.href);
-            url.searchParams.set('category_id', selectedCategories.join(','));
-
-            // Atualizar a URL para aplicar os filtros
-            window.location.href = url.href;
-        });
-
-        // Filtragem de Itens por Página
-        document.getElementById('perPageSelect').addEventListener('change', function() {
-            var perPage = this.value;
-            var url = new URL(window.location.href);
-            url.searchParams.set('per_page', perPage);
-            window.location.href = url.href;
-        });
-
-        // Animação ao selecionar/desmarcar categorias
-        document.querySelectorAll('.category-checkbox').forEach(function(checkbox) {
-            checkbox.addEventListener('change', function() {
-                this.closest('.category-option').classList.toggle('selected', this.checked);
-            });
-        });
-    });
-
-    // Filtros e itens por página
-    document.getElementById('filterSelect').addEventListener('change', function() {
-        const filter = this.value;
-        fetch(`{{ route('products.index') }}?filter=${filter}&ajax=1`)
-            .then(handleErrorResponse)
-            .then(data => {
-                if (data.html) {
-                    productsContainer.innerHTML = data.html; // Insere apenas o HTML da tabela
-                }
-            });
-    });
-
-    document.getElementById('perPageSelect').addEventListener('change', function() {
-        const perPage = this.value;
-        fetch(`{{ route('products.index') }}?per_page=${perPage}&ajax=1`)
-            .then(handleErrorResponse)
-            .then(data => {
-                if (data.html) {
-                    productsContainer.innerHTML = data.html; // Insere apenas o HTML da tabela
-                }
-            });
-    });
-
-    // Paginação dinâmica
-    const paginationLinks = document.querySelectorAll('.pagination a');
-    paginationLinks.forEach(link => {
-    link.addEventListener('click', function(event) {
-        event.preventDefault();
-        const url = this.href + '&ajax=1';
-
-        fetch(url)
-            .then(handleErrorResponse)
-            .then(data => {
-                if (data.html) {
-                    productsContainer.innerHTML = data
-                        .html; // Insere apenas o HTML da tabela
-                }
-            })
-            .catch(error => console.error('Erro ao carregar a página:', error));
-    });
-    });
-
-
-    // Função para excluir produto dinamicamente
-    function deleteProduct(productId) {
-        if (confirm('Tem certeza que deseja excluir este produto?')) {
-            fetch(`{{ url('products') }}/${productId}`, {
-                    method: 'DELETE',
-                    headers: {
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById(`product-card-${productId}`).remove();
-                    } else {
-                        alert('Erro ao excluir o produto.');
-                    }
-                })
-                .catch(error => console.error('Erro:', error));
-        }
-    }
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const filterSelect = document.getElementById('filterSelect');
-        const perPageSelect = document.getElementById('perPageSelect');
-
-        // Evento para o filtro
-        if (filterSelect) {
-            filterSelect.addEventListener('change', function() {
-                const filter = this.value;
-                const url = new URL(window.location.href);
-                url.searchParams.set('filter', filter); // Atualiza o parâmetro 'filter'
-                window.location.href = url.toString(); // Redireciona para a URL atualizada
-            });
-        }
-
-        // Evento para itens por página
-        if (perPageSelect) {
-            perPageSelect.addEventListener('change', function() {
-                const perPage = this.value;
-                const url = new URL(window.location.href);
-                url.searchParams.set('per_page', perPage); // Atualiza o parâmetro 'per_page'
-                window.location.href = url.toString(); // Redireciona para a URL atualizada
-            });
-        }
-    });
     </script>
     @include('products.delet')
     @include('products.upload')
