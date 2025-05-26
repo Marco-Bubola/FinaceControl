@@ -9,9 +9,9 @@
             <div class="card shadow-sm">
                 <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div>
-                        <h5 class="mb-1">Resumo Financeiro de {{ $cliente->name }}</h5>
-                        <p class="text-muted mb-0">Email: {{ $cliente->email ?? 'N/A' }}</p>
-                        <p class="text-muted mb-0">Telefone: {{ $cliente->phone ?? 'N/A' }}</p>
+                        <h5 class="mb-1">Resumo Financeiro de {{ e($cliente->name) }}</h5>
+                        <p class="text-muted mb-0">Email: {{ e($cliente->email) ?? 'N/A' }}</p>
+                        <p class="text-muted mb-0">Telefone: {{ e($cliente->phone) ?? 'N/A' }}</p>
                     </div>
                     <img src="{{ asset('assets/img/logos/user-icon.png') }}" class="rounded shadow" alt="Cliente"
                         style="max-width: 60px;">
@@ -71,18 +71,26 @@
                             <div class="card mb-3 border-0 shadow-sm">
                                 <div class="card-body d-flex align-items-center gap-3">
                                     <div class="rounded-circle d-flex align-items-center justify-content-center" style="border: 3px solid {{ $fatura->category->hexcolor_category }};
-                                background-color: {{ $fatura->category->hexcolor_category }}20;
-                                width: 50px; height: 50px;">
+                                        background-color: {{ $fatura->category->hexcolor_category }}20;
+                                        width: 50px; height: 50px;">
                                         <i class="{{ $fatura->category->icone }}"
                                             style="font-size: 1.5rem; color: {{ $fatura->category->hexcolor_category }}"></i>
                                     </div>
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 text-dark text-truncate">{{ $fatura->description }}</h6>
-                                        <small
-                                            class="text-muted">{{ \Carbon\Carbon::parse($fatura->invoice_date)->format('d/m/Y') }}</small>
+                                        <h6 class="mb-1 text-dark text-truncate">{{ e($fatura->description) }}</h6>
+                                        <small class="text-muted">{{ \Carbon\Carbon::parse($fatura->invoice_date)->format('d/m/Y') }}</small>
                                     </div>
-                                    <span class="badge bg-primary fs-6">R$
-                                        {{ number_format($fatura->value, 2, ',', '.') }}</span>
+                                    <div class="d-flex flex-column align-items-end">
+                                        <label class="form-check-label mb-1">
+                                            <input type="checkbox" class="form-check-input dividir-checkbox"
+                                                data-id="{{ $fatura->id }}"
+                                                {{ $fatura->dividida ? 'checked' : '' }}>
+                                            Dividir valor
+                                        </label>
+                                        <span class="badge bg-primary fs-6 valor-fatura" id="valor-fatura-{{ $fatura->id }}">
+                                            R$ {{ number_format($fatura->dividida ? $fatura->value / 2 : $fatura->value, 2, ',', '.') }}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -124,7 +132,7 @@
                                     </button>
 
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 text-dark">{{ $transferencia->description }}</h6>
+                                        <h6 class="mb-1 text-dark">{{ e($transferencia->description) }}</h6>
                                         <small class="text-muted">Data:
                                             {{ \Carbon\Carbon::parse($transferencia->transfer_date)->format('d/m/Y') }}</small><br>
                                         <small class="badge bg-primary fs-6">R$
@@ -169,7 +177,7 @@
                                     </button>
 
                                     <div class="flex-grow-1">
-                                        <h6 class="mb-1 text-dark">{{ $transferencia->description }}</h6>
+                                        <h6 class="mb-1 text-dark">{{ e($transferencia->description) }}</h6>
                                         <small class="text-muted">Data:
                                             {{ \Carbon\Carbon::parse($transferencia->transfer_date)->format('d/m/Y') }}</small><br>
                                         <small class="badge bg-primary fs-6">R$
@@ -217,7 +225,62 @@
         window.resumoCategories = @json($categories);
         window.resumoTotalInvoices = {{ $totalFaturas ?? 0 }};
         window.resumoTotals = @json($totals);
-        
+
+        // Função para atualizar os cartões de resumo
+        function atualizarCards(data) {
+            const cards = [
+                { selector: '.card .text-danger', value: data.totalFaturas },
+                { selector: '.card .text-success', value: data.totalRecebido },
+                { selector: '.card .text-warning', value: data.totalEnviado },
+                { selector: '.card .text-info', value: data.saldoAtual }
+            ];
+            cards.forEach(function(card, idx) {
+                const el = document.querySelector(card.selector);
+                if (el) {
+                    el.innerHTML = 'R$ ' + Number(card.value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            });
+        }
+
+        // Função para atualizar os gráficos (exemplo para gráfico de categorias)
+        function atualizarGraficos(data) {
+            window.resumoCategories = data.categories;
+            window.resumoTotalInvoices = data.totalFaturas;
+            window.resumoTotals = data.totals;
+            // Se você usa Chart.js, chame update() nos gráficos aqui
+            if (window.updateCategoryChartInstance) {
+                window.updateCategoryChartInstance.data.labels = data.categories.map(c => c.label);
+                window.updateCategoryChartInstance.data.datasets[0].data = data.categories.map(c => c.value);
+                window.updateCategoryChartInstance.update();
+            }
+            // Atualize outros gráficos conforme necessário
+        }
+
+        // Checkbox dividir valor AJAX
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.dividir-checkbox').forEach(function(checkbox) {
+                checkbox.addEventListener('change', function() {
+                    const invoiceId = this.getAttribute('data-id');
+                    const checked = this.checked ? 'true' : 'false'; // envia como string
+                    fetch(`/invoices/${invoiceId}/toggle-dividida`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ dividida: checked })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if(data.success) {
+                            document.getElementById('valor-fatura-' + invoiceId).innerHTML = 'R$ ' + data.valor;
+                            atualizarCards(data);
+                            atualizarGraficos(data);
+                        }
+                    });
+                });
+            });
+        });
     </script>
     <script src="{{ asset('js/resumo.js') }}"></script>
     @endpush
