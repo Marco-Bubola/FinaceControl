@@ -68,7 +68,7 @@ class UploadInvoiceController extends Controller
             'transactions.*.description' => 'required|string|max:255',
             'transactions.*.installments' => 'nullable|string|max:255',
             'transactions.*.category_id' => 'required|exists:category,id_category',
-            'transactions.*.client_id' => 'required|exists:clients,id',
+            'transactions.*.client_id' => 'nullable|exists:clients,id',
         ]);
 
         foreach ($request->transactions as $transaction) {
