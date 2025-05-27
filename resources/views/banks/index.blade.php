@@ -57,6 +57,31 @@
                         @include('banks.delet')
                         @include('banks.edit')
                         @endforeach
+
+                        @if ($banks->isEmpty())
+                        <div class="col-12">
+                            <div class="d-flex flex-column align-items-center justify-content-center py-3">
+                                <div class="animated-icon mb-2">
+                                    <svg width="70" height="70" viewBox="0 0 130 130" fill="none">
+                                        <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                                        <rect x="40" y="60" width="50" height="30" rx="10" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
+                                        <rect x="55" y="40" width="20" height="25" rx="6" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
+                                        <rect x="50" y="95" width="30" height="8" rx="4" fill="#6ea8fe" opacity="0.18"/>
+                                        <ellipse cx="60" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25"/>
+                                        <ellipse cx="70" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25"/>
+                                        <path d="M60 85 Q65 80 70 85" stroke="#6ea8fe" stroke-width="2" fill="none"/>
+                                    </svg>
+                                </div>
+                                <h2 class="fw-bold mb-2 text-primary" style="font-size:1.3rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                                    Nenhum Banco ou Cartão Cadastrado
+                                </h2>
+                                <p class="mb-2 text-secondary text-center" style="max-width: 350px; font-size:1rem; font-weight:500; line-height:1.4;">
+                                    <span style="color:#0d6efd; font-weight:700;">Ops!</span> Você ainda não cadastrou nenhum método de pagamento.<br>
+                                    <span style="color:#6ea8fe;">Adicione um novo banco ou cartão</span> para começar a gerenciar suas finanças!
+                                </p>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
