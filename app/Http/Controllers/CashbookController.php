@@ -205,6 +205,30 @@ $clients = Client::where('user_id', auth()->id())->get();
             $monthName = str_replace($english, $portuguese, $monthName);
         }
 
+        // Calcular dados do mês anterior
+        $prevDate = (clone $date)->subMonth();
+        $prevMonthName = $prevDate->format('F Y');
+        foreach ($monthTranslations as $english => $portuguese) {
+            $prevMonthName = str_replace($english, $portuguese, $prevMonthName);
+        }
+        $prevTransactions = Cashbook::where('user_id', Auth::id())
+            ->whereYear('date', $prevDate->year)
+            ->whereMonth('date', $prevDate->month)
+            ->get();
+        $prevMonthBalance = $prevTransactions->where('type_id', 1)->sum('value') - $prevTransactions->where('type_id', 2)->sum('value');
+
+        // Calcular dados do próximo mês
+        $nextDate = (clone $date)->addMonth();
+        $nextMonthName = $nextDate->format('F Y');
+        foreach ($monthTranslations as $english => $portuguese) {
+            $nextMonthName = str_replace($english, $portuguese, $nextMonthName);
+        }
+        $nextTransactions = Cashbook::where('user_id', Auth::id())
+            ->whereYear('date', $nextDate->year)
+            ->whereMonth('date', $nextDate->month)
+            ->get();
+        $nextMonthBalance = $nextTransactions->where('type_id', 1)->sum('value') - $nextTransactions->where('type_id', 2)->sum('value');
+
         return response()->json([
             'currentMonth' => $date->format('Y-m'),
             'monthName' => $monthName,
@@ -213,6 +237,14 @@ $clients = Client::where('user_id', auth()->id())->get();
             'categories' => [
                 'income' => $incomeCategories,
                 'expense' => $expenseCategories,
+            ],
+            'prevMonth' => [
+                'name' => $prevMonthName,
+                'balance' => $prevMonthBalance,
+            ],
+            'nextMonth' => [
+                'name' => $nextMonthName,
+                'balance' => $nextMonthBalance,
             ],
         ]);
     }
