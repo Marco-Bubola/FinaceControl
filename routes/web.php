@@ -36,9 +36,8 @@ Route::get('/auth/google/call-back', [GoogleAuthController::class, 'callback']);
 Route::group(['middleware' => 'auth'], function () {
     // Dashboard and general routes
     Route::get('/', [HomeController::class, 'home']);
-    Route::get('dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [App\Http\Controllers\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('dashboard/cashbook-chart-data', [App\Http\Controllers\DashboardController::class, 'cashbookChartData'])->name('dashboard.cashbookChartData');
 
     Route::get('/teste/{id}', [ClienteResumoController::class, 'index'])->name('teste.index');
 
@@ -196,3 +195,7 @@ Route::get('/clients/{id}/history', [ClientController::class, 'getPurchaseHistor
 Route::middleware(['auth'])->group(function () {
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
 });
+
+Route::get('/clientes/{cliente}/faturas', [App\Http\Controllers\ClienteResumoController::class, 'faturasAjax'])->name('clientes.faturas.ajax');
+Route::get('/clientes/{cliente}/transferencias-enviadas', [App\Http\Controllers\ClienteResumoController::class, 'transferenciasEnviadasAjax'])->name('clientes.transferencias.enviadas.ajax');
+Route::get('/clientes/{cliente}/transferencias-recebidas', [App\Http\Controllers\ClienteResumoController::class, 'transferenciasRecebidasAjax'])->name('clientes.transferencias.recebidas.ajax');
