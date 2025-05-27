@@ -49,7 +49,7 @@ class ClienteResumoController extends Controller
             ->select('id_invoice as id', 'invoice_date', 'description', 'value', 'category_id', 'dividida')
             ->with('category') // Carrega o relacionamento category
             ->orderBy('invoice_date', 'desc')
-            ->get();
+            ->paginate(6); // <-- Adiciona paginação
 
         $transferencias = Cashbook::where('client_id', $clienteId)
             ->select('type_id', 'value', 'date', 'description', 'category_id')
@@ -70,7 +70,82 @@ class ClienteResumoController extends Controller
             'totalEnviado',
             'saldoAtual',
             'faturas',
-            'transferencias'
+            'transferencias',
+            'clienteId' // <-- Adicione aqui
         ));
+    }
+
+    public function faturasAjax(Request $request, $clienteId)
+    {
+        // Otimize o with e o select
+        $faturas = Invoice::where('client_id', $clienteId)
+            ->select('id_invoice as id', 'invoice_date', 'description', 'value', 'category_id', 'dividida')
+            ->with(['category:id_category,name,icone'])
+            ->orderBy('invoice_date', 'desc')
+            ->paginate(6);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'faturas' => view('resumo.partials.faturas', [
+                    'faturas' => $faturas,
+                    'clienteId' => $clienteId,
+                    'onlyFaturas' => true
+                ])->render(),
+                'pagination' => view('resumo.partials.faturas-pagination', [
+                    'faturas' => $faturas,
+                    'clienteId' => $clienteId
+                ])->render(),
+            ]);
+        }
+
+        return redirect()->route('clientes.resumo', ['cliente' => $clienteId]);
+    }
+
+    public function transferenciasEnviadasAjax(Request $request, $clienteId)
+    {
+        $enviadas = \App\Models\Cashbook::where('client_id', $clienteId)
+            ->where('type_id', 2)
+            ->with(['category:id_category,name,icone,hexcolor_category'])
+            ->orderBy('date', 'desc')
+            ->paginate(6);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'enviadas' => view('resumo.partials.transferencias-enviadas', [
+                    'enviadas' => $enviadas,
+                    'clienteId' => $clienteId
+                ])->render(),
+                'pagination' => view('resumo.partials.transferencias-enviadas-pagination', [
+                    'enviadas' => $enviadas,
+                    'clienteId' => $clienteId
+                ])->render(),
+            ]);
+        }
+
+        return redirect()->route('clientes.resumo', ['cliente' => $clienteId]);
+    }
+
+    public function transferenciasRecebidasAjax(Request $request, $clienteId)
+    {
+        $recebidas = \App\Models\Cashbook::where('client_id', $clienteId)
+            ->where('type_id', 1)
+            ->with(['category:id_category,name,icone,hexcolor_category'])
+            ->orderBy('date', 'desc')
+            ->paginate(6);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'recebidas' => view('resumo.partials.transferencias-recebidas', [
+                    'recebidas' => $recebidas,
+                    'clienteId' => $clienteId
+                ])->render(),
+                'pagination' => view('resumo.partials.transferencias-recebidas-pagination', [
+                    'recebidas' => $recebidas,
+                    'clienteId' => $clienteId
+                ])->render(),
+            ]);
+        }
+
+        return redirect()->route('clientes.resumo', ['cliente' => $clienteId]);
     }
 }
