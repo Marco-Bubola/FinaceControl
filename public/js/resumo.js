@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             position: false,
                         },
                         title: {
-                            display: true,
+                            display: false,
                             text: 'Distribuição por Categoria'
                         }
                     },
@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         position: 'top'
                     },
                     title: {
-                        display: true,
+                        display: false,
                         text: 'Distribuição de Receitas e Despesas'
                     },
                     tooltip: {
@@ -188,4 +188,119 @@ document.addEventListener('DOMContentLoaded', function() {
 
         window.myChart = new Chart(ctx, config);
     }
+     // Função para atualizar os cartões de resumo
+        function atualizarCards(data) {
+            const cards = [
+                { selector: '.card .text-danger', value: data.totalFaturas },
+                { selector: '.card .text-success', value: data.totalRecebido },
+                { selector: '.card .text-warning', value: data.totalEnviado },
+                { selector: '.card .text-info', value: data.saldoAtual }
+            ];
+            cards.forEach(function(card, idx) {
+                const el = document.querySelector(card.selector);
+                if (el) {
+                    el.innerHTML = 'R$ ' + Number(card.value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                }
+            });
+        }
+
+        // Função para atualizar os gráficos (exemplo para gráfico de categorias)
+        function atualizarGraficos(data) {
+            window.resumoCategories = data.categories;
+            window.resumoTotalInvoices = data.totalFaturas;
+            window.resumoTotals = data.totals;
+            // Se você usa Chart.js, chame update() nos gráficos aqui
+            if (window.updateCategoryChartInstance) {
+                window.updateCategoryChartInstance.data.labels = data.categories.map(c => c.label);
+                window.updateCategoryChartInstance.data.datasets[0].data = data.categories.map(c => c.value);
+                window.updateCategoryChartInstance.update();
+            }
+            // Atualize outros gráficos conforme necessário
+        }
+
+        // Paginação AJAX das faturas
+        document.addEventListener('DOMContentLoaded', function() {
+            function bindFaturaPagination() {
+                // Atualize para buscar links tanto no container quanto na paginação do header
+                document.querySelectorAll('#faturas-pagination .pagination a, #faturas-container .pagination a').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        let url = this.getAttribute('href');
+                        if (!url) return;
+                        fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                            .then(res => res.json())
+                            .then(data => {
+                                document.getElementById('faturas-container').innerHTML = data.faturas;
+                                document.getElementById('faturas-pagination').innerHTML = data.pagination;
+                                bindFaturaPagination();
+                                bindDividirCheckbox();
+                            });
+                    });
+                });
+            }
+
+            function bindDividirCheckbox() {
+                document.querySelectorAll('.dividir-checkbox').forEach(function(checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        const invoiceId = this.getAttribute('data-id');
+                        const checked = this.checked ? 'true' : 'false';
+                        fetch(`/invoices/${invoiceId}/toggle-dividida`, {
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ dividida: checked })
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            if(data.success) {
+                                document.getElementById('valor-fatura-' + invoiceId).innerHTML = 'R$ ' + data.valor;
+                                atualizarCards(data);
+                                atualizarGraficos(data);
+                            }
+                        });
+                    });
+                });
+            }
+
+            function bindEnviadasPagination() {
+                document.querySelectorAll('#enviadas-pagination .pagination a, #enviadas-container .pagination a').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        let url = this.getAttribute('href');
+                        if (!url) return;
+                        fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                            .then(res => res.json())
+                            .then(data => {
+                                document.getElementById('enviadas-container').innerHTML = data.enviadas;
+                                document.getElementById('enviadas-pagination').innerHTML = data.pagination;
+                                bindEnviadasPagination();
+                            });
+                    });
+                });
+            }
+
+            function bindRecebidasPagination() {
+                document.querySelectorAll('#recebidas-pagination .pagination a, #recebidas-container .pagination a').forEach(function(link) {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        let url = this.getAttribute('href');
+                        if (!url) return;
+                        fetch(url, {headers: {'X-Requested-With': 'XMLHttpRequest'}})
+                            .then(res => res.json())
+                            .then(data => {
+                                document.getElementById('recebidas-container').innerHTML = data.recebidas;
+                                document.getElementById('recebidas-pagination').innerHTML = data.pagination;
+                                bindRecebidasPagination();
+                            });
+                    });
+                });
+            }
+
+            bindFaturaPagination();
+            bindDividirCheckbox();
+            bindEnviadasPagination();
+            bindRecebidasPagination();
+        });
 // ...demais funções JS (updateCategoryChart, graficoFinanceiro, etc)...
