@@ -2,90 +2,114 @@
 
 @section('content')
 
-<div class="container-fluid" style=" border: none;">
     @include('message.alert')
 
     <div class="row" style=" border: none;">
         <div class="col-md-12">
             <div class="card h-100 mb-4" style="background-color: transparent; border: none;">
-                <div class="card-header" style="background-color: transparent; border-bottom: none;">
-                    <div class="row align-items-center">
-                        <!-- Título -->
-                        <div class="col-md-3 d-flex justify-content-center align-items-center">
-                            <i class="fas fa-wallet text-primary me-2" style="font-size: 1.7rem;"></i>
-                            <h5 class="mb-0">Suas Transações</h6>
-                        </div>
-
-                        <!-- Navegação de Mês -->
-                        <div class="col-md-6 d-flex justify-content-center align-items-center">
-                            <button class="btn btn-outline-primary me-4 d-flex align-items-center"
-                                style="width: 150px; height: 50px;" onclick="loadMonth('previous')">
-                                <i class="fas fa-arrow-left me-1"></i> Mês Anterior
-                            </button>
-                            <div class="d-flex align-items-center">
-                                <i class="fas fa-calendar-alt text-info me-2" style="font-size: 1.7rem;"></i>
-                                <h5 class="mb-0"><span id="month-name">{{ $monthName ?? '' }}</span></h5>
+                <!-- HEADER EM UMA LINHA SÓ, ESTILIZADO E RESPONSIVO -->
+                <div class="card-header py-4" style="background-color: transparent; border-bottom: none;">
+                    <div class="row align-items-center g-3">
+                        <div class="col-12">
+                            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 flex-lg-nowrap">
+                                <!-- Ícone e Título -->
+                                <div class="d-flex align-items-center gap-3 flex-shrink-0">
+                                    <i class="fas fa-wallet text-primary" style="font-size: 2.2rem;"></i>
+                                    <h2 class="mb-0 fw-bold" style="letter-spacing: 0.01em; font-size: 1.7rem;">Suas Transações</h2>
+                                </div>
+                                <!-- Navegação de Mês com Cards Estilizados -->
+                                <div class="d-flex justify-content-center align-items-center gap-4 flex-wrap">
+                                    <!-- Card Mês Anterior -->
+                                    <div id="prev-month-card" class="month-nav-card" onclick="loadMonth('previous')">
+                                        <span class="month-nav-icon bg-white">
+                                            <i class="fas fa-chevron-left"></i>
+                                        </span>
+                                        <div class="month-nav-content">
+                                            <span class="month-nav-title" id="prev-month-name">...</span>
+                                            <span class="month-nav-label">Saldo</span>
+                                            <span class="month-nav-balance" id="prev-month-balance">...</span>
+                                        </div>
+                                    </div>
+                                    <!-- Card Mês Atual -->
+                                    <div class="month-nav-card active">
+                                        <span class="month-nav-icon" style="background: #bae6fd;">
+                                            <i class="fas fa-calendar-alt"></i>
+                                        </span>
+                                        <div class="month-nav-content">
+                                            <span class="month-nav-title" id="month-name">{{ $monthName ?? '' }}</span>
+                                            <span class="month-nav-label">Saldo</span>
+                                            <span class="month-nav-balance" id="month-balance">
+                                                {{ $totals['balance'] >= 0 ? '+' : '-' }} R$ {{ number_format(abs($totals['balance']), 2) }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <!-- Card Próximo Mês -->
+                                    <div id="next-month-card" class="month-nav-card" onclick="loadMonth('next')">
+                                       
+                                        <div class="month-nav-content">
+                                            <span class="month-nav-title" id="next-month-name">...</span>
+                                            <span class="month-nav-label">Saldo</span>
+                                            <span class="month-nav-balance" id="next-month-balance">...</span>
+                                        </div>
+                                         <span class="month-nav-icon bg-white">
+                                            <i class="fas fa-chevron-right"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <!-- Botões de Ação -->
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <button class="btn btn-outline-success d-flex align-items-center px-4 py-2"
+                                        data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                                        <i class="fas fa-plus me-2"></i> Adicionar
+                                    </button>
+                                    <button class="btn btn-outline-info d-flex align-items-center px-4 py-2"
+                                        data-bs-toggle="modal" data-bs-target="#uploadCashbookModal">
+                                        <i class="fas fa-upload me-2"></i> Upload
+                                    </button>
+                                </div>
                             </div>
-                            <button class="btn btn-outline-primary ms-4  d-flex align-items-center"
-                                onclick="loadMonth('next')">
-                                <i class="fas fa-arrow-right me-1"></i> Próximo Mês
-                            </button>
-                        </div>
-
-                        <!-- Botões de Ação -->
-                        <div class="col-md-3 d-flex justify-content-end align-items-center">
-                            <button class="btn btn-outline-success me-2 d-flex align-items-center"
-                                data-bs-toggle="modal" data-bs-target="#addTransactionModal">
-                                <i class="fas fa-plus me-1"></i> Adicionar
-                            </button>
-                            <button class="btn btn-outline-info d-flex align-items-center" data-bs-toggle="modal"
-                                data-bs-target="#uploadCashbookModal">
-                                <i class="fas fa-upload me-1"></i> Upload
-                            </button>
                         </div>
                     </div>
                 </div>
                 <div class="card-body pt-4 p-4">
-                    <div class="row mb-4">
-                        <div class="col-md-4">
-                            <div class="card text-center" style="border: 3px solid var(--bs-success);">
-                                <div class="card-body">
-                                    <h6 class="text-sm">Receitas</h6>
-                                    <span class="text-success">+ R$
-                                        {{ number_format(abs($totals['income']), 2) }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center" style="border: 3px solid var(--bs-danger);">
-                                <div class="card-body">
-                                    <h6 class="text-sm">Despesas</h6>
-                                    <span class="text-danger">- R$
-                                        {{ number_format(abs($totals['expense']), 2) }}</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card text-center teste {{ $totals['balance'] >= 0 ? 'border-success' : 'border-danger' }}"
-                                style="border-width: 3px;">
-                                <div class="card-body">
-                                    <h6 class="text-sm">Saldo</h6>
-                                    <span
-                                        class="text-{{ $totals['balance'] >= 0 ? 'success' : 'danger' }} text-lg font-weight-bold">
-                                        {{ $totals['balance'] >= 0 ? '+' : '-' }} R$
-                                        {{ number_format(abs($totals['balance']), 2) }}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
 
                     <div class="row">
                         <!-- Coluna da Esquerda - Transações -->
                         <div class="col-lg-8" id="transactions-container">
                             @if($transactions->isEmpty())
-                            <div class="text-center">
-                                <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
+                            <div class="col-12">
+                                <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                                    <div class="animated-icon mb-4">
+                                        <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                                            <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3"
+                                                fill="#f8fafc" />
+                                            <!-- Ícone de carteira triste -->
+                                            <rect x="40" y="60" width="50" height="30" rx="10" fill="#e9f2ff"
+                                                stroke="#6ea8fe" stroke-width="3" />
+                                            <rect x="55" y="40" width="20" height="25" rx="6" fill="#f8fafc"
+                                                stroke="#6ea8fe" stroke-width="3" />
+                                            <rect x="50" y="95" width="30" height="8" rx="4" fill="#6ea8fe"
+                                                opacity="0.18" />
+                                            <ellipse cx="60" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25" />
+                                            <ellipse cx="70" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25" />
+                                            <!-- Boca triste -->
+                                            <path d="M60 85 Q65 80 70 85" stroke="#6ea8fe" stroke-width="2"
+                                                fill="none" />
+                                        </svg>
+                                    </div>
+                                    <h2 class="fw-bold mb-3 text-primary"
+                                        style="font-size:2.2rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                                        Nenhuma Transação Encontrada
+                                    </h2>
+                                    <p class="mb-4 text-secondary text-center"
+                                        style="max-width: 480px; font-size:1.15rem; font-weight:500; line-height:1.6;">
+                                        <span style="color:#0d6efd; font-weight:700;">Ops!</span> Não encontramos
+                                        transações para o mês selecionado.<br>
+                                        <span style="color:#6ea8fe;">Adicione uma nova transação</span> para começar a
+                                        registrar seu fluxo financeiro!
+                                    </p>
+                                </div>
                             </div>
                             @else
                             <!-- Conteúdo do mês será carregado dinamicamente -->
@@ -94,14 +118,64 @@
 
                         <!-- Coluna da Direita - Gráfico -->
                         <div class="col-lg-4" id="chart-container">
+                            <div class="row mb-4 justify-content-center">
+                                <div class="col-12">
+                                    <div class="d-flex justify-content-between gap-3 flex-wrap">
+                                        <!-- Card Receitas -->
+                                        <div class="card shadow-sm border-0 flex-fill"
+                                            style="min-width: 120px; background: linear-gradient(135deg, #e6f9ec 60%, #f8fafc 100%);">
+                                            <div class="card-body text-center p-3">
+                                                <div class="mb-2">
+                                                    <i class="fas fa-arrow-up text-success" style="font-size: 1.6rem;"></i>
+                                                </div>
+                                                <h6 class="text-sm fw-bold mb-1 text-success">Receitas</h6>
+                                                <div class="fs-5 fw-bold text-success mb-0" id="income-value">
+                                                    + R$ {{ number_format(abs($totals['income']), 2) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Card Despesas -->
+                                        <div class="card shadow-sm border-0 flex-fill"
+                                            style="min-width: 120px; background: linear-gradient(135deg, #ffeaea 60%, #f8fafc 100%);">
+                                            <div class="card-body text-center p-3">
+                                                <div class="mb-2">
+                                                    <i class="fas fa-arrow-down text-danger" style="font-size: 1.6rem;"></i>
+                                                </div>
+                                                <h6 class="text-sm fw-bold mb-1 text-danger">Despesas</h6>
+                                                <div class="fs-5 fw-bold text-danger mb-0" id="expense-value">
+                                                    - R$ {{ number_format(abs($totals['expense']), 2) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- Card Saldo -->
+                                        <div class="card shadow-sm border-0 flex-fill"
+                                            style="min-width: 120px; background: linear-gradient(135deg, #eaf6ff 60%, #f8fafc 100%);">
+                                            <div class="card-body text-center p-3">
+                                                <div class="mb-2">
+                                                    <i class="fas fa-wallet text-{{ $totals['balance'] >= 0 ? 'success' : 'danger' }}"
+                                                        style="font-size: 1.6rem;"></i>
+                                                </div>
+                                                <h6 class="text-sm fw-bold mb-1 text-{{ $totals['balance'] >= 0 ? 'success' : 'danger' }}">
+                                                    Saldo
+                                                </h6>
+                                                <div class="fs-5 fw-bold text-{{ $totals['balance'] >= 0 ? 'success' : 'danger' }} mb-0" id="balance-value">
+                                                    {{ $totals['balance'] >= 0 ? '+' : '-' }} R$ {{ number_format(abs($totals['balance']), 2) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <!-- Gráfico de pizza será inserido aqui -->
-                            <canvas id="transaction-pie-chart" width="400" height="400"></canvas>
-                            <div class="mt-4">
-                                <h6 class="text-center">Receitas por Categoria</h6>
+                            <div class="bg-white rounded shadow-sm p-3 mb-4">
+                                <canvas id="transaction-pie-chart" width="400" height="400"></canvas>
+                            </div>
+                            <div class="mt-4 bg-white rounded shadow-sm p-3">
+                                <h6 class="text-center mb-3">Receitas por Categoria</h6>
                                 <canvas id="income-bar-chart" width="400" height="400"></canvas>
                             </div>
-                            <div class="mt-4">
-                                <h6 class="text-center">Despesas por Categoria</h6>
+                            <div class="mt-4 bg-white rounded shadow-sm p-3">
+                                <h6 class="text-center mb-3">Despesas por Categoria</h6>
                                 <canvas id="expense-bar-chart" width="400" height="400"></canvas>
                             </div>
                         </div>
@@ -110,7 +184,6 @@
             </div>
         </div>
     </div>
-</div>
 
 @include('cashbook.uploadCashbook')
 @include('cashbook.create')
@@ -125,17 +198,39 @@ let myChart, incomeBarChart, expenseBarChart; // Variáveis globais para armazen
 function loadMonth(direction) {
     const container = document.getElementById('transactions-container');
     const monthNameElement = document.getElementById('month-name');
-    const incomeElement = document.querySelector('.text-success');
-    const expenseElement = document.querySelector('.text-danger');
-    const balanceElement = document.querySelector(
-        '.text-lg.font-weight-bold.text-success, .text-lg.font-weight-bold.text-danger'
-    );
+    const incomeElement = document.getElementById('income-value');
+    const expenseElement = document.getElementById('expense-value');
+    const balanceElement = document.getElementById('balance-value');
+    const prevMonthName = document.getElementById('prev-month-name');
+    const prevMonthBalance = document.getElementById('prev-month-balance');
+    const nextMonthName = document.getElementById('next-month-name');
+    const nextMonthBalance = document.getElementById('next-month-balance');
 
     fetch(`/cashbook/month/${direction}?currentMonth=${currentMonth}`)
         .then(response => response.json())
         .then(data => {
             // Atualizar o mês atual e os valores exibidos
             updateMonthData(data, monthNameElement, incomeElement, expenseElement, balanceElement);
+
+            // Atualizar os cards dos meses anterior e próximo
+            if (data.prevMonth) {
+                prevMonthName.textContent = data.prevMonth.name;
+                prevMonthBalance.textContent = `${data.prevMonth.balance >= 0 ? '+' : '-'} R$ ${Math.abs(data.prevMonth.balance).toFixed(2)}`;
+                prevMonthBalance.className = `fw-bold text-${data.prevMonth.balance >= 0 ? 'success' : 'danger'}`;
+            } else {
+                prevMonthName.textContent = '---';
+                prevMonthBalance.textContent = '---';
+                prevMonthBalance.className = 'fw-bold text-secondary';
+            }
+            if (data.nextMonth) {
+                nextMonthName.textContent = data.nextMonth.name;
+                nextMonthBalance.textContent = `${data.nextMonth.balance >= 0 ? '+' : '-'} R$ ${Math.abs(data.nextMonth.balance).toFixed(2)}`;
+                nextMonthBalance.className = `fw-bold text-${data.nextMonth.balance >= 0 ? 'success' : 'danger'}`;
+            } else {
+                nextMonthName.textContent = '---';
+                nextMonthBalance.textContent = '---';
+                nextMonthBalance.className = 'fw-bold text-secondary';
+            }
 
             // Atualizar as transações
             updateTransactions(container, data.transactionsByDay);
@@ -159,7 +254,14 @@ function updateMonthData(data, monthNameElement, incomeElement, expenseElement, 
     expenseElement.textContent = `- R$ ${data.totals.expense.toFixed(2)}`;
     balanceElement.textContent =
         `${data.totals.balance >= 0 ? '+' : '-'} R$ ${Math.abs(data.totals.balance).toFixed(2)}`;
-    balanceElement.className = `text-lg font-weight-bold text-${data.totals.balance >= 0 ? 'success' : 'danger'}`;
+    balanceElement.className = `fs-5 fw-bold text-${data.totals.balance >= 0 ? 'success' : 'danger'} mb-0`;
+
+    // Atualizar saldo do card central de navegação de mês
+    const monthBalanceElement = document.getElementById('month-balance');
+    if (monthBalanceElement) {
+        monthBalanceElement.textContent = `${data.totals.balance >= 0 ? '+' : '-'} R$ ${Math.abs(data.totals.balance).toFixed(2)}`;
+        monthBalanceElement.className = `fw-bold text-${data.totals.balance >= 0 ? 'success' : 'danger'}`;
+    }
 
     // Atualizar a borda do card de saldo dinamicamente
     const balanceCard = document.querySelector('.card.text-center.teste');
@@ -172,17 +274,76 @@ function updateMonthData(data, monthNameElement, incomeElement, expenseElement, 
 // Atualizar as transações exibidas
 function updateTransactions(container, transactionsByDay) {
     const allTransactions = Object.values(transactionsByDay).flat();
+    const maxVisible = 24;
 
     if (allTransactions.length > 0) {
-        container.innerHTML = `
-            <div class="row">
-                ${allTransactions.map(transaction => renderTransactionCard(transaction)).join('')}
+        // Divida as transações em visíveis e ocultas
+        const visibleTransactions = allTransactions.slice(0, maxVisible);
+        const hiddenTransactions = allTransactions.slice(maxVisible);
+
+        let html = `
+            <div class="row" id="visible-transactions">
+                ${visibleTransactions.map(transaction => renderTransactionCard(transaction)).join('')}
             </div>
         `;
-    } else {
+
+        if (hiddenTransactions.length > 0) {
+            html += `
+                <div class="row d-none" id="hidden-transactions">
+                    ${hiddenTransactions.map(transaction => renderTransactionCard(transaction)).join('')}
+                </div>
+                <div class="text-center my-3">
+                    <button id="show-more-btn" class="btn btn-outline-primary">
+                        Mostrar mais
+                    </button>
+                </div>
+            `;
+        }
+
+        container.innerHTML = html;
+
+        // Lógica do botão "Mostrar mais/menos"
+        if (hiddenTransactions.length > 0) {
+            const showMoreBtn = document.getElementById('show-more-btn');
+            const hiddenRow = document.getElementById('hidden-transactions');
+            let expanded = false;
+            showMoreBtn.addEventListener('click', function () {
+                expanded = !expanded;
+                if (expanded) {
+                    hiddenRow.classList.remove('d-none');
+                    showMoreBtn.textContent = 'Mostrar menos';
+                } else {
+                    hiddenRow.classList.add('d-none');
+                    showMoreBtn.textContent = 'Mostrar mais';
+                    // Scroll para o botão ao recolher
+                    showMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            });
+        }  } else {
         container.innerHTML = `
-            <div class="text-center">
-                <h6 class="text-muted">Nenhuma transação encontrada para o mês selecionado.</h6>
+            <div class="col-12">
+                <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                    <div class="animated-icon mb-4">
+                        <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                            <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
+                            <!-- Ícone de carteira triste -->
+                            <rect x="40" y="60" width="50" height="30" rx="10" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
+                            <rect x="55" y="40" width="20" height="25" rx="6" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
+                            <rect x="50" y="95" width="30" height="8" rx="4" fill="#6ea8fe" opacity="0.18"/>
+                            <ellipse cx="60" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25"/>
+                            <ellipse cx="70" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25"/>
+                            <!-- Boca triste -->
+                            <path d="M60 85 Q65 80 70 85" stroke="#6ea8fe" stroke-width="2" fill="none"/>
+                        </svg>
+                    </div>
+                    <h2 class="fw-bold mb-3 text-primary" style="font-size:2.2rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                        Nenhuma Transação Encontrada
+                    </h2>
+                    <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.15rem; font-weight:500; line-height:1.6;">
+                        <span style="color:#0d6efd; font-weight:700;">Ops!</span> Não encontramos transações para o mês selecionado.<br>
+                        <span style="color:#6ea8fe;">Adicione uma nova transação</span> para começar a registrar seu fluxo financeiro!
+                    </p>
+                </div>
             </div>
         `;
     }
@@ -199,7 +360,7 @@ function renderTransactionCard(transaction) {
     const transactionValue = `${transaction.type_id == 2 ? '-' : '+'} R$ ${Math.abs(transaction.value).toFixed(2)}`;
 
     return `
-        <div class="col-md-4 mb-4">
+        <div class="col-md-4 mb-2">
             <div class="card border-${borderColor}" style="border: 3px solid var(--bs-${borderColor});">
                 <div class="card-body">
                     <div class="row">
@@ -519,6 +680,99 @@ function loadDeleteModal(id, description) {
 .step-circle.active {
     background-color: #0d6efd;
     color: #fff;
+}
+
+/* Estilo para os cards de navegação de mês - NOVO */
+.month-nav-card {
+    min-width: 220px;
+    max-width: 260px;
+    height: 90px;
+    border-radius: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
+    padding: 0.5rem 1.2rem;
+    background: #fff;
+    border: none;
+}
+.month-nav-card.active {
+    background: linear-gradient(90deg, #eaf6ff 60%, #f8fafc 100%);
+    border: 2px solid #0ea5e9;
+    box-shadow: 0 4px 18px rgba(14,165,233,0.10);
+    cursor: default;
+}
+.month-nav-card:hover:not(.active) {
+    box-shadow: 0 4px 18px rgba(14,165,233,0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+.month-nav-icon {
+    font-size: 2.2rem;
+    margin-right: 1.1rem;
+    color: #0ea5e9;
+    flex-shrink: 0;
+    background: #e0f2fe;
+    border-radius: 50%;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+}
+.month-nav-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+}
+.month-nav-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+}
+.month-nav-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.1rem;
+}
+.month-nav-balance {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #0ea5e9;
+}
+/* Responsividade extra para o header em linha única */
+@media (max-width: 1200px) {
+    .month-nav-card {
+        min-width: 180px;
+        max-width: 220px;
+        height: 80px;
+        font-size: 0.95rem;
+    }
+    .month-nav-icon {
+        font-size: 1.7rem;
+        width: 38px;
+        height: 38px;
+        margin-right: 0.7rem;
+    }
+    .month-nav-title, .month-nav-label, .month-nav-balance {
+        font-size: 0.95rem;
+    }
+}
+@media (max-width: 992px) {
+    .d-flex.flex-wrap.align-items-center.justify-content-between.gap-3.flex-lg-nowrap.flex-wrap {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1.2rem !important;
+    }
+    .month-nav-card {
+        min-width: 100%;
+        max-width: 100%;
+        margin-bottom: 0.5rem;
+    }
 }
 </style>
 <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
