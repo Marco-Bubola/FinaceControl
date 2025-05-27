@@ -1,214 +1,143 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-<div class="container-fluid py-4">
 
-    {{-- Cabeçalho do Cliente --}}
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-body d-flex justify-content-between align-items-center flex-wrap gap-3">
-                    <div>
-                        <h5 class="mb-1">Resumo Financeiro de {{ e($cliente->name) }}</h5>
-                        <p class="text-muted mb-0">Email: {{ e($cliente->email) ?? 'N/A' }}</p>
-                        <p class="text-muted mb-0">Telefone: {{ e($cliente->phone) ?? 'N/A' }}</p>
-                    </div>
-                    <img src="{{ asset('assets/img/logos/user-icon.png') }}" class="rounded shadow" alt="Cliente"
-                        style="max-width: 60px;">
+
+    {{-- Cabeçalho do Cliente + Cartões de Resumo --}}
+    <div class="card bg-transparent  shadow-none">
+        <div class="card-body d-flex flex-wrap gap-4 align-items-center justify-content-between">
+            {{-- Dados do Cliente --}}
+            <div class="d-flex align-items-center gap-3 flex-shrink-0" style="min-width: 260px;">
+                <img src="{{ asset('assets/img/logos/user-icon.png') }}" class="rounded shadow" alt="Cliente"
+                    style="max-width: 60px;">
+                <div>
+                    <h5 class="mb-1">Resumo Financeiro de {{ e($cliente->name) }}</h5>
+                    <p class="text-muted mb-0">Email: {{ e($cliente->email) ?? 'N/A' }}</p>
+                    <p class="text-muted mb-0">Telefone: {{ e($cliente->phone) ?? 'N/A' }}</p>
                 </div>
             </div>
-        </div>
-    </div>
 
-    {{-- Cartões de Resumo --}}
-    <div class="row g-3 mb-4">
-        @php
-        $cards = [
-        ['label' => 'Total de Faturas', 'value' => $totalFaturas, 'colors' => 'danger','color' => 'text-danger', 'icon'
-        => 'fas fa-file-invoice'],
-        ['label' => 'Total Recebido', 'value' => $totalRecebido, 'colors' => 'success','color' => 'text-success', 'icon'
-        => 'fas fa-arrow-down'],
-        ['label' => 'Total Enviado', 'value' => $totalEnviado,'colors' => 'warning', 'color' => 'text-warning', 'icon'
-        => 'fas fa-arrow-up'],
-        ['label' => 'Saldo Atual', 'value' => $saldoAtual,'colors' => 'info', 'color' => 'text-info', 'icon' => 'fas
-        fa-wallet'],
-        ];
-        @endphp
+            {{-- Cartões de Resumo --}}
+            <div class="d-flex gap-3 flex-wrap justify-content-end flex-grow-1">
+                @php
+                $cards = [
+                    ['label' => 'Total de Faturas', 'value' => $totalFaturas, 'colors' => 'danger','color' => 'text-danger', 'icon' => 'fas fa-file-invoice'],
+                    ['label' => 'Total Recebido', 'value' => $totalRecebido, 'colors' => 'success','color' => 'text-success', 'icon' => 'fas fa-arrow-down'],
+                    ['label' => 'Total Enviado', 'value' => $totalEnviado,'colors' => 'warning', 'color' => 'text-warning', 'icon' => 'fas fa-arrow-up'],
+                    ['label' => 'Saldo Atual', 'value' => $saldoAtual,'colors' => 'info', 'color' => 'text-info', 'icon' => 'fas fa-wallet'],
+                ];
+                @endphp
 
-        @foreach ($cards as $card)
-        <div class="col-sm-6 col-md-3">
-            <div class="card bg-dark text-white shadow-sm mb-4 h-100">
-                <div class="card-body d-flex align-items-center gap-3">
-                    <div class="bg-{{ $card['colors'] }} rounded-circle d-flex justify-content-center align-items-center"
-                        style="width: 50px; height: 50px;">
-                        <i class="{{ $card['icon'] }} text-white"></i>
-                    </div>
-                    <div>
-                        <p class="mb-0 text-sm">{{ $card['label'] }}</p>
-                        <h6 class="{{ $card['color'] }} font-weight-bold">
-                            R$ {{ number_format($card['value'], 2, ',', '.') }}
-                        </h6>
+                @foreach ($cards as $card)
+                <div class="card bg-transparent  shadow-none mb-0 flex-fill" style="min-width:180px; max-width:220px;">
+                    <div class="card-body d-flex align-items-center gap-3">
+                        <div class="bg-{{ $card['colors'] }} bg-opacity-75 rounded-circle d-flex justify-content-center align-items-center shadow"
+                            style="width: 48px; height: 48px;">
+                            <i class="{{ $card['icon'] }} text-white fs-4"></i>
+                        </div>
+                        <div>
+                            <p class="mb-1 text-sm text-muted fw-semibold">{{ $card['label'] }}</p>
+                            <h6 class="{{ $card['color'] }} fw-bold mb-0">
+                                R$ {{ number_format($card['value'], 2, ',', '.') }}
+                            </h6>
+                        </div>
                     </div>
                 </div>
+                @endforeach
             </div>
         </div>
-        @endforeach
     </div>
 
     <div class="row">
         {{-- Coluna Esquerda --}}
-        <div class="col-lg-6">
+        <div class="col-lg-8">
 
-            {{-- Faturas --}}
-            <div class="card shadow-sm mb-4">
-                <div class="card-header pb-0">
-                    <h6 class="mb-0">Faturas</h6>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        @forelse ($faturas as $fatura)
-                        <div class="col-md-6">
-                            <div class="card mb-3 border-0 shadow-sm">
-                                <div class="card-body d-flex align-items-center gap-3">
-                                    <div class="rounded-circle d-flex align-items-center justify-content-center" style="border: 3px solid {{ $fatura->category->hexcolor_category }};
-                                        background-color: {{ $fatura->category->hexcolor_category }}20;
-                                        width: 50px; height: 50px;">
-                                        <i class="{{ $fatura->category->icone }}"
-                                            style="font-size: 1.5rem; color: {{ $fatura->category->hexcolor_category }}"></i>
-                                    </div>
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1 text-dark text-truncate">{{ e($fatura->description) }}</h6>
-                                        <small class="text-muted">{{ \Carbon\Carbon::parse($fatura->invoice_date)->format('d/m/Y') }}</small>
-                                    </div>
-                                    <div class="d-flex flex-column align-items-end">
-                                        <label class="form-check-label mb-1">
-                                            <input type="checkbox" class="form-check-input dividir-checkbox"
-                                                data-id="{{ $fatura->id }}"
-                                                {{ $fatura->dividida ? 'checked' : '' }}>
-                                            Dividir valor
-                                        </label>
-                                        <span class="badge bg-primary fs-6 valor-fatura" id="valor-fatura-{{ $fatura->id }}">
-                                            R$ {{ number_format($fatura->dividida ? $fatura->value / 2 : $fatura->value, 2, ',', '.') }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="text-center text-muted">Nenhuma fatura registrada.</div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
+      
+
+{{-- Faturas --}}
+<div class="card bg-transparent  shadow-none mb-2">
+    <div class="card-header bg-transparent  shadow-none pb-0 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0">Faturas</h6>
+        {{-- Paginação das faturas no header --}}
+        <div id="faturas-pagination" class="mb-0">
+            {{-- Inclua apenas a paginação, sem as faturas --}}
+            @if ($faturas->hasPages())
+                @include('resumo.partials.faturas-pagination', ['faturas' => $faturas, 'clienteId' => $cliente->id])
+            @endif
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="faturas-container">
+            @include('resumo.partials.faturas', ['faturas' => $faturas, 'clienteId' => $cliente->id, 'onlyFaturas' => true])
+        </div>
+    </div>
+</div>
 
 
             {{-- Transferências Enviadas --}}
-            <div class="card shadow-sm mb-4">
-                <div class="card-header pb-0">
-                    <h6 class="mb-0 text-danger"><i class="fas fa-arrow-down me-1"></i> Transferências Enviadas</h6>
-                </div>
-                <div class="card-body">
-                    @php
-                    $enviadas = collect($transferencias)->where('tipo', 'Enviado');
-                    @endphp
-
-                    <div class="row">
-                        @forelse ($enviadas as $transferencia)
-                        @php $bgColor = '#dc3545'; @endphp
-                        <div class="col-md-6">
-                            <div class="card mb-3 border-0 shadow-sm">
-                                <div class="card-body d-flex align-items-center gap-3">
-
-
-                                    <button
-                                        class="btn btn-icon-only btn-rounded d-flex align-items-center justify-content-center"
-                                        style="border: 3px solid {{ $transferencia->category->hexcolor_category ?? '#ccc' }};
-                                background-color: {{ $transferencia->category->hexcolor_category ?? '#ccc' }}20;
-                                width: 50px; height: 50px;"
-                                        title="{{ $transferencia->category->name ?? 'Categoria não definida' }}"
-                                        data-bs-toggle="tooltip">
-                                        <i class="{{ $transferencia->category->icone ?? 'fas fa-question' }}"
-                                            style="font-size: 1.3rem;"></i>
-                                    </button>
-
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1 text-dark">{{ e($transferencia->description) }}</h6>
-                                        <small class="text-muted">Data:
-                                            {{ \Carbon\Carbon::parse($transferencia->transfer_date)->format('d/m/Y') }}</small><br>
-                                        <small class="badge bg-primary fs-6">R$
-                                            {{ number_format($transferencia->value, 2, ',', '.') }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="text-center text-muted">Nenhuma transferência enviada.</div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
+            <div class="card bg-transparent  shadow-none mb-2">
+    <div class="card-header bg-transparent  shadow-none pb-0 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 text-danger"><i class="fas fa-arrow-down me-1"></i> Transferências Enviadas</h6>
+        <div id="enviadas-pagination" class="mb-0">
+            @php
+                $enviadasPag = \App\Models\Cashbook::where('client_id', $cliente->id)
+                    ->where('type_id', 2)
+                    ->with(['category:id_category,name,icone,hexcolor_category'])
+                    ->orderBy('date', 'desc')
+                    ->paginate(6);
+            @endphp
+            @if ($enviadasPag->hasPages())
+                @include('resumo.partials.transferencias-enviadas-pagination', ['enviadas' => $enviadasPag, 'clienteId' => $cliente->id])
+            @endif
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="enviadas-container">
+            @include('resumo.partials.transferencias-enviadas', ['enviadas' => $enviadasPag, 'clienteId' => $cliente->id])
+        </div>
+    </div>
+</div>
 
             {{-- Transferências Recebidas --}}
-            <div class="card shadow-sm mb-4">
-                <div class="card-header pb-0">
-                    <h6 class="mb-0 text-success"><i class="fas fa-arrow-up me-1"></i> Transferências Recebidas</h6>
-                </div>
-                <div class="card-body">
-                    @php
-                    $recebidas = collect($transferencias)->where('tipo', 'Recebido');
-                    @endphp
-
-                    <div class="row">
-                        @forelse ($recebidas as $transferencia)
-                        @php $bgColor = '#198754'; @endphp
-                        <div class="col-md-6">
-                            <div class="card mb-3 border-0 shadow-sm">
-                                <div class="card-body d-flex align-items-center gap-3">
-
-                                    <button
-                                        class="btn btn-icon-only btn-rounded d-flex align-items-center justify-content-center"
-                                        style="border: 3px solid {{ $transferencia->category->hexcolor_category ?? '#ccc' }};
-                                    background-color: {{ $transferencia->category->hexcolor_category ?? '#ccc' }}20;
-                                    width: 50px; height: 50px;"
-                                        title="{{ $transferencia->category->name ?? 'Categoria não definida' }}"
-                                        data-bs-toggle="tooltip">
-                                        <i class="{{ $transferencia->category->icone ?? 'fas fa-question' }}"
-                                            style="font-size: 1.3rem;"></i>
-                                    </button>
-
-                                    <div class="flex-grow-1">
-                                        <h6 class="mb-1 text-dark">{{ e($transferencia->description) }}</h6>
-                                        <small class="text-muted">Data:
-                                            {{ \Carbon\Carbon::parse($transferencia->transfer_date)->format('d/m/Y') }}</small><br>
-                                        <small class="badge bg-primary fs-6">R$
-                                            {{ number_format($transferencia->value, 2, ',', '.') }}</small>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        @empty
-                        <div class="text-center text-muted">Nenhuma transferência recebida.</div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
+            <div class="card bg-transparent  shadow-none mb-2">
+    <div class="card-header bg-transparent  shadow-none pb-0 d-flex justify-content-between align-items-center">
+        <h6 class="mb-0 text-success"><i class="fas fa-arrow-up me-1"></i> Transferências Recebidas</h6>
+        <div id="recebidas-pagination" class="mb-0">
+            @php
+                $recebidasPag = \App\Models\Cashbook::where('client_id', $cliente->id)
+                    ->where('type_id', 1)
+                    ->with(['category:id_category,name,icone,hexcolor_category'])
+                    ->orderBy('date', 'desc')
+                    ->paginate(6);
+            @endphp
+            @if ($recebidasPag->hasPages())
+                @include('resumo.partials.transferencias-recebidas-pagination', ['recebidas' => $recebidasPag, 'clienteId' => $cliente->id])
+            @endif
+        </div>
+    </div>
+    <div class="card-body">
+        <div id="recebidas-container">
+            @include('resumo.partials.transferencias-recebidas', ['recebidas' => $recebidasPag, 'clienteId' => $cliente->id])
+        </div>
+    </div>
+</div>
 
 
         </div>
 
         <!-- Coluna da direita: Gráfico -->
-        <div class="col-md-6">
-            <div class="card shadow-sm mb-4">
-                <div class="card-header pb-0">
+        <div class="col-md-4 ">
+            <div class="card bg-transparent  shadow-none mb-2">
+                <div class="card-header bg-transparent  shadow-none pb-0">
                     <h6 class="mb-0">Gráfico de Receitas e Despesas</h6>
                 </div>
-                <div class="card-body">
+                <div class="card-body ">
                     <canvas id="transaction-pie-chart" style="max-height: 500px;"></canvas>
                 </div>
             </div>
-            <div class="card shadow-sm mb-4">
-                <div class="card-header pb-0">
-                    <h6 class="mb-0">Gráfico de Categorias</h6>
+            <div class="card bg-transparent  shadow-none mb-2">
+                <div class="card-header bg-transparent  shadow-none  pb-0">
+                    <h6 class="mb-0 ">Gráfico de Categorias</h6>
                 </div>
                 <div class="card-body">
                     <canvas id="updateCategoryChart" style="max-height: 500px;"></canvas>
@@ -216,7 +145,7 @@
                 </div>
             </div>
         </div>
-    </div>
+ 
     @endsection
 
     @push('scripts')
@@ -226,61 +155,8 @@
         window.resumoTotalInvoices = {{ $totalFaturas ?? 0 }};
         window.resumoTotals = @json($totals);
 
-        // Função para atualizar os cartões de resumo
-        function atualizarCards(data) {
-            const cards = [
-                { selector: '.card .text-danger', value: data.totalFaturas },
-                { selector: '.card .text-success', value: data.totalRecebido },
-                { selector: '.card .text-warning', value: data.totalEnviado },
-                { selector: '.card .text-info', value: data.saldoAtual }
-            ];
-            cards.forEach(function(card, idx) {
-                const el = document.querySelector(card.selector);
-                if (el) {
-                    el.innerHTML = 'R$ ' + Number(card.value).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                }
-            });
-        }
-
-        // Função para atualizar os gráficos (exemplo para gráfico de categorias)
-        function atualizarGraficos(data) {
-            window.resumoCategories = data.categories;
-            window.resumoTotalInvoices = data.totalFaturas;
-            window.resumoTotals = data.totals;
-            // Se você usa Chart.js, chame update() nos gráficos aqui
-            if (window.updateCategoryChartInstance) {
-                window.updateCategoryChartInstance.data.labels = data.categories.map(c => c.label);
-                window.updateCategoryChartInstance.data.datasets[0].data = data.categories.map(c => c.value);
-                window.updateCategoryChartInstance.update();
-            }
-            // Atualize outros gráficos conforme necessário
-        }
-
-        // Checkbox dividir valor AJAX
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.dividir-checkbox').forEach(function(checkbox) {
-                checkbox.addEventListener('change', function() {
-                    const invoiceId = this.getAttribute('data-id');
-                    const checked = this.checked ? 'true' : 'false'; // envia como string
-                    fetch(`/invoices/${invoiceId}/toggle-dividida`, {
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ dividida: checked })
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if(data.success) {
-                            document.getElementById('valor-fatura-' + invoiceId).innerHTML = 'R$ ' + data.valor;
-                            atualizarCards(data);
-                            atualizarGraficos(data);
-                        }
-                    });
-                });
-            });
-        });
+       
     </script>
+    <link rel="stylesheet" href="{{ asset('css/resumo.css') }}">
     <script src="{{ asset('js/resumo.js') }}"></script>
     @endpush
