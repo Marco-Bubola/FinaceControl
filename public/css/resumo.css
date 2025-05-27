@@ -1,0 +1,107 @@
+.fatura-card {
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06);
+        transition: box-shadow 0.2s, transform 0.2s;
+        overflow: visible; /* Permite que conteúdo interno seja exibido */
+        border: none;
+        position: relative;
+    }
+    .fatura-card:hover {
+        box-shadow: 0 6px 24px 0 rgba(0,0,0,0.12);
+        transform: translateY(-2px) scale(1.01);
+    }
+  
+    .fatura-card-body {
+        padding: 1.2rem 1.2rem 1rem 1.2rem;
+        min-width: 0;
+        /* Garante que o conteúdo interno possa crescer */
+        width: 100%;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+    }
+    .fatura-icon {
+        border: 3px solid #e0e0e0;
+        background: #f7f7f7;
+        width: 54px;
+        height: 54px;
+        font-size: 2rem;
+        color: #6c63ff;
+        box-shadow: 0 1px 6px 0 rgba(108,99,255,0.08);
+        transition: border-color 0.2s, background 0.2s;
+    }
+    .fatura-card:hover .fatura-icon {
+        border-color: #6c63ff;
+        background: #eae6ff;
+    }
+    .fatura-icon i {
+        color: inherit !important;
+        font-size: 1.7rem;
+    }
+    .fatura-title {
+        max-width: 100%;
+        white-space: normal;      /* Permite quebra de linha */
+        overflow: visible;        /* Mostra todo o conteúdo */
+        text-overflow: unset;     /* Remove reticências */
+        font-weight: 600;
+        font-size: 1.05rem;
+        color: #222;
+        margin-bottom: 0.15rem;
+        line-height: 1.2;
+        word-break: break-word;   /* Quebra palavras longas */
+    }
+    .fatura-date {
+        color: #888;
+        font-size: 0.92rem;
+    }
+    .fatura-actions {
+        width: 100%;
+        flex-wrap: wrap;
+        min-width: 0;
+    }
+    .fatura-badge {
+        background: linear-gradient(90deg, #6c63ff 60%, #5eead4 100%);
+        color: #fff;
+        font-weight: 600;
+        font-size: 1.05rem;
+        border-radius: 1.2rem;
+        padding: 0.35rem 1.1rem;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 1px 4px 0 rgba(108,99,255,0.10);
+        white-space: nowrap;
+        min-width: 0;
+        margin-left: auto;
+        transition: background 0.2s;
+    }
+    .fatura-badge i {
+        font-size: 1.1rem;
+        opacity: 0.85;
+    }
+    /* Responsivo */
+    @media (max-width: 767.98px) {
+        .fatura-card-body {
+            padding: 1rem 0.7rem 0.9rem 0.9rem;
+        }
+        .fatura-title {
+            font-size: 0.98rem;
+        }
+        .fatura-badge {
+            font-size: 0.98rem;
+            padding: 0.32rem 0.8rem;
+        }
+    }
+    @media (max-width: 575.98px) {
+        .fatura-actions {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .fatura-badge {
+            margin-left: 0 !important;
+            margin-top: 0.5rem;
+        }
+        .fatura-title {
+            font-size: 0.93rem;
+        }
+    }
