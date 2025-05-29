@@ -1,16 +1,16 @@
-<aside class="sidenav navbar navbar-vertical navbar-expand-xs fixed-start" id="sidenav-main">
+<aside class="sidenav navbar navbar-vertical overflow-hidden navbar-expand-xs fixed-start" id="sidenav-main">
     <div class="sidenav-header d-flex align-items-center justify-content-between flex-nowrap">
         <a class="align-items-center d-flex m-0 navbar-brand text-wrap" href="{{ route('dashboard') }}">
             <img src="../assets/img/logo-ct.png" class="navbar-brand-img" alt="..." />
             <span class="ms-3 font-weight-bold sidebar-text"> Flow Manege</span>
         </a>
         <!-- Botão para alternar sidebar SEMPRE visível -->
-        <button id="toggleSidebar" class="btn btn-link p-2 ms-2 toggle-sidebar-btn" style="font-size: 1.5rem;">
+        <button id="toggleSidebar" class="btn btn-link toggle-sidebar-btn" style="font-size: 1.5rem;">
             <i class="fas fa-bars"></i>
         </button>
     </div>
     <hr class="horizontal dark mt-0">
-    <div class="sidebar-body" style="height: 90%; display: flex; flex-direction: column;">
+    <div class="sidebar-body" style=" display: flex; flex-direction: column;">
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
             <ul class="navbar-nav">
                 <li class="nav-item">
@@ -76,54 +76,14 @@
                                 </g>
                             </svg>
                         </div>
-                        <span class="nav-link-text ms-1 sidebar-text">Gerenciamento de Usuários</span>
+                        <span class="nav-link-text ms-1 sidebar-text">Gerenciamento</span>
                     </a>
                 </li>
                 @endif
                 <li class="nav-item mt-2 sidebar-text">
                     <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Páginas de Exemplo</h6>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ (Request::is('tables') ? 'active' : '') }}" href="{{ url('tables') }}">
-                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <svg viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <title>office</title>
-                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-1869.000000, -293.000000)" fill="#FFFFFF" fill-rule="nonzero">
-                                        <g transform="translate(1716.000000, 291.000000)">
-                                            <g id="office" transform="translate(153.000000, 2.000000)">
-                                                <path class="color-background opacity-6" d="M12.25,17.5 L8.75,17.5 L8.75,1.75 C8.75,0.78225 9.53225,0 10.5,0 L31.5,0 C32.46775,0 33.25,0.78225 33.25,1.75 L33.25,12.25 L29.75,12.25 L29.75,3.5 L12.25,3.5 L12.25,17.5 Z"></path>
-                                                <path class="color-background" d="M40.25,14 L24.5,14 C23.53225,14 22.75,14.78225 22.75,15.75 L22.75,38.5 L19.25,38.5 L19.25,22.75 C19.25,21.78225 18.46775,21 17.5,21 L1.75,21 C0.78225,21 0,21.78225 0,22.75 L0,40.25 C0,41.21775 0.78225,42 1.75,42 L40.25,42 C41.21775,42 42,41.21775 42,40.25 L42,15.75 C42,14.78225 41.21775,14 40.25,14 Z M12.25,36.75 L7,36.75 L7,33.25 L12.25,33.25 L12.25,36.75 Z M12.25,29.75 L7,29.75 L7,26.25 L12.25,26.25 L12.25,29.75 Z M35,36.75 L29.75,36.75 L29.75,33.25 L35,33.25 L35,36.75 Z M35,29.75 L29.75,29.75 L29.75,26.25 L35,26.25 L35,29.75 Z M35,22.75 L29.75,22.75 L29.75,19.25 L35,19.25 L35,22.75 Z"></path>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <span class="nav-link-text ms-1 sidebar-text">Tabelas</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link {{ (Request::is('full-calender') ? 'active' : '') }}" href="{{ url('full-calender') }}">
-                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                            <svg viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                <title>office</title>
-                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
-                                    <g transform="translate(-1869.000000, -293.000000)" fill="#FFFFFF" fill-rule="nonzero">
-                                        <g transform="translate(1716.000000, 291.000000)">
-                                            <g id="office" transform="translate(153.000000, 2.000000)">
-                                                <path class="color-background opacity-6" d="M12.25,17.5 L8.75,17.5 L8.75,1.75 C8.75,0.78225 9.53225,0 10.5,0 L31.5,0 C32.46775,0 33.25,0.78225 33.25,1.75 L33.25,12.25 L29.75,12.25 L29.75,3.5 L12.25,3.5 L12.25,17.5 Z"></path>
-                                                <path class="color-background" d="M40.25,14 L24.5,14 C23.53225,14 22.75,14.78225 22.75,15.75 L22.75,38.5 L19.25,38.5 L19.25,22.75 C19.25,21.78225 18.46775,21 17.5,21 L1.75,21 C0.78225,21 0,21.78225 0,22.75 L0,40.25 C0,41.21775 0.78225,42 1.75,42 L40.25,42 C41.21775,42 42,41.21775 42,40.25 L42,15.75 C42,14.78225 41.21775,14 40.25,14 Z M12.25,36.75 L7,36.75 L7,33.25 L12.25,33.25 L12.25,36.75 Z M12.25,29.75 L7,29.75 L7,26.25 L12.25,26.25 L12.25,29.75 Z M35,36.75 L29.75,36.75 L29.75,33.25 L35,33.25 L35,36.75 Z M35,29.75 L29.75,29.75 L29.75,26.25 L35,26.25 L35,29.75 Z M35,22.75 L29.75,22.75 L29.75,19.25 L35,19.25 L35,22.75 Z"></path>
-                                            </g>
-                                        </g>
-                                    </g>
-                                </g>
-                            </svg>
-                        </div>
-                        <span class="nav-link-text ms-1 sidebar-text">Calendário Completo</span>
-                    </a>
-                </li>
-                <li class="nav-item">
+                                <li class="nav-item">
                     <a class="nav-link {{ (Request::is('banks') ? 'active' : '') }}" href="{{ url('banks') }}">
                         <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
                             <svg viewBox="0 0 43 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -205,6 +165,36 @@
                         <span class="nav-link-text ms-1 sidebar-text">Categorias</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (Request::is('dashboard/cashbook') ? 'active' : '') }}" href="{{ url('dashboard/cashbook') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-wallet2" viewBox="0 0 16 16">
+                                <path d="M12 4H2a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v2zm0 1V2H3v3h9zm2 1a1 1 0 0 1 1 1v6a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h12z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-link-text ms-1 sidebar-text">Dashboard Cashbook</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (Request::is('dashboard/sales') ? 'active' : '') }}" href="{{ url('dashboard/sales') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-bar-chart-line" viewBox="0 0 16 16">
+                                <path d="M0 0h1v15h15v1H0V0zm10 10h2V5h-2v5zm-3 0h2V1H7v9zm-3 0h2V7H4v3z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-link-text ms-1 sidebar-text">Dashboard Vendas</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ (Request::is('dashboard/products') ? 'active' : '') }}" href="{{ url('dashboard/products') }}">
+                        <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-box-seam" viewBox="0 0 16 16">
+                                <path d="M8.186.113a1.5 1.5 0 0 0-1.372 0l-6 3A1.5 1.5 0 0 0 0 4.382V12.5A1.5 1.5 0 0 0 .803 13.82l6 2.25a1.5 1.5 0 0 0 1.394 0l6-2.25A1.5 1.5 0 0 0 16 12.5V4.382a1.5 1.5 0 0 0-.814-1.269l-6-3ZM8 1.058 14.481 4 8 6.942 1.519 4 8 1.058ZM1 5.383l6 2.25v7.384l-6-2.25V5.383Zm7 9.634v-7.384l6-2.25v7.384l-6 2.25Z"/>
+                            </svg>
+                        </div>
+                        <span class="nav-link-text ms-1 sidebar-text">Dashboard Produtos</span>
+                    </a>
+                </li>
             </ul>
         </div>
     </div>
@@ -219,7 +209,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        width: 250px;
+        width: 350px;
         display: flex;
         flex-direction: column;
         z-index: 1040;
@@ -227,10 +217,11 @@
         border-radius: 1rem;
         box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         transition: border-radius 0.2s, width 0.2s, box-shadow 0.2s;
+        
     }
     .sidebar-body {
         flex: 1 1 auto;
-        overflow-y: auto;
+       overflow: hidden;
         display: block;
         padding: 0;
         margin: 0;
@@ -267,7 +258,7 @@
         display: block !important;
         max-width: 40px !important;
         max-height: 40px !important;
-        margin-top: 35px !important;
+       
     }
     .navbar-brand-img {
         max-width: 40px;
@@ -309,8 +300,7 @@
     .nav-link {
         border-radius: 0.75rem;
         transition: background 0.2s, color 0.2s;
-        margin-bottom: 0.25rem;
-        padding: 0.5rem 1rem;
+       
         display: flex;
         align-items: center;
     }
@@ -334,10 +324,11 @@
         flex-direction: column !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 10px;
+       height: 130px;
     }
     .sidenav-header {
         width: 100%;
+        
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -363,6 +354,10 @@
             left: 0;
             z-index: 1040;
         }
+    }
+    .sidebar-collapsed .sidebar-text {
+        display: none !important;
+        margin: 0 !important; /* Adicione esta linha para remover o espaço */
     }
 </style>
 
