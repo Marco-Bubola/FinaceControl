@@ -2,11 +2,8 @@
 
 @section('content')
 
-<div class="container-fluid py-4">
-
-    @include('message.alert')
+<div class="container-fluid">
     <div class="row">
-
         <div class="col-lg-12 ">
             <div class="card shadow-none" style="background-color: transparent; border: none; ">
                 <div class="card-header" style="background-color: transparent; border-bottom: none;">
@@ -25,7 +22,6 @@
                         <div class="col-md-3">
                             <div
                                 class="card card-body border shadow-sm border-radius-lg d-flex align-items-center flex-row">
-
                                 <div class="d-flex flex-column align-items-center">
                                 <img class="w-45 me-3 mb-0 "
                                 src="../assets/img/logos/mastercard.png" alt="logo">
@@ -37,27 +33,23 @@
                                         class="btn btn-info me-2" title="Visualizar">
                                         <i class="fas fa-eye"></i>
                                     </a>
-
                                     <!-- Botão com ícone de lápis (pincel) -->
                                     <button class="btn btn-light d-flex align-items-center justify-content-center me-2"
                                         data-bs-toggle="modal" data-bs-target="#editBankModal{{ $bank->id_bank }}"
                                         title="Editar">
                                         <i class="fas fa-pencil-alt text-dark"></i>
                                     </button>
-
                                     <button class="btn btn-danger d-flex align-items-center justify-content-center me-2"
                                         data-bs-toggle="modal" data-bs-target="#deleteBankModal{{ $bank->id_bank }}"
                                         title="Excluir">
                                         <i class="fas fa-trash-alt"></i>
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                         @include('banks.delet')
                         @include('banks.edit')
                         @endforeach
-
                         @if ($banks->isEmpty())
                         <div class="col-12">
                             <div class="d-flex flex-column align-items-center justify-content-center py-3">
@@ -95,29 +87,22 @@
                             <h6 class="mb-0">Suas Transações</h6>
                         </div>
                         <div class="col-md-6 d-flex justify-content-center mb-3">
-
                             <button id="prevMonth" class="btn btn-outline-primary me-3">
                                 <i class="fas fa-chevron-left"></i> Mês Anterior
                             </button>
-
                             <i class="fas fa-calendar-alt text-info me-2" style="font-size: 1.7rem;"></i>
                             <h3 id="monthTitle" class="text-center me-3">
                                 <!-- O título será atualizado dinamicamente -->
                             </h3>
-
-
                             <button id="nextMonth" class="btn btn-outline-primary ">
                                 Próximo Mês <i class="fas fa-chevron-right"></i>
                             </button>
-
                         </div>
                         <div class="col-md-3 text-end">
                             <i class="far fa-calendar-alt me-2"></i>
                             <small>{{ \Carbon\Carbon::now()->format('d - m Y') }}</small>
                         </div>
                     </div>
-
-
                     <!-- Informações adicionais -->
                     <div class="row text-center ">
                         <div class="col-md-3">
@@ -162,11 +147,8 @@
                         </div>
                     </div>
                 </div>
-
-
                 <div class="row">
                     <div class="col-md-8">
-
                         <div class="card-body" id="transactionsContainer">
                         </div>
                     </div>
@@ -181,14 +163,8 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
         </div>
-
-
-
-
     </div>
 </div>
 <script>
