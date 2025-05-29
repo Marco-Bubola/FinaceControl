@@ -2,143 +2,6 @@
 
 @section('content')
 <link rel="stylesheet" href="{{ asset('css/sales.css') }}">
-<style>
-.custom-card {
-    border: none;
-    border-radius: 1.1rem;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
-    transition: box-shadow 0.2s, transform 0.2s;
-    position: relative;
-    overflow: hidden;
-    min-height: 120px;
-    background: #fff;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-.custom-card:hover {
-    box-shadow: 0 8px 32px rgba(0,0,0,0.13);
-    transform: translateY(-4px) scale(1.02);
-}
-.product-code-badge {
-    position: absolute;
-    top: 9rem;
-    left: 0.7rem;
-    z-index: 2;
-    background: rgba(52,58,64,0.9);
-    color: #fff;
-    font-size: 0.98em;
-    font-weight: 600;
-    padding: 0.32em 0.95em;
-    border-radius: 1.2em;
-    box-shadow: 0 2px 8px rgba(52,58,64,0.13);
-    letter-spacing: 0.03em;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 0.3em;
-}
-.custom-card .card-img-top {
-    height: 180px;
-    object-fit: cover;
-    border-top-left-radius: 1.1rem;
-    border-top-right-radius: 1.1rem;
-    background: #f8f9fa;
-    position: relative;
-}
-.custom-card-body {
-    padding: 1.1rem 0.7rem 0.7rem 0.7rem;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    height: 100%;
-}
-.product-title {
-    font-size: 1.13em;
-    font-weight: 800;
-    color: #0d6efd;
-    letter-spacing: 0.01em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    margin-bottom: 0 !important;
-    text-align: center;
-    display: block;
-}
-.product-info {
-    margin-top: 0.1em;
-    margin-bottom: 0.1em;
-    gap: 0.5em;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-.product-badge.quantity {
-    background: #e7f1ff;
-    color: #0d6efd;
-    font-size: 1em;
-    font-weight: 600;
-    border-radius: 1.2em;
-    padding: 0.35em 0.9em;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-    display: flex;
-    align-items: center;
-    gap: 0.3em;
-}
-.product-badge.price {
-    background: #eafbee;
-    color: #198754;
-    font-size: 1em;
-    font-weight: 600;
-    border-radius: 1.2em;
-    padding: 0.35em 0.9em;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-    display: flex;
-    align-items: center;
-    gap: 0.3em;
-}
-.product-description {
-    font-size: 0.98em;
-    color: #6c757d;
-    min-height: 1.8em;
-    max-height: 1.8em;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    margin-bottom: 0.5em;
-    text-align: center;
-    display: block;
-}
-@media (max-width: 991px) {
-    .col-md-3 {
-        flex: 0 0 33.333333%;
-        max-width: 33.333333%;
-    }
-    .custom-card {
-        min-height: 300px;
-    }
-}
-@media (max-width: 767px) {
-    .col-md-3 {
-        flex: 0 0 50%;
-        max-width: 50%;
-    }
-    .custom-card {
-        min-height: 280px;
-    }
-}
-@media (max-width: 575px) {
-    .col-md-3 {
-        flex: 0 0 100%;
-        max-width: 100%;
-    }
-    .custom-card {
-        min-height: 260px;
-    }
-}
-</style>
-
 <div class="container-fluid py-4">
     @include('message.alert')
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -305,54 +168,6 @@
                     </div>
                 </form>
             </div>
-            <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                // Para cada dropdown de filtro na página
-                document.querySelectorAll('.dropdown-filtros').forEach(function(dropdownEl) {
-                    // Impede o fechamento ao clicar em qualquer parte interna do dropdown, exceto nos botões
-                    dropdownEl.querySelector('.dropdown-menu').addEventListener('mousedown', function(
-                        e) {
-                        if (
-                            e.target.closest('button[type="submit"]') ||
-                            e.target.closest('a.btn-outline-secondary')
-                        ) {
-                            // Permite o clique normal
-                        } else {
-                            e.stopPropagation();
-                        }
-                    });
-
-                    // Função para fechar o dropdown deste filtro
-                    function closeDropdown() {
-                        var dropdownToggle = dropdownEl.querySelector('.dropdown-toggle');
-                        var dropdown = bootstrap.Dropdown.getOrCreateInstance(dropdownToggle);
-                        dropdown.hide();
-                    }
-
-                    // Ao clicar em "Aplicar"
-                    var submitBtn = dropdownEl.querySelector('button[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.addEventListener('click', function() {
-                            setTimeout(closeDropdown, 100); // Fecha após submit
-                        });
-                    }
-
-                    // Ao clicar em "Limpar"
-                    var clearBtn = dropdownEl.querySelector('a.btn-outline-secondary');
-                    if (clearBtn) {
-                        clearBtn.addEventListener('click', function() {
-                            closeDropdown();
-                        });
-                    }
-                });
-
-                // Ativa tooltips do Bootstrap (caso use tooltips nos filtros)
-                var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
-                tooltipTriggerList.forEach(function(tooltipTriggerEl) {
-                    new bootstrap.Tooltip(tooltipTriggerEl)
-                });
-            });
-            </script>
             <div class="col-md-4 mb-3">
                 <form action="{{ route('sales.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <div class="input-group search-bar-sales w-100">
@@ -365,53 +180,6 @@
                     </div>
                 </form>
             </div>
-
-            <script>
-            function setupDynamicSearch() {
-                const searchInput = document.getElementById('search-input');
-                if (!searchInput) return;
-
-                let timeout = null;
-
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(timeout);
-                    timeout = setTimeout(() => {
-                        const query = this.value;
-                        const selectionStart = this.selectionStart;
-                        const selectionEnd = this.selectionEnd;
-
-                        const url = `{{ route('sales.index') }}?search=${encodeURIComponent(query)}`;
-
-                        fetch(url)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Erro ao buscar dados');
-                                }
-                                return response.text();
-                            })
-                            .then(html => {
-                                const parser = new DOMParser();
-                                const doc = parser.parseFromString(html, 'text/html');
-                                const newContent = doc.querySelector('.container-fluid.py-4');
-                                if (newContent) {
-                                    document.querySelector('.container-fluid.py-4').innerHTML =
-                                        newContent.innerHTML;
-                                    setupDynamicSearch();
-                                    // Recupera o novo input e restaura foco/cursor
-                                    const newSearchInput = document.getElementById('search-input');
-                                    if (newSearchInput) {
-                                        newSearchInput.focus();
-                                        newSearchInput.setSelectionRange(selectionStart,
-                                            selectionEnd);
-                                    }
-                                }
-                            })
-                            .catch(error => console.error('Erro ao buscar dados:', error));
-                    }, 100); // Debounce mais rápido
-                });
-            }
-            document.addEventListener('DOMContentLoaded', setupDynamicSearch);
-            </script>
             <div class="col-md-5 mb-3 d-flex justify-content-end align-items-center">
                 <a href="#" class="btn bg-gradient-primary mb-0 d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#modalAddSale">
@@ -641,32 +409,7 @@
               
             </div>
         </div>
-        <style>
-        .animated-icon svg {
-            animation: floatIcon 2.5s ease-in-out infinite;
-            filter: drop-shadow(0 4px 16px #e3eafc);
-        }
-        @keyframes floatIcon {
-            0%, 100% { transform: translateY(0);}
-            50% { transform: translateY(-14px);}
-        }
-        .stylish-btn, .btn-xl {
-            background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
-            color: #fff;
-            border: none;
-            border-radius: 2.5em;
-            transition: background 0.2s, transform 0.15s;
-            box-shadow: 0 4px 24px rgba(13,110,253,0.12);
-            font-size: 1.25rem;
-            padding: 0.9em 2.5em;
-        }
-        .stylish-btn:hover, .stylish-btn:focus {
-            background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
-            color: #fff;
-            transform: translateY(-2px) scale(1.05);
-            box-shadow: 0 8px 32px rgba(13,110,253,0.18);
-        }
-        </style>
+      
         @endif
        <!-- Paginação -->
         <div class="d-flex justify-content-center mt-4">
@@ -730,4 +473,8 @@
 @include('sales.delet')
 @include('sales.addProduct')
 
+<script>
+window.SALES_INDEX_URL = "{{ route('sales.index') }}";
+</script>
+<script src="{{ asset('js/sales.js') }}"></script>
 @endsection
