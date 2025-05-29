@@ -1,10 +1,11 @@
 /* Estilos para os cards de resumo */
 .summary-cards-area {
-  
+
     border-radius: 1.2em;
     padding: 1.5em 1.2em 1.2em 1.2em;
 
 }
+
 .summary-card {
     background: #fff;
     border-radius: 1em;
@@ -14,15 +15,17 @@
     display: flex;
     align-items: center;
     gap: 0.7em;
-  
+
     border-left: 4px solid #e7f1ff;
     transition: box-shadow 0.2s, border-color 0.2s, transform 0.18s;
 }
+
 .summary-card:hover {
-    box-shadow: 0 4px 18px rgba(13,110,253,0.13);
+    box-shadow: 0 4px 18px rgba(13, 110, 253, 0.13);
     border-left: 4px solid #0d6efd;
     transform: translateY(-2px) scale(1.03);
 }
+
 .summary-icon {
     font-size: 1.5em;
     border-radius: 50%;
@@ -32,27 +35,46 @@
     justify-content: center;
     min-width: 2em;
     min-height: 2em;
-    box-shadow: 0 1px 6px rgba(13,110,253,0.07);
+    box-shadow: 0 1px 6px rgba(13, 110, 253, 0.07);
 }
-.summary-total { color: #198754; background: #eafbee; }
-.summary-high { color: #dc3545; background: #fdeaea; }
-.summary-low { color: #ffc107; background: #fffbe6; }
-.summary-count { color: #0dcaf0; background: #e7f1ff; }
+
+.summary-total {
+    color: #198754;
+    background: #eafbee;
+}
+
+.summary-high {
+    color: #dc3545;
+    background: #fdeaea;
+}
+
+.summary-low {
+    color: #ffc107;
+    background: #fffbe6;
+}
+
+.summary-count {
+    color: #0dcaf0;
+    background: #e7f1ff;
+}
+
 .summary-label {
     font-size: 0.97em;
     color: #6c757d;
     margin-bottom: 0.1em;
 }
+
 .summary-value {
     font-size: 1.09em;
     font-weight: 700;
     margin-bottom: 0;
     white-space: nowrap;
 }
+
 .summary-actions {
     background: #fff;
     border-radius: 1em;
-    box-shadow: 0 1px 8px rgba(13,110,253,0.08);
+    box-shadow: 0 1px 8px rgba(13, 110, 253, 0.08);
     padding: 0.8em 0.6em;
     min-width: 65px;
     min-height: 110px;
@@ -62,6 +84,7 @@
     gap: 0.5em;
     margin-left: 0.5em;
 }
+
 .summary-actions .btn {
     width: 40px;
     height: 40px;
@@ -72,32 +95,38 @@
     justify-content: center;
     transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
+
 .summary-actions .btn-primary {
     background: linear-gradient(90deg, #0d6efd 80%, #6ea8fe 100%);
     border: none;
     color: #fff;
 }
+
 .summary-actions .btn-primary:hover {
     background: #0b5ed7;
     color: #fff;
-    box-shadow: 0 2px 10px rgba(13,110,253,0.13);
+    box-shadow: 0 2px 10px rgba(13, 110, 253, 0.13);
 }
+
 .summary-actions .btn-outline-secondary:hover {
     background: #e7f1ff;
     color: #0d6efd;
     border-color: #0d6efd;
-    box-shadow: 0 2px 10px rgba(13,110,253,0.13);
+    box-shadow: 0 2px 10px rgba(13, 110, 253, 0.13);
 }
+
 @media (max-width: 991px) {
     .summary-cards-area {
         padding: 1em 0.5em 0.8em 0.5em;
     }
+
     .summary-card {
         min-width: 120px;
         max-width: 100%;
         padding: 0.6em 0.7em;
         flex: 0 0 140px;
     }
+
     .summary-actions {
         min-width: 70px;
         min-height: 90px;
@@ -109,9 +138,10 @@
 .card-group .card {
     transition: transform 0.2s, box-shadow 0.2s;
 }
+
 .card-group .card:hover:not(.bg-primary) {
     transform: translateY(-3px);
-    box-shadow: 0 6px 18px rgba(13,110,253,0.15) !important;
+    box-shadow: 0 6px 18px rgba(13, 110, 253, 0.15) !important;
 }
 
 /* Estilo para o fundo da página */
@@ -119,28 +149,31 @@ body {
     background: #f8fafc !important;
 }
 
-    .no-transactions-card {
-        background: #f8fafc;
-        border: 1.5px solid #e3e8ef;
-        border-radius: 1.2em;
-        min-height: 120px;
-        padding: 2em 1em 1.5em 1em;
-        box-shadow: 0 1px 8px rgba(13,110,253,0.06);
-        max-width: 420px;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-    }
-    .no-transactions-icon {
-        font-size: 2.5em;
-        color: #b6d4fe;
-        line-height: 1;
-    }
-    .no-transactions-text {
-        font-size: 1.13em;
-        letter-spacing: 0.01em;
-    }
-    .invoice-month-section {
+.no-transactions-card {
+    background: #f8fafc;
+    border: 1.5px solid #e3e8ef;
+    border-radius: 1.2em;
+    min-height: 120px;
+    padding: 2em 1em 1.5em 1em;
+    box-shadow: 0 1px 8px rgba(13, 110, 253, 0.06);
+    max-width: 420px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.no-transactions-icon {
+    font-size: 2.5em;
+    color: #b6d4fe;
+    line-height: 1;
+}
+
+.no-transactions-text {
+    font-size: 1.13em;
+    letter-spacing: 0.01em;
+}
+
+.invoice-month-section {
     background: #f8fafc;
     border-radius: 1.2em;
     padding: 1.1em 0.7em 0.7em 0.7em;
@@ -148,6 +181,7 @@ body {
     transition: box-shadow 0.2s;
     overflow: hidden;
 }
+
 .show-more-invoices-btn {
     background: linear-gradient(90deg, #e7f1ff 60%, #f8fafc 100%);
     color: #0d6efd;
@@ -156,7 +190,7 @@ body {
     padding: 0.7em 1.7em;
     font-weight: 600;
     font-size: 1.07em;
-    box-shadow: 0 2px 10px rgba(13,110,253,0.07);
+    box-shadow: 0 2px 10px rgba(13, 110, 253, 0.07);
     transition: background 0.18s, color 0.18s, box-shadow 0.18s;
     outline: none;
     margin: 0 auto;
@@ -164,17 +198,21 @@ body {
     cursor: pointer;
     text-decoration: none !important;
 }
-.show-more-invoices-btn:hover, .show-more-invoices-btn:focus {
+
+.show-more-invoices-btn:hover,
+.show-more-invoices-btn:focus {
     background: linear-gradient(90deg, #d0e6ff 60%, #e7f1ff 100%);
     color: #084298;
-    box-shadow: 0 4px 18px rgba(13,110,253,0.13);
+    box-shadow: 0 4px 18px rgba(13, 110, 253, 0.13);
     text-decoration: none !important;
 }
+
 .show-more-invoices-btn i {
     font-size: 1.18em;
     vertical-align: middle;
     transition: transform 0.25s;
 }
+
 .show-more-invoices-btn .show-less-label i {
     transform: rotate(180deg);
 }
@@ -184,7 +222,7 @@ body {
 .modern-transaction-card {
     border-radius: 1.2em;
     background: #fff;
-    box-shadow: 0 1px 8px rgba(13,110,253,0.08);
+    box-shadow: 0 1px 8px rgba(13, 110, 253, 0.08);
     display: flex;
     flex-direction: column;
     transition: box-shadow 0.18s, transform 0.18s;
@@ -192,10 +230,12 @@ body {
     overflow: hidden;
     height: 100%;
 }
+
 .modern-transaction-card:hover {
-    box-shadow: 0 8px 24px rgba(13,110,253,0.13);
+    box-shadow: 0 8px 24px rgba(13, 110, 253, 0.13);
     transform: translateY(-2px) scale(1.02);
 }
+
 .modern-card-header {
     display: flex;
     align-items: center;
@@ -207,6 +247,7 @@ body {
     justify-content: space-between;
     flex-wrap: wrap;
 }
+
 .icon-circle {
     width: 38px;
     height: 38px;
@@ -216,9 +257,10 @@ body {
     justify-content: center;
     font-size: 1.25em;
     color: #fff;
-    box-shadow: 0 1px 8px rgba(13,110,253,0.10);
+    box-shadow: 0 1px 8px rgba(13, 110, 253, 0.10);
     flex-shrink: 0;
 }
+
 .modern-card-category {
     font-size: 1em;
     font-weight: 500;
@@ -228,6 +270,7 @@ body {
     text-overflow: ellipsis;
     white-space: nowrap;
 }
+
 .modern-card-actions-header .btn {
     border-radius: 50%;
     width: 30px;
@@ -241,21 +284,25 @@ body {
     margin-left: 0.08em;
     margin-right: 0.08em;
 }
+
 .modern-card-actions-header .btn-outline-primary:hover {
     background: #0d6efd;
     color: #fff;
     border-color: #0d6efd;
 }
+
 .modern-card-actions-header .btn-outline-danger:hover {
     background: #dc3545;
     color: #fff;
     border-color: #dc3545;
 }
+
 .modern-card-actions-header .btn-outline-success:hover {
     background: #198754;
     color: #fff;
     border-color: #198754;
 }
+
 .modern-card-body {
     padding: 0.5em 1em 0.7em 1em;
     flex: 1 1 auto;
@@ -265,6 +312,7 @@ body {
     gap: 0.2em;
     min-width: 0;
 }
+
 .modern-card-title {
     font-size: 1em;
     font-weight: 700;
@@ -274,10 +322,12 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .modern-card-details-badges {
     margin-bottom: 0.1em;
     flex-wrap: wrap;
 }
+
 .badge {
     display: inline-flex;
     align-items: center;
@@ -292,14 +342,17 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .badge-date {
     background: #e7f1ff;
     color: #0d6efd;
 }
+
 .badge-installments {
     background: #eafbee;
     color: #198754;
 }
+
 .modern-card-value {
     font-size: 1.08em;
     font-weight: 800;
@@ -311,10 +364,12 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
 }
+
 .modern-card-value.positive {
     color: #198754;
     background: linear-gradient(90deg, #eafbee 60%, #fff 100%);
 }
+
 .modern-card-value.negative {
     color: #dc3545;
     background: linear-gradient(90deg, #fdeaea 60%, #fff 100%);
@@ -329,6 +384,7 @@ body {
     border: none;
     transition: color 0.15s;
 }
+
 .show-more-invoices-btn:hover {
     color: #084298;
     text-decoration: underline;
@@ -339,14 +395,18 @@ body {
     .invoice-month-section {
         padding: 0.7em 0.2em 0.5em 0.2em;
     }
-    .modern-card-header, .modern-card-body {
+
+    .modern-card-header,
+    .modern-card-body {
         padding-left: 0.5em;
         padding-right: 0.5em;
     }
+
     .modern-card-category {
         max-width: 60px;
     }
 }
+
 @media (max-width: 575px) {
     .modern-card-header {
         flex-direction: column;
@@ -354,71 +414,87 @@ body {
         gap: 0.3em;
         padding: 0.5em 0.5em 0.3em 0.5em;
     }
+
     .modern-card-actions-header {
         margin-top: 0.3em;
     }
+
     .modern-card-category {
         max-width: 100px;
     }
 }
+
 .month-cards-group {
     gap: 2.2rem !important;
 }
+
 .month-card {
     min-width: 220px;
     max-width: 260px;
     border-radius: 1.2em !important;
     transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
-    box-shadow: 0 2px 12px rgba(13,110,253,0.07);
+    box-shadow: 0 2px 12px rgba(13, 110, 253, 0.07);
 }
+
 .month-card:hover {
-    box-shadow: 0 6px 22px rgba(13,110,253,0.13);
+    box-shadow: 0 6px 22px rgba(13, 110, 253, 0.13);
     transform: translateY(-3px) scale(1.03);
     border-color: #0d6efd;
 }
+
 .month-card .card-body {
     border-radius: 1.2em;
 }
+
 .month-card .card-title {
     font-size: 1.25rem;
     letter-spacing: 0.01em;
 }
+
 .month-card .btn {
     font-size: 1.07rem;
     border-width: 2px;
     transition: background 0.15s, color 0.15s, border-color 0.15s, box-shadow 0.15s;
 }
-.month-card .btn-outline-primary:hover, .month-card .btn-outline-primary:focus {
+
+.month-card .btn-outline-primary:hover,
+.month-card .btn-outline-primary:focus {
     background: #0d6efd;
     color: #fff;
     border-color: #0d6efd;
-    box-shadow: 0 2px 10px rgba(13,110,253,0.13);
+    box-shadow: 0 2px 10px rgba(13, 110, 253, 0.13);
 }
+
 .month-card-current {
     background: linear-gradient(90deg, #0d6efd 80%, #6ea8fe 100%) !important;
-    box-shadow: 0 4px 18px rgba(13,110,253,0.15) !important;
+    box-shadow: 0 4px 18px rgba(13, 110, 253, 0.15) !important;
     border-radius: 1.2em !important;
 }
+
 .month-card-current .card-title,
 .month-card-current .card-text,
 .month-card-current .small {
     color: #fff !important;
 }
+
 @media (max-width: 991px) {
     .month-cards-group {
         gap: 1.2rem !important;
     }
+
     .month-card {
         min-width: 160px;
         max-width: 100%;
         padding: 0.6em 0.7em;
     }
 }
+
 @media (max-width: 600px) {
     .month-cards-group {
         flex-direction: column !important;
         gap: 1rem !important;
     }
+
     .month-card {
         min-width: 100%;
         max-width: 100%;
@@ -430,9 +506,10 @@ body {
     border-radius: 1.5em;
     padding: 2em 1.5em 1.5em 1.5em;
     background: #f8fafc;
-    box-shadow: 0 2px 16px rgba(13,110,253,0.07);
+    box-shadow: 0 2px 16px rgba(13, 110, 253, 0.07);
     margin-bottom: 2.5em;
 }
+
 .summary-card-modern {
     background: #fff;
     border-radius: 1.2em;
@@ -443,15 +520,17 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 1.5em 1em 1.2em 1em;
-    box-shadow: 0 2px 12px rgba(13,110,253,0.08);
+    box-shadow: 0 2px 12px rgba(13, 110, 253, 0.08);
     transition: box-shadow 0.2s, transform 0.18s;
     position: relative;
     overflow: hidden;
 }
+
 .summary-card-modern:hover {
-    box-shadow: 0 6px 24px rgba(13,110,253,0.18);
+    box-shadow: 0 6px 24px rgba(13, 110, 253, 0.18);
     transform: translateY(-4px) scale(1.04);
 }
+
 .summary-icon-modern {
     font-size: 2.6em;
     border-radius: 50%;
@@ -461,30 +540,35 @@ body {
     justify-content: center;
     min-width: 2.7em;
     min-height: 2.7em;
-    box-shadow: 0 2px 10px rgba(13,110,253,0.10);
+    box-shadow: 0 2px 10px rgba(13, 110, 253, 0.10);
     margin-bottom: 0.5em;
     transition: background 0.18s, color 0.18s, box-shadow 0.18s;
 }
+
 .summary-total-modern {
     color: #fff;
     background: linear-gradient(135deg, #198754 60%, #43e97b 100%);
     box-shadow: 0 2px 12px #eafbee;
 }
+
 .summary-high-modern {
     color: #fff;
     background: linear-gradient(135deg, #dc3545 60%, #ff7e5f 100%);
     box-shadow: 0 2px 12px #fdeaea;
 }
+
 .summary-low-modern {
     color: #fff;
     background: linear-gradient(135deg, #ffc107 60%, #fffbe6 100%);
     box-shadow: 0 2px 12px #fffbe6;
 }
+
 .summary-count-modern {
     color: #fff;
     background: linear-gradient(135deg, #0dcaf0 60%, #6ea8fe 100%);
     box-shadow: 0 2px 12px #e7f1ff;
 }
+
 .summary-label-modern {
     font-size: 1.08em;
     color: #6c757d;
@@ -493,6 +577,7 @@ body {
     letter-spacing: 0.01em;
     text-align: center;
 }
+
 .summary-value-modern {
     font-size: 1.35em;
     font-weight: 800;
@@ -501,10 +586,12 @@ body {
     text-align: center;
     letter-spacing: 0.01em;
 }
+
 @media (max-width: 991px) {
     .summary-cards-area-modern {
         padding: 1.2em 0.5em 1em 0.5em;
     }
+
     .summary-card-modern {
         min-width: 140px;
         max-width: 100%;
@@ -512,10 +599,12 @@ body {
         flex: 0 0 140px;
     }
 }
+
 @media (max-width: 600px) {
     .summary-cards-area-modern {
         padding: 1em 0.2em 0.7em 0.2em;
     }
+
     .summary-card-modern {
         min-width: 100%;
         max-width: 100%;
