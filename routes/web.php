@@ -21,6 +21,9 @@ use App\Http\Controllers\UploadInvoiceController;
 use App\Http\Controllers\CashbookController;
 use App\Http\Controllers\UploadCashbookController;
 use App\Http\Controllers\ClienteResumoController;
+use App\Http\Controllers\DashboardCashbookController;
+use App\Http\Controllers\DashboardProductsController;
+use App\Http\Controllers\DashboardSalesController;
 
 /*
 |----------------------------------------------------------------------
@@ -145,6 +148,7 @@ Route::post('/invoices/{invoice}/toggle-dividida', [InvoiceController::class, 't
     Route::post('/cashbook/confirm', [UploadCashbookController::class, 'confirm'])->name('cashbook.confirm');
 
     Route::get('/sales/search', [SaleController::class, 'search'])->name('sales.search');
+Route::get('/dashboard/invoices-daily-chart-data', [\App\Http\Controllers\DashboardController::class, 'invoicesDailyChartData'])->name('dashboard.invoicesDailyChartData');
 
 
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
@@ -199,3 +203,16 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/clientes/{cliente}/faturas', [App\Http\Controllers\ClienteResumoController::class, 'faturasAjax'])->name('clientes.faturas.ajax');
 Route::get('/clientes/{cliente}/transferencias-enviadas', [App\Http\Controllers\ClienteResumoController::class, 'transferenciasEnviadasAjax'])->name('clientes.transferencias.enviadas.ajax');
 Route::get('/clientes/{cliente}/transferencias-recebidas', [App\Http\Controllers\ClienteResumoController::class, 'transferenciasRecebidasAjax'])->name('clientes.transferencias.recebidas.ajax');
+
+Route::prefix('dashboard/cashbook')->middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardCashbookController::class, 'index'])->name('dashboard.cashbook');
+    Route::get('/chart-data', [DashboardCashbookController::class, 'cashbookChartData'])->name('dashboard.cashbookChartData');
+});
+
+Route::prefix('dashboard/products')->middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardProductsController::class, 'index'])->name('dashboard.products');
+});
+
+Route::prefix('dashboard/sales')->middleware(['auth'])->group(function () {
+    Route::get('/', [DashboardSalesController::class, 'index'])->name('dashboard.sales');
+});
