@@ -1,0 +1,171 @@
+.list-group-item .d-flex .text-xs {
+    margin-right: 10px;
+}
+
+.d-flex.align-items-center.justify-content-end {
+    margin-left: auto;
+    /* Fixa o valor no final */
+    font-weight: bold;
+    color: var(--bs-success);
+}
+
+.d-flex.align-items-center.justify-content-end.text-danger {
+    color: var(--bs-danger);
+}
+
+/* Alinhamento e espaçamento entre os elementos do item */
+.d-flex .btn {
+    margin-left: 10px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .list-group-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .d-flex.align-items-center.justify-content-end {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+}
+
+.progress-container {
+    position: relative;
+}
+
+.progress {
+    height: 5px;
+    background-color: #e9ecef;
+}
+
+.progress-bar {
+    height: 5px;
+    background-color: #0d6efd;
+}
+
+.step-circle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #6c757d;
+}
+
+.step-circle.active {
+    background-color: #0d6efd;
+    color: #fff;
+}
+
+/* Estilo para os cards de navegação de mês - NOVO */
+.month-nav-card {
+    min-width: 220px;
+    max-width: 260px;
+    height: 90px;
+    border-radius: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    
+    transition: box-shadow 0.2s, transform 0.15s;
+    cursor: pointer;
+    padding: 0.5rem 1.2rem;
+    background: #fff;
+    border: none;
+}
+
+.month-nav-card.active {
+    background: linear-gradient(90deg, #eaf6ff 60%, #f8fafc 100%);
+    border: 2px solid #0ea5e9;
+    box-shadow: 0 4px 18px rgba(14, 165, 233, 0.10);
+    cursor: default;
+}
+
+.month-nav-card:hover:not(.active) {
+    box-shadow: 0 4px 18px rgba(14, 165, 233, 0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.month-nav-icon {
+    font-size: 2.2rem;
+    margin-right: 1.1rem;
+    color: #0ea5e9;
+    flex-shrink: 0;
+    background: #e0f2fe;
+    border-radius: 50%;
+    padding: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+}
+
+.month-nav-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+}
+
+.month-nav-title {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 0.1rem;
+}
+
+.month-nav-label {
+    font-size: 0.85rem;
+    color: #64748b;
+    margin-bottom: 0.1rem;
+}
+
+.month-nav-balance {
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: #0ea5e9;
+}
+
+/* Responsividade extra para o header em linha única */
+@media (max-width: 1200px) {
+    .month-nav-card {
+        min-width: 180px;
+        max-width: 220px;
+        height: 80px;
+        font-size: 0.95rem;
+    }
+
+    .month-nav-icon {
+        font-size: 1.7rem;
+        width: 38px;
+        height: 38px;
+        margin-right: 0.7rem;
+    }
+
+    .month-nav-title,
+    .month-nav-label,
+    .month-nav-balance {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .d-flex.flex-wrap.align-items-center.justify-content-between.gap-3.flex-lg-nowrap.flex-wrap {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 1.2rem !important;
+    }
+
+    .month-nav-card {
+        min-width: 100%;
+        max-width: 100%;
+        margin-bottom: 0.5rem;
+    }
+}
