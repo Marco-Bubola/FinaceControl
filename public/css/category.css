@@ -1,0 +1,36 @@
+  .animated-icon svg {
+      animation: floatIcon 2.5s ease-in-out infinite;
+      filter: drop-shadow(0 4px 16px #e3eafc);
+  }
+
+  @keyframes floatIcon {
+
+      0%,
+      100% {
+          transform: translateY(0);
+      }
+
+      50% {
+          transform: translateY(-14px);
+      }
+  }
+
+  .stylish-btn,
+  .btn-xl {
+      background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
+      color: #fff;
+      border: none;
+      border-radius: 2.5em;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 24px rgba(13, 110, 253, 0.12);
+      font-size: 1.25rem;
+      padding: 0.9em 2.5em;
+  }
+
+  .stylish-btn:hover,
+  .stylish-btn:focus {
+      background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
+      color: #fff;
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 8px 32px rgba(13, 110, 253, 0.18);
+  }
