@@ -3,12 +3,9 @@
 @section('content')
 <div class="container-fluid py-4">
     <link rel="stylesheet" href="{{ asset('css/produtos.css') }}">
-
-
     <!-- Filtro e Pesquisa -->
     <div class="d-flex justify-content-between align-items-center">
         <div class="row w-100">
-
             {{-- Filtros de Produtos no mesmo padrão dos filtros de vendas --}}
             <div class="col-md-3 mb-3">
                 <form action="{{ route('products.index') }}" method="GET" class="w-100" id="productsFiltersForm">
@@ -125,8 +122,6 @@
                     </div>
                 </form>
             </div>
-
-
             <div class="col-md-3 mb-3">
                 <form action="{{ route('products.index') }}" method="GET" class="d-flex align-items-center w-100">
                     <div class="input-group search-bar-sales w-100">
@@ -141,7 +136,6 @@
                     </div>
                 </form>
             </div>
-
             <div class="col-md-6 d-flex justify-content-end align-items-center mb-0">
                 <a href="#" class="btn bg-gradient-primary btn-sm mb-0 d-flex align-items-center" data-bs-toggle="modal"
                     data-bs-target="#modalAddProduct">
@@ -168,353 +162,102 @@
             </div>
         </div>
     </div>
-
-    <!-- Estilos para o card de produto moderno -->
-    <style>
-        .product-card-modern {
-            border: none;
-            border-radius: 1.2em;
-            box-shadow: 0 2px 12px rgba(13,110,253,0.07);
-            overflow: visible;
-            position: relative;
-            background: #fff;
-            transition: box-shadow 0.18s, transform 0.18s;
-            min-height: 390px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-        .product-card-modern:hover {
-            box-shadow: 0 8px 32px rgba(13,110,253,0.13);
-            transform: translateY(-2px) scale(1.01);
-        }
-        .product-card-modern .product-img-area {
-            position: relative;
-            background: #f8f9fa;
-            border-top-left-radius: 1.2em;
-            border-top-right-radius: 1.2em;
-            overflow: visible;
-            min-height: 240px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .product-card-modern .product-img {
-            width: 100%;
-            height: 250px;
-            object-fit: cover;
-            border-top-left-radius: 1.2em;
-            border-top-right-radius: 1.2em;
-            display: block;
-        }
-        .product-card-modern .badge-product-code {
-            position: absolute;
-            top: 0.7em;
-            left: 0.7em;
-            background: #343a40e6;
-            color: #fff;
-            font-size: 0.98em;
-            font-weight: 600;
-            padding: 0.32em 0.95em;
-            border-radius: 1.2em;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(52,58,64,0.13);
-            letter-spacing: 0.03em;
-            pointer-events: none;
-            display: flex;
-            align-items: center;
-            gap: 0.3em;
-        }
-        .product-card-modern .badge-quantity {
-            position: absolute;
-            bottom: 0.7em;
-            right: 0.7em;
-            background: #0dcaf0e6;
-            color: #0d6efd;
-            font-size: 1em;
-            font-weight: 700;
-            padding: 0.32em 1.1em;
-            border-radius: 1.2em;
-            z-index: 2;
-            box-shadow: 0 2px 8px rgba(13,202,240,0.13);
-            display: flex;
-            align-items: center;
-            gap: 0.3em;
-        }
-        .product-card-modern .category-icon-wrapper {
-            position: absolute;
-            left: 50%;
-            bottom: -28px;
-            transform: translateX(-50%);
-            z-index: 3;
-            background: #fff;
-            border-radius: 50%;
-            box-shadow: 0 2px 12px rgba(13,110,253,0.10);
-            width: 56px;
-            height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 3px solid #f8f9fa;
-        }
-        .product-card-modern .category-icon {
-            font-size: 2.1em;
-            color: inherit;
-        }
-        .product-card-modern .card-body {
-            padding: 2.2em 1em 1.1em 1em;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: stretch;
-            min-height: 180px;
-            position: relative;
-        }
-        .product-card-modern .product-title {
-            font-size: 1.13em;
-            font-weight: 700;
-            color: #0d6efd;
-            margin-bottom: 0.15em;
-            display: block;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
-            text-align: center;
-        }
-        .product-card-modern .product-description {
-            font-size: 0.98em;
-            color: #6c757d;
-            margin-bottom: 0.6em;
-            display: flex;
-            align-items: center;
-            gap: 0.4em;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            justify-content: center;
-        }
-        .product-card-modern .price-area {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.2em;
-            margin-bottom: 0.7em;
-        }
-        .product-card-modern .badge-price {
-            background: #f1f3f5;
-            color: #495057;
-            font-size: 1.04em;
-            font-weight: 600;
-            border-radius: 1.2em;
-            padding: 0.32em 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 0.3em;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.07);
-        }
-        .product-card-modern .badge-price-sale {
-            background: #eafbee;
-            color: #198754;
-            font-size: 1.09em;
-            font-weight: 700;
-            border-radius: 1.2em;
-            padding: 0.32em 1.1em;
-            display: flex;
-            align-items: center;
-            gap: 0.3em;
-            box-shadow: 0 1px 4px rgba(25,135,84,0.07);
-        }
-        .product-card-modern .btn-action-group {
-            position: absolute;
-            top: 0.7em;
-            right: 0.7em;
-            z-index: 4;
-            display: flex;
-            flex-direction: column;
-            gap: 0.4em;
-        }
-        .product-card-modern .btn-action-group .btn {
-            border-radius: 50%;
-            width: 34px;
-            height: 34px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            font-size: 1.1em;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-            border: none;
-        }
-        .product-card-modern .btn-action-group .btn-primary {
-            background: #0d6efd;
-            color: #fff;
-        }
-        .product-card-modern .btn-action-group .btn-danger {
-            background: #dc3545;
-            color: #fff;
-        }
-        .product-card-modern .out-of-stock {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(220, 53, 69, 0.9);
-            color: #fff;
-            font-size: 0.98em;
-            font-weight: 600;
-            padding: 0.32em 0.95em;
-            border-top-left-radius: 1.2em;
-            border-bottom-right-radius: 1.2em;
-            z-index: 3;
-            display: flex;
-            align-items: center;
-            gap: 0.3em;
-        }
-        @media (max-width: 991px) {
-            .col-md-2 {
-                flex: 0 0 33.333333%;
-                max-width: 33.333333%;
-            }
-        }
-        @media (max-width: 767px) {
-            .col-md-2 {
-                flex: 0 0 50%;
-                max-width: 50%;
-            }
-            .product-card-modern {
-                min-height: 340px;
-            }
-        }
-        @media (max-width: 575px) {
-            .col-md-2 {
-                flex: 0 0 100%;
-                max-width: 100%;
-            }
-            .product-card-modern {
-                min-height: 300px;
-            }
-        }
-    </style>
-
     <!-- Tabela de Produtos -->
     <div id="productsContainer" class="row mt-4">
         {{-- Bloco estilizado para nenhum produto encontrado --}}
         @if($products->isEmpty())
-            <div class="col-12">
-                <div class="d-flex flex-column align-items-center justify-content-center py-5">
-                    <div class="animated-icon mb-4">
-                        <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
-                            <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
-                            <rect x="35" y="55" width="60" height="40" rx="12" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
-                            <rect x="50" y="40" width="30" height="25" rx="7" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
-                            <path d="M45 95c0-10 10-18 20-18s20 8 20 18" stroke="#6ea8fe" stroke-width="3" stroke-linecap="round"/>
-                            <circle cx="65" cy="75" r="6" fill="#6ea8fe" opacity="0.15"/>
-                            <rect x="60" y="65" width="10" height="10" rx="3" fill="#6ea8fe" opacity="0.25"/>
-                        </svg>
-                    </div>
-                    <h2 class="fw-bold mb-3 text-primary" style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
-                        Nenhum Produto Encontrado
-                    </h2>
-                    <p class="mb-4 text-secondary text-center" style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
-                        <span style="color:#0d6efd; font-weight:700;">Ops!</span> Sua prateleira está vazia.<br>
-                        <span style="color:#6ea8fe;">Cadastre seu primeiro produto</span> e comece a vender agora mesmo!
-                    </p>
-                
+        <div class="col-12">
+            <div class="d-flex flex-column align-items-center justify-content-center py-5">
+                <div class="animated-icon mb-4">
+                    <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
+                        <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc" />
+                        <rect x="35" y="55" width="60" height="40" rx="12" fill="#e9f2ff" stroke="#6ea8fe"
+                            stroke-width="3" />
+                        <rect x="50" y="40" width="30" height="25" rx="7" fill="#f8fafc" stroke="#6ea8fe"
+                            stroke-width="3" />
+                        <path d="M45 95c0-10 10-18 20-18s20 8 20 18" stroke="#6ea8fe" stroke-width="3"
+                            stroke-linecap="round" />
+                        <circle cx="65" cy="75" r="6" fill="#6ea8fe" opacity="0.15" />
+                        <rect x="60" y="65" width="10" height="10" rx="3" fill="#6ea8fe" opacity="0.25" />
+                    </svg>
                 </div>
+                <h2 class="fw-bold mb-3 text-primary"
+                    style="font-size:2.5rem; letter-spacing:0.01em; text-shadow:0 2px 8px #e3eafc;">
+                    Nenhum Produto Encontrado
+                </h2>
+                <p class="mb-4 text-secondary text-center"
+                    style="max-width: 480px; font-size:1.25rem; font-weight:500; line-height:1.6;">
+                    <span style="color:#0d6efd; font-weight:700;">Ops!</span> Sua prateleira está vazia.<br>
+                    <span style="color:#6ea8fe;">Cadastre seu primeiro produto</span> e comece a vender agora mesmo!
+                </p>
+
             </div>
-            <style>
-            .animated-icon svg {
-                animation: floatIcon 2.5s ease-in-out infinite;
-                filter: drop-shadow(0 4px 16px #e3eafc);
-            }
-            @keyframes floatIcon {
-                0%, 100% { transform: translateY(0);}
-                50% { transform: translateY(-14px);}
-            }
-            .stylish-btn, .btn-xl {
-                background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
-                color: #fff;
-                border: none;
-                border-radius: 2.5em;
-                transition: background 0.2s, transform 0.15s;
-                box-shadow: 0 4px 24px rgba(13,110,253,0.12);
-                font-size: 1.25rem;
-                padding: 0.9em 2.5em;
-            }
-            .stylish-btn:hover, .stylish-btn:focus {
-                background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
-                color: #fff;
-                transform: translateY(-2px) scale(1.05);
-                box-shadow: 0 8px 32px rgba(13,110,253,0.18);
-            }
-            </style>
+        </div>
         @else
-            @foreach($products as $product)
-            <div class="col-md-2 mb-4">
-                <div class="product-card-modern position-relative d-flex flex-column h-100">
-                    <!-- Botões flutuantes -->
-                    <div class="btn-action-group">
-                        <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal"
-                            data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
-                            <i class="bi bi-pencil-square"></i>
-                        </a>
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                            data-bs-target="#modalDeleteProduct{{ $product->id }}" title="Excluir">
-                            <i class="bi bi-trash3"></i>
-                        </button>
-                    </div>
+        @foreach($products as $product)
+        <div class="col-md-2 mb-4">
+            <div class="product-card-modern position-relative d-flex flex-column h-100">
+                <!-- Botões flutuantes -->
+                <div class="btn-action-group">
+                    <a href="javascript:void(0)" class="btn btn-primary" data-bs-toggle="modal"
+                        data-bs-target="#modalEditProduct{{ $product->id }}" title="Editar">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                        data-bs-target="#modalDeleteProduct{{ $product->id }}" title="Excluir">
+                        <i class="bi bi-trash3"></i>
+                    </button>
+                </div>
 
-                    <!-- Área da imagem com badges -->
-                    <div class="product-img-area">
-                        <img src="{{ asset('storage/products/' . $product->image) }}" class="product-img"
-                            alt="{{ $product->name }}">
-                        <!-- Código do produto -->
-                        <span class="badge-product-code" title="Código do Produto">
-                            <i class="bi bi-upc-scan"></i> {{ $product->product_code }}
-                        </span>
-                        <!-- Quantidade -->
-                        <span class="badge-quantity" title="Quantidade em Estoque">
-                            <i class="bi bi-stack"></i> {{ $product->stock_quantity }}
-                        </span>
-                        <!-- Ícone da categoria -->
-                        <div class="category-icon-wrapper" style="color: {{ $product->category->hexcolor_category }}; border: 2px solid {{ $product->category->hexcolor_category }};
+                <!-- Área da imagem com badges -->
+                <div class="product-img-area">
+                    <img src="{{ asset('storage/products/' . $product->image) }}" class="product-img"
+                        alt="{{ $product->name }}">
+                    <!-- Código do produto -->
+                    <span class="badge-product-code" title="Código do Produto">
+                        <i class="bi bi-upc-scan"></i> {{ $product->product_code }}
+                    </span>
+                    <!-- Quantidade -->
+                    <span class="badge-quantity" title="Quantidade em Estoque">
+                        <i class="bi bi-stack"></i> {{ $product->stock_quantity }}
+                    </span>
+                    <!-- Ícone da categoria -->
+                    <div class="category-icon-wrapper" style="color: {{ $product->category->hexcolor_category }}; border: 2px solid {{ $product->category->hexcolor_category }};
                                        background-color: {{ $product->category->hexcolor_category }}20;">
-                            <i class="{{ $product->category->icone }} category-icon"></i>
-                        </div>
-                        @if($product->stock_quantity == 0)
-                        <div class="out-of-stock">
-                            <i class="bi bi-x-circle"></i> Fora de Estoque
-                        </div>
-                        @endif
+                        <i class="{{ $product->category->icone }} category-icon"></i>
                     </div>
-
-                    <!-- Conteúdo -->
-                    <div class="card-body">
-                        <div class="product-title" title="{{ $product->name }}">
-                            <i class="bi bi-box-seam"></i>
-                            {{ ucwords($product->name) }}
-                        </div>
-                        <div class="product-description" title="{{ $product->description }}">
-                            <i class="bi bi-card-text"></i>
-                            {{ ucwords($product->description) }}
-                        </div>
-                        <div class="price-area">
-                            <span class="badge-price" title="Preço de Custo">
-                                <i class="bi bi-tag"></i>
-                                R$ {{ number_format($product->price, 2, ',', '.') }}
-                            </span>
-                            <span class="badge-price-sale" title="Preço de Venda">
-                                <i class="bi bi-currency-dollar"></i>
-                                R$ {{ number_format($product->price_sale, 2, ',', '.') }}
-                            </span>
-                        </div>
+                    @if($product->stock_quantity == 0)
+                    <div class="out-of-stock">
+                        <i class="bi bi-x-circle"></i> Fora de Estoque
+                    </div>
+                    @endif
+                </div>
+                <!-- Conteúdo -->
+                <div class="card-body">
+                    <div class="product-title" title="{{ $product->name }}">
+                        <i class="bi bi-box-seam"></i>
+                        {{ ucwords($product->name) }}
+                    </div>
+                    <div class="product-description" title="{{ $product->description }}">
+                        <i class="bi bi-card-text"></i>
+                        {{ ucwords($product->description) }}
+                    </div>
+                    <div class="price-area">
+                        <span class="badge-price" title="Preço de Custo">
+                            <i class="bi bi-tag"></i>
+                            R$ {{ number_format($product->price, 2, ',', '.') }}
+                        </span>
+                        <span class="badge-price-sale" title="Preço de Venda">
+                            <i class="bi bi-currency-dollar"></i>
+                            R$ {{ number_format($product->price_sale, 2, ',', '.') }}
+                        </span>
                     </div>
                 </div>
             </div>
-            @endforeach
+        </div>
+        @endforeach
         @endif
     </div>
-
     <!-- Paginação -->
     <div class="d-flex justify-content-center mt-4">
         <nav>
@@ -567,57 +310,13 @@
             </ul>
         </nav>
     </div>
-    <script>
-    function setupDynamicSearch() {
-        const searchInput = document.getElementById('search-input');
-        if (!searchInput) return;
-
-        let timeout = null;
-
-        searchInput.addEventListener('input', function() {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => {
-                const query = this.value;
-                const selectionStart = this.selectionStart;
-                const selectionEnd = this.selectionEnd;
-
-                const url = `{{ route('products.index') }}?search=${encodeURIComponent(query)}`;
-
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Erro ao buscar dados');
-                        }
-                        return response.text();
-                    })
-                    .then(html => {
-                        const parser = new DOMParser();
-                        const doc = parser.parseFromString(html, 'text/html');
-                        const newContent = doc.querySelector('.container-fluid.py-4');
-                        if (newContent) {
-                            document.querySelector('.container-fluid.py-4').innerHTML =
-                                newContent.innerHTML;
-                            setupDynamicSearch();
-                            // Recupera o novo input e restaura foco/cursor
-                            const newSearchInput = document.getElementById('search-input');
-                            if (newSearchInput) {
-                                newSearchInput.focus();
-                                newSearchInput.setSelectionRange(selectionStart,
-                                    selectionEnd);
-                            }
-                        }
-                    })
-                    .catch(error => console.error('Erro ao buscar dados:', error));
-            }, 50); // Debounce mais rápido
-        });
-    }
-    document.addEventListener('DOMContentLoaded', setupDynamicSearch);
-
- 
-
-    </script>
-    @include('products.delet')
-    @include('products.upload')
-    @include('products.create')
-    @include('products.edit')
-    @endsection
+</div>
+<script>
+window.PRODUCTS_INDEX_URL = "{{ route('products.index') }}";
+</script>
+<script src="{{ asset('js/products.js') }}"></script>
+@include('products.delet')
+@include('products.upload')
+@include('products.create')
+@include('products.edit')
+@endsection
