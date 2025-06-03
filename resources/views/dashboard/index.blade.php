@@ -249,7 +249,6 @@
                         {{-- Stats Area --}}
                         <div class="w-100">
                             <div class="row g-3">
-
                                 <!-- Card 1: Valor faltante -->
                                 <div class="col-4">
                                     <div class="card">
