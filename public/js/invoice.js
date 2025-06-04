@@ -1,3 +1,5 @@
+
+
 $(document).ready(function() {
     // Usa variáveis globais definidas no Blade
     var initialCategories = window.INITIAL_CATEGORIES || [];
@@ -59,6 +61,23 @@ $(document).ready(function() {
                     labels: response.dailyLabels,
                     values: response.dailyValues
                 });
+
+                // Reativa o JS de expansão dos cards de categoria
+                document.querySelectorAll('.category-card-header').forEach(function(header) {
+                    header.addEventListener('click', function() {
+                        const card = header.closest('.category-card');
+                        const body = card.querySelector('.invoices-list');
+                        const icon = header.querySelector('.toggle-icon');
+                        body.classList.toggle('d-none');
+                        icon.classList.toggle('fa-chevron-down');
+                        icon.classList.toggle('fa-chevron-up');
+                    });
+                });
+
+                // Atualiza os totais dos meses nos cards
+                $('#previous-month-total').text(`R$ ${parseFloat(response.previousMonthTotal).toFixed(2)}`);
+                $('#current-month-total').text(`R$ ${parseFloat(response.currentMonthTotal).toFixed(2)}`);
+                $('#next-month-total').text(`R$ ${parseFloat(response.nextMonthTotal).toFixed(2)}`);
             },
             error: function(xhr, status, error) {
                 console.error('Erro na requisição AJAX:', xhr.responseText);
@@ -66,6 +85,20 @@ $(document).ready(function() {
             }
         });
     }
+
+    // Troca de mês ao clicar no card
+    $(document).on('click', '.month-card-change', function() {
+        var month = $(this).data('month');
+        if (month) {
+            updateMonthData(month);
+            if (window.fp) {
+                window.fp.setDate(month, true, "Y-m-d");
+            }
+        }
+    });
+
+    // Torna updateMonthData global para ser chamada pelo calendário
+    window.updateMonthData = updateMonthData;
 
     function initInvoiceExpanders() {
         document.querySelectorAll('.show-more-invoices-btn').forEach(function(btn) {
@@ -165,12 +198,6 @@ $(document).ready(function() {
             console.error('Erro ao criar o gráfico:', error);
         }
     }
-
-    $('.btn-change-month').on('click', function(e) {
-        e.preventDefault();
-        const month = $(this).data('month');
-        updateMonthData(month);
-    });
 
     function addLineChart(dailyData) {
         const ctx = document.getElementById('lineChart');
