@@ -1,5 +1,3 @@
-
-
 @extends('layouts.app')
 
 @section('auth')
@@ -50,3 +48,9 @@
 
 
 @endsection
+
+<head>
+    {{-- ...existing code... --}}
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    {{-- ...existing code... --}}
+</head>
