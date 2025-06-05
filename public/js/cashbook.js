@@ -37,7 +37,8 @@ function loadMonth(direction) {
                 nextMonthBalance.className = 'fw-bold text-secondary';
             }
 
-            updateTransactions(container, data.transactionsByDay);
+            // CORRIGIDO: Use transactionsByCategory
+            updateTransactions(container, data.transactionsByCategory);
 
             updateChart(data.totals);
             updateBarChart('income-bar-chart', data.categories.income, 'Receitas por Categoria');
@@ -75,68 +76,20 @@ function updateMonthData(data, monthNameElement, incomeElement, expenseElement, 
 }
 
 // Atualizar as transações exibidas
-function updateTransactions(container, transactionsByDay) {
-    const allTransactions = Object.values(transactionsByDay).flat();
-    const maxVisible = 24;
-
-    if (allTransactions.length > 0) {
-        // Divida as transações em visíveis e ocultas
-        const visibleTransactions = allTransactions.slice(0, maxVisible);
-        const hiddenTransactions = allTransactions.slice(maxVisible);
-
-        let html = `
-            <div class="row" id="visible-transactions">
-                ${visibleTransactions.map(transaction => renderTransactionCard(transaction)).join('')}
-            </div>
-        `;
-
-        if (hiddenTransactions.length > 0) {
-            html += `
-                <div class="row d-none" id="hidden-transactions">
-                    ${hiddenTransactions.map(transaction => renderTransactionCard(transaction)).join('')}
-                </div>
-                <div class="text-center my-3">
-                    <button id="show-more-btn" class="btn btn-outline-primary">
-                        Mostrar mais
-                    </button>
-                </div>
-            `;
-        }
-
-        container.innerHTML = html;
-
-        // Lógica do botão "Mostrar mais/menos"
-        if (hiddenTransactions.length > 0) {
-            const showMoreBtn = document.getElementById('show-more-btn');
-            const hiddenRow = document.getElementById('hidden-transactions');
-            let expanded = false;
-            showMoreBtn.addEventListener('click', function () {
-                expanded = !expanded;
-                if (expanded) {
-                    hiddenRow.classList.remove('d-none');
-                    showMoreBtn.textContent = 'Mostrar menos';
-                } else {
-                    hiddenRow.classList.add('d-none');
-                    showMoreBtn.textContent = 'Mostrar mais';
-                    // Scroll para o botão ao recolher
-                    showMoreBtn.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }
-            });
-        }
-    } else {
+function updateTransactions(container, transactionsByCategory) {
+    // CORRIGIDO: Recebe já agrupado por categoria
+    if (!transactionsByCategory || transactionsByCategory.length === 0) {
         container.innerHTML = `
             <div class="col-12">
                 <div class="d-flex flex-column align-items-center justify-content-center py-5">
                     <div class="animated-icon mb-4">
                         <svg width="130" height="130" viewBox="0 0 130 130" fill="none">
                             <circle cx="65" cy="65" r="62" stroke="#e3eafc" stroke-width="3" fill="#f8fafc"/>
-                            <!-- Ícone de carteira triste -->
                             <rect x="40" y="60" width="50" height="30" rx="10" fill="#e9f2ff" stroke="#6ea8fe" stroke-width="3"/>
                             <rect x="55" y="40" width="20" height="25" rx="6" fill="#f8fafc" stroke="#6ea8fe" stroke-width="3"/>
                             <rect x="50" y="95" width="30" height="8" rx="4" fill="#6ea8fe" opacity="0.18"/>
                             <ellipse cx="60" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25"/>
                             <ellipse cx="70" cy="75" rx="3" ry="2" fill="#6ea8fe" opacity="0.25"/>
-                            <!-- Boca triste -->
                             <path d="M60 85 Q65 80 70 85" stroke="#6ea8fe" stroke-width="2" fill="none"/>
                         </svg>
                     </div>
@@ -150,7 +103,38 @@ function updateTransactions(container, transactionsByDay) {
                 </div>
             </div>
         `;
+        return;
     }
+
+    // Renderizar accordion de categorias
+    let html = `<div class="accordion" id="accordionCategorias">`;
+    transactionsByCategory.forEach((cat, idx) => {
+        const collapseId = `collapseCat${cat.category_id}`;
+        const headingId = `headingCat${cat.category_id}`;
+        const totalReceita = cat.total_receita > 0 ? ` <span class="badge bg-success ms-2">+ R$ ${cat.total_receita.toFixed(2)}</span>` : '';
+        const totalDespesa = cat.total_despesa > 0 ? ` <span class="badge bg-danger ms-2">- R$ ${cat.total_despesa.toFixed(2)}</span>` : '';
+        html += `
+            <div class="accordion-item mb-2">
+                <h2 class="accordion-header" id="${headingId}">
+                    <button class="accordion-button collapsed d-flex align-items-center gap-2" type="button" data-bs-toggle="collapse" data-bs-target="#${collapseId}" aria-expanded="false" aria-controls="${collapseId}" style="background: linear-gradient(90deg, ${cat.category_hexcolor_category}11 0%, #fff 100%);">
+                        <i class="${cat.category_icone}" style="color:${cat.category_hexcolor_category}; font-size:1.3rem;"></i>
+                        <span class="fw-bold">${cat.category_name}</span>
+                        ${totalReceita}
+                        ${totalDespesa}
+                    </button>
+                </h2>
+                <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headingId}" data-bs-parent="#accordionCategorias">
+                    <div class="accordion-body">
+                        <div class="row">
+                            ${cat.transactions.map(renderTransactionCard).join('')}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    html += `</div>`;
+    container.innerHTML = html;
 }
 
 // Renderizar o cartão de uma transação
@@ -408,9 +392,23 @@ function loadEditModal(id) {
         .then(data => {
             const form = document.getElementById('editTransactionForm');
             form.action = `/cashbook/${id}`;
-            document.getElementById('edit_value').value = data.cashbook.value;
+            // Corrigir valor para number
+            document.getElementById('edit_value').value = Number(data.cashbook.value) || '';
             document.getElementById('edit_description').value = data.cashbook.description;
-            document.getElementById('edit_date').value = data.cashbook.date;
+
+            // Corrigir formato da data para yyyy-MM-dd
+            let date = data.cashbook.date;
+            if (date) {
+                // Aceita tanto Date quanto string
+                let d = new Date(date);
+                if (!isNaN(d)) {
+                    date = d.toISOString().slice(0, 10);
+                } else if (typeof date === 'string' && /^\d{4}-\d{2}-\d{2}/.test(date)) {
+                    date = date.slice(0, 10);
+                }
+            }
+            document.getElementById('edit_date').value = date || '';
+
             document.getElementById('edit_is_pending').value = data.cashbook.is_pending;
             document.getElementById('edit_category_id').value = data.cashbook.category_id;
             document.getElementById('edit_type_id').value = data.cashbook.type_id;
@@ -420,13 +418,11 @@ function loadEditModal(id) {
             // Preencher o select de cliente corretamente (Choices.js)
             const clientSelect = document.getElementById('edit_client_id');
             if (clientSelect) {
-                // Atualiza o valor do select
                 clientSelect.value = data.cashbook.client_id ?? '';
-                // Se Choices.js estiver ativo, atualiza via API
-                if (clientSelect.choices) {
+                // Só tente usar Choices se estiver definido
+                if (typeof Choices !== 'undefined' && clientSelect.choices) {
                     clientSelect.choices.setChoiceByValue(String(data.cashbook.client_id ?? ''));
-                } else if (window.Choices) {
-                    // Busca a instância Choices se não estiver no elemento
+                } else if (typeof Choices !== 'undefined' && window.Choices) {
                     if (!clientSelect.choicesInstance) {
                         clientSelect.choicesInstance = [...document.querySelectorAll('.choices-select')]
                             .map(sel => sel.choices)
