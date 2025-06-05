@@ -1,3 +1,192 @@
+@push('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+    #uploadModal {
+        /* Garante que o escopo seja só do modal */
+    }
+    #uploadModal .modal-content {
+        background: linear-gradient(135deg, #f8fafc 80%, #e3f0fc 100%);
+        border-radius: 2rem;
+        box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.15);
+        border: none;
+    }
+    #uploadModal .modal-header {
+        background: linear-gradient(90deg, #3498db 60%, #1d72b8 100%);
+        border-top-left-radius: 2rem;
+        border-top-right-radius: 2rem;
+        box-shadow: 0 2px 8px #b6d4fa;
+    }
+    #uploadModal .modal-title {
+        font-size: 2.2rem;
+        letter-spacing: 0.02em;
+    }
+    #uploadModal .btn-close {
+        filter: brightness(1.2);
+    }
+    #uploadModal .upload-modal-circle {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #e3eaf6;
+        color: #3498db;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin: 0 auto;
+        box-shadow: 0 1px 4px #e0e7ef;
+        transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+        border: 2px solid #e3eaf6;
+    }
+    #uploadModal .upload-modal-circle.active {
+        background: linear-gradient(135deg, #3498db 60%, #1d72b8 100%);
+        color: #fff;
+        border-color: #3498db;
+        box-shadow: 0 2px 8px #b6d4fa;
+    }
+    #uploadModal .upload-modal-step-label {
+        font-size: 0.98rem;
+        color: #1d3557;
+        font-weight: 500;
+        letter-spacing: 0.01em;
+        opacity: 0.85;
+        margin-top: 0.1rem;
+        display: inline-block;
+    }
+    #uploadModal .upload-modal-step-progress {
+        height: 6px !important;
+        background: #e3eaf6 !important;
+        border-radius: 4px;
+        box-shadow: none;
+    }
+    #uploadModal .upload-modal-step-progress .progress-bar {
+        background: linear-gradient(90deg, #3498db 60%, #1d72b8 100%);
+        border-radius: 4px;
+        box-shadow: none;
+        font-size: 1.1rem;
+    }
+    @media (max-width: 600px) {
+        #uploadModal .upload-modal-circle {
+            width: 28px;
+            height: 28px;
+            font-size: 1rem;
+        }
+        #uploadModal .upload-modal-step-label {
+            font-size: 0.85rem;
+        }
+    }
+    #uploadModal .upload-modal-confirm-title {
+        font-size: 1.7rem;
+        color: #1d3557;
+        background: linear-gradient(90deg, #e3f0fc 60%, #f8fafc 100%);
+        border-radius: 1rem;
+        padding: 0.7rem 0;
+        box-shadow: 0 2px 8px #e0e7ef;
+    }
+    #uploadModal .upload-modal-table-area {
+        background: #fff;
+        border-radius: 1.2rem;
+        box-shadow: 0 4px 24px 0 rgba(52, 152, 219, 0.10);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border: 1px solid #e3f0fc;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: #3498db #e0e7ef;
+    }
+    #uploadModal .upload-modal-table-area::-webkit-scrollbar {
+        width: 10px;
+        background: #e0e7ef;
+        border-radius: 8px;
+    }
+    #uploadModal .upload-modal-table-area::-webkit-scrollbar-thumb {
+        background: #3498db;
+        border-radius: 8px;
+    }
+    #uploadModal .upload-modal-table {
+        font-size: 1.18rem;
+        border-radius: 1rem;
+        overflow: hidden;
+    }
+    #uploadModal .upload-modal-table thead th {
+        vertical-align: middle;
+        background: linear-gradient(90deg, #e3f0fc 60%, #f8fafc 100%);
+        color: #1d3557;
+        font-size: 1.18rem;
+        border-bottom: 2px solid #3498db;
+    }
+    #uploadModal .upload-modal-table tbody tr {
+        transition: background 0.2s;
+    }
+    #uploadModal .upload-modal-table tbody tr:hover {
+        background: #e3f0fc;
+        box-shadow: 0 2px 8px #e0e7ef;
+    }
+    #uploadModal .upload-modal-table td, 
+    #uploadModal .upload-modal-table th {
+        vertical-align: middle !important;
+        border: none;
+    }
+    #uploadModal .upload-modal-table input,
+    #uploadModal .upload-modal-table select {
+        border-radius: 0.7rem !important;
+        border: 1.5px solid #b6d4fa !important;
+        font-size: 1.1rem;
+        background: #f8fafc;
+        transition: border 0.2s;
+    }
+    #uploadModal .upload-modal-table input:focus,
+    #uploadModal .upload-modal-table select:focus {
+        border-color: #3498db !important;
+        box-shadow: 0 0 0 2px #b6d4fa33;
+    }
+    #uploadModal .upload-modal-table .btn-danger {
+        border-radius: 50%;
+        padding: 0.5rem 0.7rem;
+        font-size: 1.1rem;
+        transition: background 0.2s, box-shadow 0.2s;
+    }
+    #uploadModal .upload-modal-table .btn-danger:hover {
+        background: #e74c3c;
+        box-shadow: 0 2px 8px #e0e7ef;
+    }
+    #uploadModal .upload-modal-back-btn {
+        border-radius: 1.5rem;
+        box-shadow: 0 2px 8px #b6d4fa;
+        padding: 0.8rem 3rem;
+        transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+        border-width: 2px;
+        color: #1d3557;
+        background: #fff;
+    }
+    #uploadModal .upload-modal-back-btn:hover {
+        background: #e3f0fc !important;
+        color: #3498db !important;
+        box-shadow: 0 4px 16px #b6d4fa;
+        border-color: #3498db;
+    }
+    #uploadModal .upload-modal-confirm-btn {
+        font-size: 1.3rem;
+        border-radius: 1.5rem;
+        box-shadow: 0 2px 8px #b6d4fa;
+        padding: 0.8rem 3rem;
+        transition: background 0.2s, box-shadow 0.2s;
+    }
+    #uploadModal .upload-modal-confirm-btn:hover {
+        background: #218838 !important;
+        box-shadow: 0 4px 16px #b6d4fa;
+    }
+    #uploadModal .form-group.d-flex {
+        gap: 1.5rem;
+    }
+    @media (max-width: 600px) {
+        #uploadModal .form-group.d-flex {
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+    }
+    </style>
+@endpush
 
 <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl" style="max-width: 80vw;">
@@ -85,7 +274,7 @@
                             @csrf
                             <input type="hidden" name="id_bank" value="{{ $bank->id_bank }}">
 
-                            <div class="upload-modal-table-area table-responsive" style="max-height: 45vh;">
+                            <div class="upload-modal-table-area table-responsive" style="max-height: 60vh;">
                                 <table class="table table-striped table-bordered align-middle text-center mb-0 upload-modal-table">
                                     <thead class="table-primary sticky-top">
                                         <tr>
@@ -121,197 +310,6 @@
         </div>
     </div>
 </div>
-
-<!-- CSS escopado para o modal -->
-<style>
-#uploadModal {
-    /* Garante que o escopo seja só do modal */
-}
-#uploadModal .modal-content {
-    background: linear-gradient(135deg, #f8fafc 80%, #e3f0fc 100%);
-    border-radius: 2rem;
-    box-shadow: 0 8px 32px 0 rgba(52, 152, 219, 0.15);
-    border: none;
-}
-#uploadModal .modal-header {
-    background: linear-gradient(90deg, #3498db 60%, #1d72b8 100%);
-    border-top-left-radius: 2rem;
-    border-top-right-radius: 2rem;
-    box-shadow: 0 2px 8px #b6d4fa;
-}
-#uploadModal .modal-title {
-    font-size: 2.2rem;
-    letter-spacing: 0.02em;
-}
-#uploadModal .btn-close {
-    filter: brightness(1.2);
-}
-#uploadModal .upload-modal-circle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: #e3eaf6;
-    color: #3498db;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.25rem;
-    margin: 0 auto;
-    box-shadow: 0 1px 4px #e0e7ef;
-    transition: background 0.3s, color 0.3s, box-shadow 0.3s;
-    border: 2px solid #e3eaf6;
-}
-#uploadModal .upload-modal-circle.active {
-    background: linear-gradient(135deg, #3498db 60%, #1d72b8 100%);
-    color: #fff;
-    border-color: #3498db;
-    box-shadow: 0 2px 8px #b6d4fa;
-}
-#uploadModal .upload-modal-step-label {
-    font-size: 0.98rem;
-    color: #1d3557;
-    font-weight: 500;
-    letter-spacing: 0.01em;
-    opacity: 0.85;
-    margin-top: 0.1rem;
-    display: inline-block;
-}
-#uploadModal .upload-modal-step-progress {
-    height: 6px !important;
-    background: #e3eaf6 !important;
-    border-radius: 4px;
-    box-shadow: none;
-}
-#uploadModal .upload-modal-step-progress .progress-bar {
-    background: linear-gradient(90deg, #3498db 60%, #1d72b8 100%);
-    border-radius: 4px;
-    box-shadow: none;
-    font-size: 1.1rem;
-}
-@media (max-width: 600px) {
-    #uploadModal .upload-modal-circle {
-        width: 28px;
-        height: 28px;
-        font-size: 1rem;
-    }
-    #uploadModal .upload-modal-step-label {
-        font-size: 0.85rem;
-    }
-}
-#uploadModal .upload-modal-confirm-title {
-    font-size: 1.7rem;
-    color: #1d3557;
-    background: linear-gradient(90deg, #e3f0fc 60%, #f8fafc 100%);
-    border-radius: 1rem;
-    padding: 0.7rem 0;
-    box-shadow: 0 2px 8px #e0e7ef;
-}
-#uploadModal .upload-modal-table-area {
-    background: #fff;
-    border-radius: 1.2rem;
-    box-shadow: 0 4px 24px 0 rgba(52, 152, 219, 0.10);
-    padding: 1rem;
-    margin-bottom: 1rem;
-    border: 1px solid #e3f0fc;
-    overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: #3498db #e0e7ef;
-}
-#uploadModal .upload-modal-table-area::-webkit-scrollbar {
-    width: 10px;
-    background: #e0e7ef;
-    border-radius: 8px;
-}
-#uploadModal .upload-modal-table-area::-webkit-scrollbar-thumb {
-    background: #3498db;
-    border-radius: 8px;
-}
-#uploadModal .upload-modal-table {
-    font-size: 1.18rem;
-    border-radius: 1rem;
-    overflow: hidden;
-}
-#uploadModal .upload-modal-table thead th {
-    vertical-align: middle;
-    background: linear-gradient(90deg, #e3f0fc 60%, #f8fafc 100%);
-    color: #1d3557;
-    font-size: 1.18rem;
-    border-bottom: 2px solid #3498db;
-}
-#uploadModal .upload-modal-table tbody tr {
-    transition: background 0.2s;
-}
-#uploadModal .upload-modal-table tbody tr:hover {
-    background: #e3f0fc;
-    box-shadow: 0 2px 8px #e0e7ef;
-}
-#uploadModal .upload-modal-table td, 
-#uploadModal .upload-modal-table th {
-    vertical-align: middle !important;
-    border: none;
-}
-#uploadModal .upload-modal-table input,
-#uploadModal .upload-modal-table select {
-    border-radius: 0.7rem !important;
-    border: 1.5px solid #b6d4fa !important;
-    font-size: 1.1rem;
-    background: #f8fafc;
-    transition: border 0.2s;
-}
-#uploadModal .upload-modal-table input:focus,
-#uploadModal .upload-modal-table select:focus {
-    border-color: #3498db !important;
-    box-shadow: 0 0 0 2px #b6d4fa33;
-}
-#uploadModal .upload-modal-table .btn-danger {
-    border-radius: 50%;
-    padding: 0.5rem 0.7rem;
-    font-size: 1.1rem;
-    transition: background 0.2s, box-shadow 0.2s;
-}
-#uploadModal .upload-modal-table .btn-danger:hover {
-    background: #e74c3c;
-    box-shadow: 0 2px 8px #e0e7ef;
-}
-#uploadModal .upload-modal-back-btn {
-    border-radius: 1.5rem;
-    box-shadow: 0 2px 8px #b6d4fa;
-    padding: 0.8rem 3rem;
-    transition: background 0.2s, box-shadow 0.2s, color 0.2s;
-    border-width: 2px;
-    color: #1d3557;
-    background: #fff;
-}
-#uploadModal .upload-modal-back-btn:hover {
-    background: #e3f0fc !important;
-    color: #3498db !important;
-    box-shadow: 0 4px 16px #b6d4fa;
-    border-color: #3498db;
-}
-#uploadModal .upload-modal-confirm-btn {
-    font-size: 1.3rem;
-    border-radius: 1.5rem;
-    box-shadow: 0 2px 8px #b6d4fa;
-    padding: 0.8rem 3rem;
-    transition: background 0.2s, box-shadow 0.2s;
-}
-#uploadModal .upload-modal-confirm-btn:hover {
-    background: #218838 !important;
-    box-shadow: 0 4px 16px #b6d4fa;
-}
-#uploadModal .form-group.d-flex {
-    gap: 1.5rem;
-}
-@media (max-width: 600px) {
-    #uploadModal .form-group.d-flex {
-        flex-direction: column;
-        gap: 0.7rem;
-    }
-}
-</style>
-
-<!-- FontAwesome 6 CDN (caso não esteja incluso no projeto) -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
