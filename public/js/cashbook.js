@@ -1,4 +1,3 @@
-
 let currentMonth = window.currentMonth || document.querySelector('[data-current-month]')?.dataset.currentMonth || "";
 let myChart, incomeBarChart, expenseBarChart; // Variáveis globais para armazenar os gráficos
 
@@ -193,6 +192,7 @@ function renderTransactionCard(transaction) {
                                     <button class="btn btn-warning d-flex align-items-center justify-content-center"
                                         style="width: 30px; height: 30px;"
                                         data-bs-toggle="modal" data-bs-target="#editTransactionModal"
+                                        data-client_id="${transaction.client_id || ''}"
                                         onclick="loadEditModal(${transaction.id}); event.stopPropagation();">
                                         <i class="fas fa-edit"></i>
                                     </button>
@@ -416,6 +416,27 @@ function loadEditModal(id) {
             document.getElementById('edit_type_id').value = data.cashbook.type_id;
             document.getElementById('edit_note').value = data.cashbook.note;
             document.getElementById('edit_segment_id').value = data.cashbook.segment_id;
+
+            // Preencher o select de cliente corretamente (Choices.js)
+            const clientSelect = document.getElementById('edit_client_id');
+            if (clientSelect) {
+                // Atualiza o valor do select
+                clientSelect.value = data.cashbook.client_id ?? '';
+                // Se Choices.js estiver ativo, atualiza via API
+                if (clientSelect.choices) {
+                    clientSelect.choices.setChoiceByValue(String(data.cashbook.client_id ?? ''));
+                } else if (window.Choices) {
+                    // Busca a instância Choices se não estiver no elemento
+                    if (!clientSelect.choicesInstance) {
+                        clientSelect.choicesInstance = [...document.querySelectorAll('.choices-select')]
+                            .map(sel => sel.choices)
+                            .find(inst => inst && inst.passedElement.element === clientSelect);
+                    }
+                    if (clientSelect.choicesInstance) {
+                        clientSelect.choicesInstance.setChoiceByValue(String(data.cashbook.client_id ?? ''));
+                    }
+                }
+            }
         });
 }
 
