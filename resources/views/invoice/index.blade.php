@@ -286,5 +286,6 @@ window.BANK_ID = "{{ $bank->id_bank }}";
 </script>
 <script src="{{ asset('js/invoice.js') }}"></script>
 @include('invoice.create')
+@include('invoice.uploadInvoice')
 <link rel="stylesheet" href="{{ asset('css/invoice.css') }}">
 @endsection
