@@ -68,17 +68,26 @@ $clients = Client::where('user_id', auth()->id())->get();
         return redirect()->route('cashbook.index')->with('success', 'Transação adicionada com sucesso!');
     }
 
-    public function edit(Cashbook $cashbook)
+    public function edit($id)
     {
-        $categories = Category::all();
-        $types = Type::all();
-        $segments = Segment::all();
+        $cashbook = Cashbook::findOrFail($id);
 
+        // Certifique-se de que client_id está presente no array/objeto retornado
+        // Se você usa Eloquent, normalmente já vem, mas garanta que está assim:
         return response()->json([
-            'cashbook' => $cashbook,
-            'categories' => $categories,
-            'types' => $types,
-            'segments' => $segments,
+            'cashbook' => [
+                'id' => $cashbook->id,
+                'value' => $cashbook->value,
+                'description' => $cashbook->description,
+                'date' => $cashbook->date,
+                'is_pending' => $cashbook->is_pending,
+                'category_id' => $cashbook->category_id,
+                'type_id' => $cashbook->type_id,
+                'note' => $cashbook->note,
+                'segment_id' => $cashbook->segment_id,
+                'client_id' => $cashbook->client_id, // <-- ESSENCIAL
+                // ...outros campos se necessário...
+            ]
         ]);
     }
 
@@ -129,7 +138,8 @@ $clients = Client::where('user_id', auth()->id())->get();
         }
 
         // Obter transações do mês selecionado para o usuário logado
-        $transactions = Cashbook::where('user_id', Auth::id())
+        $transactions = Cashbook::with('category')
+            ->where('user_id', Auth::id())
             ->whereYear('date', $date->year)
             ->whereMonth('date', $date->month)
             ->orderBy('date', 'desc')
@@ -137,52 +147,42 @@ $clients = Client::where('user_id', auth()->id())->get();
 
         // Calcular totais do mês selecionado
         $totals = [
-            'income' => $transactions->where('type_id', 1)->sum('value'), // Apenas receitas (type_id = 1)
-            'expense' => $transactions->where('type_id', 2)->sum('value'), // Apenas despesas (type_id = 2)
-            'balance' => $transactions->where('type_id', 1)->sum('value') - $transactions->where('type_id', 2)->sum('value'), // Saldo
+            'income' => $transactions->where('type_id', 1)->sum('value'),
+            'expense' => $transactions->where('type_id', 2)->sum('value'),
+            'balance' => $transactions->where('type_id', 1)->sum('value') - $transactions->where('type_id', 2)->sum('value'),
         ];
 
-        // Agrupar transações por dia
-        $transactionsByDay = $transactions->groupBy(function ($transaction) {
-            return \Carbon\Carbon::parse($transaction->date)->format('d');
-        })->map(function ($dayTransactions) {
-            return $dayTransactions->map(function ($transaction) {
-                return [
-                    'id' => $transaction->id,
-                    'description' => $transaction->description,
-                    'value' => $transaction->value,
-                    'type_id' => $transaction->type_id,
-                    'time' => \Carbon\Carbon::parse($transaction->date)->format('d/m'),
-                    'category_name' => $transaction->category->name ?? null,
-                    'category_hexcolor_category' => $transaction->category->hexcolor_category ?? '#cccccc',
-                    'category_icone' => $transaction->category->icone ?? 'fas fa-question',
-                    'note' => $transaction->note,
-                ];
-            });
-        });
-
-        // Obter dados de categorias para receitas e despesas
-        $incomeCategories = $transactions->where('type_id', 1)
-            ->groupBy('category_id')
-            ->map(function ($group) {
-                $category = $group->first()->category;
-                return [
-                    'name' => $category->name ?? 'Sem Categoria',
-                    'total' => $group->sum('value'),
-                    'hexcolor_category' => $category->hexcolor_category ?? '#cccccc',
-                ];
-            })->values();
-
-        $expenseCategories = $transactions->where('type_id', 2)
-            ->groupBy('category_id')
-            ->map(function ($group) {
-                $category = $group->first()->category;
-                return [
-                    'name' => $category->name ?? 'Sem Categoria',
-                    'total' => $group->sum('value'),
-                    'hexcolor_category' => $category->hexcolor_category ?? '#cccccc', // Garantir que a cor seja retornada
-                ];
-            })->values();
+        // Agrupar transações por categoria
+        $transactionsByCategory = $transactions->groupBy(function ($transaction) {
+            return $transaction->category_id ?: 'sem_categoria';
+        })->map(function ($group, $catId) {
+            $category = $group->first()->category;
+            $total_receita = $group->where('type_id', 1)->sum('value');
+            $total_despesa = $group->where('type_id', 2)->sum('value');
+            return [
+                'category_id' => $catId,
+                'category_name' => $category->name ?? 'Sem Categoria',
+                'category_hexcolor_category' => $category->hexcolor_category ?? '#cccccc',
+                'category_icone' => $category->icone ?? 'fas fa-question',
+                'total_receita' => $total_receita,
+                'total_despesa' => $total_despesa,
+                'transactions' => $group->map(function ($transaction) use ($category) {
+                    return [
+                        'id' => $transaction->id,
+                        'description' => $transaction->description,
+                        'value' => $transaction->value,
+                        'type_id' => $transaction->type_id,
+                        'time' => \Carbon\Carbon::parse($transaction->date)->format('d/m'),
+                        'category_id' => $transaction->category_id,
+                        'category_name' => $category->name ?? 'Sem Categoria',
+                        'category_hexcolor_category' => $category->hexcolor_category ?? '#cccccc',
+                        'category_icone' => $category->icone ?? 'fas fa-question',
+                        'note' => $transaction->note,
+                        'client_id' => $transaction->client_id,
+                    ];
+                })->values(),
+            ];
+        })->values();
 
         // Tradução manual dos meses
         $monthTranslations = [
@@ -232,11 +232,29 @@ $clients = Client::where('user_id', auth()->id())->get();
         return response()->json([
             'currentMonth' => $date->format('Y-m'),
             'monthName' => $monthName,
-            'transactionsByDay' => $transactionsByDay,
+            'transactionsByCategory' => $transactionsByCategory, // <-- agrupado por categoria
             'totals' => $totals,
             'categories' => [
-                'income' => $incomeCategories,
-                'expense' => $expenseCategories,
+                'income' => $transactions->where('type_id', 1)
+                    ->groupBy('category_id')
+                    ->map(function ($group) {
+                        $category = $group->first()->category;
+                        return [
+                            'name' => $category->name ?? 'Sem Categoria',
+                            'total' => $group->sum('value'),
+                            'hexcolor_category' => $category->hexcolor_category ?? '#cccccc',
+                        ];
+                    })->values(),
+                'expense' => $transactions->where('type_id', 2)
+                    ->groupBy('category_id')
+                    ->map(function ($group) {
+                        $category = $group->first()->category;
+                        return [
+                            'name' => $category->name ?? 'Sem Categoria',
+                            'total' => $group->sum('value'),
+                            'hexcolor_category' => $category->hexcolor_category ?? '#cccccc',
+                        ];
+                    })->values(),
             ],
             'prevMonth' => [
                 'name' => $prevMonthName,
