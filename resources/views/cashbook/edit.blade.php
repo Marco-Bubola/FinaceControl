@@ -318,13 +318,12 @@
     </div>
 </div>
 
-<!-- Choices.js -->
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const selects = document.querySelectorAll('#editTransactionModal .choices-select');
+    const choicesInstances = [];
     selects.forEach(function(select) {
-        new Choices(select, {
+        const instance = new Choices(select, {
             searchEnabled: true,
             itemSelectText: '',
             shouldSort: false,
@@ -334,6 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 containerOuter: 'choices choices--modal'
             }
         });
+        choicesInstances.push({select, instance});
     });
 
     // Mostrar nome do arquivo selecionado
@@ -344,6 +344,27 @@ document.addEventListener('DOMContentLoaded', function() {
             fileNameSpan.textContent = fileInput.files.length ? fileInput.files[0].name : '';
         });
     }
+
+    // Preencher selects ao abrir o modal de edição
+    document.addEventListener('show.bs.modal', function(event) {
+        const modal = event.target;
+        if(modal.id === 'editTransactionModal') {
+            // O botão que abriu o modal deve ter os data-* com os valores
+            const button = event.relatedTarget;
+            if(!button) return;
+
+            // Exemplo: data-client_id="3"
+            const clientId = button.getAttribute('data-client_id');
+            if(clientId !== null) {
+                const clientSelect = document.getElementById('edit_client_id');
+                clientSelect.value = clientId;
+                // Atualiza Choices.js
+                const found = choicesInstances.find(obj => obj.select === clientSelect);
+                if(found) found.instance.setChoiceByValue(clientId);
+            }
+            // Repita para outros selects se necessário (category_id, type_id, etc)
+        }
+    });
 });
 </script>
 
