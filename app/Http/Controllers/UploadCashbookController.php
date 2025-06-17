@@ -52,29 +52,25 @@ class UploadCashbookController extends Controller
 
     public function confirm(Request $request)
     {
-     
-
         $transactions = $request->input('transactions');
         $success = true;
+        $duplicated = [];
+        $inserted = [];
 
         if (!$transactions || !is_array($transactions)) {
-         
             return redirect()->route('cashbook.index')->with('error', 'Nenhuma transação recebida.');
         }
 
         foreach ($transactions as $idx => $trans) {
             try {
-                $cashbook = new \App\Models\Cashbook();
-                $cashbook->user_id = auth()->id();
-                $cashbook->client_id = $trans['client_id'] ?? null; // Salvar client_id como opcional
-
                 // Verificar e corrigir o formato da data
-                $dateFormats = ['d-m-Y', 'Y-m-d']; // Suporte para múltiplos formatos
+                $dateFormats = ['d-m-Y', 'Y-m-d'];
                 $validDate = false;
+                $dateFormatted = null;
 
                 foreach ($dateFormats as $format) {
                     if (\Carbon\Carbon::hasFormat($trans['date'], $format)) {
-                        $cashbook->date = \Carbon\Carbon::createFromFormat($format, $trans['date'])->format('Y-m-d');
+                        $dateFormatted = \Carbon\Carbon::createFromFormat($format, $trans['date'])->format('Y-m-d');
                         $validDate = true;
                         break;
                     }
@@ -86,21 +82,53 @@ class UploadCashbookController extends Controller
 
                 // Validar campos obrigatórios
                 if (empty($trans['value']) || empty($trans['category_id']) || empty($trans['type_id'])) {
-                 
                     return redirect()->route('cashbook.index')->with('error', 'Erro: Campos obrigatórios ausentes em uma das transações.');
                 }
 
+                // Verificar duplicidade
+                $exists = \App\Models\Cashbook::where('user_id', auth()->id())
+                    ->where('date', $dateFormatted)
+                    ->where('value', $trans['value'])
+                    ->where('description', $trans['description'] ?? null)
+                    ->where('category_id', $trans['category_id'])
+                    ->where('type_id', $trans['type_id'])
+                    ->where(function($q) use ($trans) {
+                        if (isset($trans['client_id'])) {
+                            $q->where('client_id', $trans['client_id']);
+                        } else {
+                            $q->whereNull('client_id');
+                        }
+                    })
+                    ->exists();
+
+                if ($exists) {
+                    $duplicated[] = [
+                        'date' => $trans['date'],
+                        'value' => $trans['value'],
+                        'description' => $trans['description'] ?? '',
+                    ];
+                    continue;
+                }
+
+                // Salvar normalmente
+                $cashbook = new \App\Models\Cashbook();
+                $cashbook->user_id = auth()->id();
+                $cashbook->client_id = $trans['client_id'] ?? null;
+                $cashbook->date = $dateFormatted;
                 $cashbook->value = $trans['value'];
                 $cashbook->description = $trans['description'] ?? null;
                 $cashbook->category_id = $trans['category_id'];
                 $cashbook->type_id = $trans['type_id'];
                 $cashbook->is_pending = $trans['is_pending'] ?? 0;
 
-                if (!$cashbook->save()) {
-                   
-                    $success = false;
+                if ($cashbook->save()) {
+                    $inserted[] = [
+                        'date' => $dateFormatted,
+                        'value' => $trans['value'],
+                        'description' => $trans['description'] ?? '',
+                    ];
                 } else {
-                   
+                    $success = false;
                 }
             } catch (\Exception $e) {
                 \Log::error('Exceção ao salvar transação', [
@@ -113,8 +141,19 @@ class UploadCashbookController extends Controller
         }
 
         if ($success) {
-            \Log::info('Todas as transações salvas com sucesso');
-            return redirect()->route('cashbook.index')->with('success', 'Transações salvas com sucesso.');
+            $msg = 'Transações salvas com sucesso.';
+            if (count($duplicated) > 0) {
+                // Mensagem resumida + detalhes para modal
+                return redirect()->route('cashbook.index')->with([
+                    'success' => $msg,
+                    'warning' => 'Algumas transações não foram inseridas pois já existiam.',
+                    'warning_details' => [
+                        'inserted' => $inserted,
+                        'duplicated' => $duplicated
+                    ]
+                ]);
+            }
+            return redirect()->route('cashbook.index')->with('success', $msg);
         } else {
             \Log::error('Houve um erro ao salvar uma ou mais transações');
             return redirect()->route('cashbook.index')->with('error', 'Houve um erro ao salvar as transações.');
