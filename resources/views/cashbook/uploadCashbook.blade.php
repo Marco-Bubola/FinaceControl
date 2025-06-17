@@ -1,24 +1,26 @@
 <div class="modal fade" id="uploadCashbookModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="uploadModalLabel">Upload e Confirmação de Transações</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        <div class="modal-content stylish-modal">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="uploadModalLabel">
+                    <i class="fa fa-upload me-2 text-primary"></i>Upload e Confirmação de Transações
+                </h5>
+                <button type="button" class="btn-close shadow-none" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body pt-0">
                 <!-- Barra de Progresso com Círculos e Títulos -->
                 <div class="mb-4" id="step-indicator">
                     <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-center">
-                            <div class="circle active" id="circle-step1">1</div>
+                        <div class="text-center flex-grow-1">
+                            <div class="circle active shadow" id="circle-step1">1</div>
                         </div>
                         <div class="flex-grow-1 mx-2">
-                            <div class="progress" style="height: 5px;">
+                            <div class="progress stylish-progress" style="height: 7px;">
                                 <div class="progress-bar" id="step-progress-bar-inner" style="width: 50%;"></div>
                             </div>
                         </div>
-                        <div class="text-center">
-                            <div class="circle" id="circle-step2">2</div>
+                        <div class="text-center flex-grow-1">
+                            <div class="circle shadow" id="circle-step2">2</div>
                         </div>
                     </div>
                     <div class="d-flex justify-content-between mt-2">
@@ -33,13 +35,13 @@
                 <div id="uploadSteps">
                     <!-- Step 1: Upload de Arquivo -->
                     <div id="step1" class="step">
-                        <h5 class="text-center mb-3">Envio de Arquivo em PDF ou CSV</h5>
+                        <h5 class="text-center mb-3 fw-semibold">Envio de Arquivo em PDF ou CSV</h5>
                         <form id="uploadForm" method="POST" action="{{ route('cashbook.upload') }}"
                             enctype="multipart/form-data">
                             @csrf
                             <div class="form-group text-center mb-4">
-                                <label for="file-upload" class="btn btn-outline-primary">
-                                    <i class="fa fa-file"></i> Escolher arquivo PDF ou CSV
+                                <label for="file-upload" class="btn btn-outline-primary stylish-btn px-4 py-2">
+                                    <i class="fa fa-file"></i> <span id="file-upload-label">Escolher arquivo PDF ou CSV</span>
                                 </label>
                                 <input type="file" id="file-upload" name="file" accept=".pdf, .csv"
                                     style="display: none;" required />
@@ -50,14 +52,14 @@
                             </div>
 
                             <!-- Barra de Progresso -->
-                            <div class="progress" style="height: 25px; display: none;" id="upload-progress-bar">
+                            <div class="progress stylish-progress" style="height: 25px; display: none;" id="upload-progress-bar">
                                 <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
                                     style="width: 0%; background-color: #3498db;" aria-valuenow="0" aria-valuemin="0"
                                     aria-valuemax="100">0%</div>
                             </div>
 
                             <div class="form-group text-center mt-4">
-                                <button type="button" class="btn btn-primary" id="nextStep1">
+                                <button type="button" class="btn btn-primary stylish-btn px-4 py-2" id="nextStep1">
                                     Próximo <i class="fa fa-arrow-right"></i>
                                 </button>
                             </div>
@@ -65,23 +67,21 @@
                     </div>
                     <!-- Step 2: Confirmar Transações -->
                     <div id="step2" class="step d-none">
-                        <h5 class="text-center mb-3">Confirmar Transações</h5>
+                        <h5 class="text-center mb-3 fw-semibold">Confirmar Transações</h5>
                         <form id="confirmationForm" method="POST" action="{{ route('cashbook.confirm') }}">
                             @csrf
 
-                            <div class="table-responsive">
-                                <table class="table table-striped table-bordered text-center">
-                                    <thead>
+                            <div class="table-responsive stylish-table-responsive" style="max-height:65vh; overflow-y:auto;">
+                                <table class="table table-striped table-bordered text-center stylish-table mb-0">
+                                    <thead class="table-primary">
                                         <tr>
                                             <th>Remover </th>
                                             <th>Data</th>
                                             <th>Valor</th>
                                             <th>Descrição</th>
-
                                             <th>Categoria</th>
                                             <th>Tipo</th>
-                                            <th>Nota</th>
-                                            <th>Segmento</th>
+                                            
                                             <th>Cliente</th>
                                         </tr>
                                     </thead>
@@ -117,18 +117,7 @@
                                                     <option value="2" ${transaction.type_id == 2 ? 'selected' : ''}>Despesa</option>
                                                 </select>
                                             </td>
-                                            <td>
-                                                <input type="text" name="transactions[${index}][note]" value="${transaction.note || ''}" class="form-control">
-                                            </td>
-                                            <td>
-                                                <select name="transactions[${index}][segment_id]" class="form-control">
-                                                    <option value="" ${!transaction.segment_id ? 'selected' : ''}>Nenhum</option>
-                                                    ${(data.segments || []).map(segment => {
-                                                        const isSelected = segment.id == transaction.segment_id ? 'selected' : '';
-                                                        return `<option value="${segment.id}" ${isSelected}>${segment.name}</option>`;
-                                                    }).join('')}
-                                                </select>
-                                            </td>
+                                        
                                             <td>
                                                 <select name="transactions[${index}][client_id]" class="form-control">
                                                     <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
@@ -144,15 +133,12 @@
                             </div>
 
                             <div class="form-group text-center mt-4">
-                                <button type="submit" class="btn btn-success">
+                                <button type="submit" class="btn btn-success stylish-btn px-4 py-2">
                                     Confirmar Transações <i class="fa fa-check"></i>
                                 </button>
                             </div>
                         </form>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
@@ -160,29 +146,100 @@
 </div>
 
 <style>
+.stylish-modal {
+    border-radius: 18px;
+    box-shadow: 0 8px 32px rgba(52, 152, 219, 0.15), 0 1.5px 8px rgba(0,0,0,0.07);
+    background: #f8fafc;
+    border: none;
+}
+.stylish-progress {
+    background: #eaf1fb;
+    border-radius: 8px;
+}
 .circle {
-    width: 30px;
-    height: 30px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
     background-color: #ddd;
-    color: #fff;
+    color: #3498db;
     display: flex;
     align-items: center;
     justify-content: center;
     font-weight: bold;
+    font-size: 1.2rem;
+    border: 2px solid #eaf1fb;
+    transition: background 0.2s, color 0.2s;
 }
-
 .circle.active {
     background-color: #3498db;
+    color: #fff;
+    border-color: #3498db;
+    box-shadow: 0 0 0 4px #eaf1fb;
 }
-
-.progress-bar {
-    background-color: #3498db;
+.stylish-btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.08);
 }
-
+.stylish-btn:hover, .stylish-btn:focus {
+    background: #217dbb !important;
+    color: #fff !important;
+    box-shadow: 0 4px 16px rgba(52, 152, 219, 0.13);
+}
+.stylish-table-responsive {
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(52, 152, 219, 0.07);
+    background: #fff;
+    padding: 8px 0;
+}
+.stylish-table thead th {
+    background: #3498db !important;
+    color: #fff;
+    border-top: none;
+    font-weight: 600;
+    font-size: 1rem;
+}
+.stylish-table tbody tr {
+    transition: background 0.15s;
+}
+.stylish-table tbody tr:hover {
+    background: #eaf1fb !important;
+}
+.stylish-table td, .stylish-table th {
+    vertical-align: middle;
+}
+.stylish-table input, .stylish-table select {
+    border-radius: 6px;
+    border: 1px solid #d1e3f8;
+    background: #f8fafc;
+    font-size: 0.97rem;
+}
+.stylish-table input:focus, .stylish-table select:focus {
+    border-color: #3498db;
+    background: #fff;
+    box-shadow: 0 0 0 2px #eaf1fb;
+}
+.btn-danger.btn-sm {
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+.btn-danger.btn-sm:hover {
+    background: #e74c3c !important;
+}
 #step-indicator small {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: #555;
+    font-weight: 500;
+}
+::-webkit-scrollbar {
+    width: 8px;
+    background: #eaf1fb;
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb {
+    background: #b7d6f6;
+    border-radius: 6px;
 }
 </style>
 
@@ -201,8 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Alterar nome do arquivo após a seleção
     fileInput.addEventListener('change', function() {
         const fileName = this.files[0] ? this.files[0].name : 'Escolher arquivo PDF ou CSV';
-        document.querySelector('label[for="file-upload"]').innerHTML =
-            `<i class="fa fa-file"></i> ${fileName}`;
+        document.getElementById('file-upload-label').textContent = fileName;
     });
     // Ação do botão de "Próximo"
     nextStep1.addEventListener('click', function() {
@@ -295,18 +351,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <option value="2" ${transaction.type_id == 2 ? 'selected' : ''}>Despesa</option>
                         </select>
                     </td>
-                    <td>
-                        <input type="text" name="transactions[${index}][note]" value="${transaction.note || ''}" class="form-control">
-                    </td>
-                    <td>
-                        <select name="transactions[${index}][segment_id]" class="form-control">
-                            <option value="" ${!transaction.segment_id ? 'selected' : ''}>Nenhum</option>
-                            ${(data.segments || []).map(segment => {
-                                const isSelected = segment.id == transaction.segment_id ? 'selected' : '';
-                                return `<option value="${segment.id}" ${isSelected}>${segment.name}</option>`;
-                            }).join('')}
-                        </select>
-                    </td>
+                
                     <td>
                         <select name="transactions[${index}][client_id]" class="form-control">
                             <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
