@@ -52,47 +52,71 @@ class UploadCashbookController extends Controller
 
     public function confirm(Request $request)
     {
+     
+
         $transactions = $request->input('transactions');
         $success = true;
 
-        foreach ($transactions as $trans) {
-            $cashbook = new \App\Models\Cashbook();
-            $cashbook->user_id = auth()->id();
-            $cashbook->client_id = $trans['client_id'] ?? null; // Salvar client_id como opcional
+        if (!$transactions || !is_array($transactions)) {
+         
+            return redirect()->route('cashbook.index')->with('error', 'Nenhuma transação recebida.');
+        }
 
-            // Verificar e corrigir o formato da data
-            $dateFormats = ['d-m-Y', 'Y-m-d']; // Suporte para múltiplos formatos
-            $validDate = false;
+        foreach ($transactions as $idx => $trans) {
+            try {
+                $cashbook = new \App\Models\Cashbook();
+                $cashbook->user_id = auth()->id();
+                $cashbook->client_id = $trans['client_id'] ?? null; // Salvar client_id como opcional
 
-            foreach ($dateFormats as $format) {
-                if (\Carbon\Carbon::hasFormat($trans['date'], $format)) {
-                    $cashbook->date = \Carbon\Carbon::createFromFormat($format, $trans['date'])->format('Y-m-d');
-                    $validDate = true;
-                    break;
+                // Verificar e corrigir o formato da data
+                $dateFormats = ['d-m-Y', 'Y-m-d']; // Suporte para múltiplos formatos
+                $validDate = false;
+
+                foreach ($dateFormats as $format) {
+                    if (\Carbon\Carbon::hasFormat($trans['date'], $format)) {
+                        $cashbook->date = \Carbon\Carbon::createFromFormat($format, $trans['date'])->format('Y-m-d');
+                        $validDate = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!$validDate) {
-                return redirect()->route('cashbook.index')->with('error', 'Erro: Data inválida ou ausente em uma das transações.');
-            }
+                if (!$validDate) {
+                    return redirect()->route('cashbook.index')->with('error', 'Erro: Data inválida ou ausente em uma das transações.');
+                }
 
-            // Validar campos obrigatórios
-            if (empty($trans['value']) || empty($trans['category_id']) || empty($trans['type_id'])) {
-                return redirect()->route('cashbook.index')->with('error', 'Erro: Campos obrigatórios ausentes em uma das transações.');
-            }
+                // Validar campos obrigatórios
+                if (empty($trans['value']) || empty($trans['category_id']) || empty($trans['type_id'])) {
+                 
+                    return redirect()->route('cashbook.index')->with('error', 'Erro: Campos obrigatórios ausentes em uma das transações.');
+                }
 
-            $cashbook->value = $trans['value'];
-            $cashbook->description = $trans['description'] ?? null;
-            $cashbook->category_id = $trans['category_id'];
-            $cashbook->type_id = $trans['type_id'];
-            $cashbook->segment_id = $trans['segment_id'] ?? null;
-            $cashbook->is_pending = $trans['is_pending'] ?? 0;
-            $cashbook->note = $trans['note'] ?? null;
+                $cashbook->value = $trans['value'];
+                $cashbook->description = $trans['description'] ?? null;
+                $cashbook->category_id = $trans['category_id'];
+                $cashbook->type_id = $trans['type_id'];
+                $cashbook->is_pending = $trans['is_pending'] ?? 0;
+
+                if (!$cashbook->save()) {
+                   
+                    $success = false;
+                } else {
+                   
+                }
+            } catch (\Exception $e) {
+                \Log::error('Exceção ao salvar transação', [
+                    'index' => $idx,
+                    'exception' => $e->getMessage(),
+                    'trace' => $e->getTraceAsString()
+                ]);
+                $success = false;
+            }
         }
 
         if ($success) {
+            \Log::info('Todas as transações salvas com sucesso');
             return redirect()->route('cashbook.index')->with('success', 'Transações salvas com sucesso.');
         } else {
+            \Log::error('Houve um erro ao salvar uma ou mais transações');
             return redirect()->route('cashbook.index')->with('error', 'Houve um erro ao salvar as transações.');
         }
     }
