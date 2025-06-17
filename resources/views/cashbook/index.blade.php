@@ -6,6 +6,36 @@
 <div class="row ">
     <div class="col-md-12">
         <div class="card h-100 shadow-none" style="background-color: transparent; border: none;">
+            {{-- Mensagens de sucesso e erro (usando o modal padrão) --}}
+            @include('message.alert')
+
+            {{-- Aviso resumido de duplicados --}}
+            @if(session('warning'))
+                <div class="alert alert-warning d-flex justify-content-between align-items-center shadow-sm border-0"
+                     style="background: linear-gradient(90deg, #fffbe6 80%, #fef9c3 100%); color: #b68400; font-size: 1.08em; font-weight: 500;">
+                    <span class="d-flex align-items-center">
+                        <i class="fas fa-info-circle me-2" style="font-size:1.3em;color:#f59e42;"></i>
+                        <span>Algumas transações não foram inseridas pois já existiam.</span>
+                    </span>
+                    <div>
+                        <button class="btn btn-sm btn-outline-warning me-2" style="border-radius: 20px; font-weight: 600;" data-bs-toggle="modal" data-bs-target="#warningDetailsModal">
+                            <i class="fas fa-list me-1"></i> Ver detalhes
+                        </button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary btn-close-warning" title="Fechar" style="border-radius: 20px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Modal de detalhes de inserção/duplicados --}}
+            @if(session('warning_details'))
+                @include('message.warning_details', [
+                    'inserted' => session('warning_details')['inserted'] ?? [],
+                    'duplicated' => session('warning_details')['duplicated'] ?? []
+                ])
+            @endif
+
             <!-- HEADER EM UMA LINHA SÓ, ESTILIZADO E RESPONSIVO -->
             <div class="card-header " style="background-color: transparent; border-bottom: none;">
                 <div class="row align-items-center g-3">
