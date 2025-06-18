@@ -1,476 +1,841 @@
 @extends('layouts.user_type.auth')
 
 @section('content')
-{{-- Totais de Receitas e Despesas de todos os meses --}}
-<div class="row mt-4">
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-lg border-0 h-100 mb-4" style="background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);">
-            <div class="card-body pb-0">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h6 class="mb-0 text-uppercase text-primary fw-bold letter-spacing-1">
-                        <i class="fas fa-wallet me-2"></i>Totais Cashbook
-                    </h6>
-                    <a href="{{ url('cashbook') }}" class="btn btn-outline-primary btn-sm">
-                        <i class="fas fa-wallet me-1"></i> Ver todos
-                    </a>
+@push('head')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+@endpush
+
+<style>
+body,
+.container-fluid {
+    background: #f8fafc;
+}
+
+.dashboard-header {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #4f46e5;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: linear-gradient(90deg, #e0e7ff 60%, #f8fafc 100%);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.09);
+    padding: 1.2rem 2rem 1.2rem 1.5rem;
+}
+
+.dashboard-header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.dashboard-header-title {
+    font-size: 2rem;
+    font-weight: 900;
+    color: #4f46e5;
+    letter-spacing: 2px;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.dashboard-header-subtitle {
+    font-size: 1.1rem;
+    color: #64748b;
+    font-weight: 500;
+    margin-left: 0.5rem;
+}
+
+.dashboard-header-action {
+    background: linear-gradient(90deg, #6366f1 60%, #818cf8 100%);
+    color: #fff;
+    border: none;
+    border-radius: 0.7rem;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 0.6rem 1.4rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.09);
+    transition: background 0.2s, box-shadow 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.dashboard-header-action:hover {
+    background: linear-gradient(90deg, #818cf8 60%, #6366f1 100%);
+    box-shadow: 0 4px 16px rgba(80, 80, 180, 0.13);
+}
+
+.dashboard-row-flex {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    align-items: stretch;
+    margin-bottom: 1rem;
+}
+
+.dashboard-calendar-flat {
+    background: linear-gradient(135deg, #f1f5f9 60%, #e0e7ff 100%);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.09);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: auto;
+    min-width: unset;
+    max-width: unset;
+    height: auto;
+    padding: 1.2rem 0.7rem 1.2rem 0.7rem;
+}
+
+.dashboard-calendar-flat #dashboardCalendar {
+    width: 100%;
+    min-width: 260px;
+    max-width: 340px;
+}
+
+.dashboard-calendar-flat .calendar-label {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #6366f1;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.dashboard-summary-card {
+    background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+    border-radius: 0.8rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.07);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.7rem 0.7rem 0.6rem 0.7rem;
+    flex-direction: column;
+    flex: 0 1 130px;
+    margin: 0;
+    transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.dashboard-summary-card:hover {
+    box-shadow: 0 4px 16px rgba(80, 80, 180, 0.13);
+    transform: translateY(-2px) scale(1.03);
+}
+
+.dashboard-summary-icon {
+    font-size: 2rem;
+    margin-bottom: 0.2rem;
+    display: block;
+    filter: drop-shadow(0 1px 2px #e0e7ff);
+}
+
+.dashboard-summary-label {
+    font-size: 0.95rem;
+    color: #6366f1;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 0.1rem;
+    text-transform: uppercase;
+}
+
+.dashboard-summary-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+}
+
+.dashboard-summary-row {
+    display: flex;
+    flex-direction: row;
+    gap: 0.7rem;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 0.7rem;
+}
+
+.dashboard-lastmonth-card {
+    background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.10);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1.2rem 1rem;
+    min-width: 180px;
+    min-height: 110px;
+    flex: 1 1 0;
+    margin: 0;
+}
+
+.dashboard-lastmonth-badge {
+    font-size: 1rem;
+    padding: 0.3rem 1.2rem;
+    border-radius: 1rem;
+    background: linear-gradient(90deg, #38bdf8 60%, #818cf8 100%);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(56, 189, 248, 0.12);
+    margin-bottom: 0.5rem;
+    display: inline-block;
+}
+
+.dashboard-lastmonth-values {
+    display: flex;
+    gap: 1.2rem;
+    justify-content: center;
+}
+
+.dashboard-lastmonth-value {
+    text-align: center;
+    min-width: 60px;
+}
+
+.dashboard-lastmonth-label {
+    font-size: 0.85rem;
+    color: #888;
+    margin-bottom: 0.1rem;
+}
+
+.dashboard-lastmonth-amount {
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.dashboard-graph-card {
+    background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.07);
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
+    min-width: 420px;
+    max-width: 100%;
+    min-height: 110px;
+    flex: 4 1 600px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.dashboard-section-title {
+    font-size: 0.95rem;
+    color: #6366f1;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 0.1rem;
+    text-transform: uppercase;
+}
+
+@media (max-width: 1400px) {
+    .dashboard-row-flex {
+        flex-wrap: wrap;
+        gap: 0.7rem;
+    }
+    .dashboard-calendar-flat,
+    .dashboard-summary-card,
+    .dashboard-lastmonth-card,
+    .dashboard-graph-card {
+        min-width: 160px;
+    }
+}
+
+@media (max-width: 991px) {
+    .dashboard-row-flex {
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+    .dashboard-calendar-flat,
+    .dashboard-summary-card,
+    .dashboard-lastmonth-card,
+    .dashboard-graph-card {
+        min-width: 100%;
+    }
+}
+</style>
+<style>
+.day-details-area-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #4f46e5;
+    letter-spacing: 1px;
+    margin-bottom: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    background: linear-gradient(90deg, #e0e7ff 60%, #f8fafc 100%);
+    border-radius: 0.7rem;
+    box-shadow: 0 2px 8px rgba(80, 80, 180, 0.09);
+    padding: 0.7rem 1.2rem;
+}
+.day-details-card {
+    background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
+    border-radius: 1rem;
+    box-shadow: 0 4px 24px rgba(80,80,180,0.13), 0 1.5px 4px rgba(80,80,180,0.07);
+    padding: 1.2rem 1.3rem 1.2rem 1.3rem;
+    margin-bottom: 1.2rem;
+    transition: box-shadow 0.25s, transform 0.22s, background 0.25s;
+    border-left: 6px solid #e0e7ff;
+    position: relative;
+    overflow: visible;
+}
+.day-details-card:hover {
+    box-shadow: 0 8px 32px rgba(80,80,180,0.18), 0 2px 8px rgba(80,80,180,0.13);
+    transform: translateY(-4px) scale(1.035);
+    background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
+}
+.day-details-card .card-action-icon {
+    position: absolute;
+    top: 1.1rem;
+    right: 1.1rem;
+    font-size: 1.1rem;
+    color: #bdbdbd;
+    opacity: 0.7;
+    transition: color 0.2s, opacity 0.2s;
+    cursor: pointer;
+}
+.day-details-card:hover .card-action-icon {
+    color: #6366f1;
+    opacity: 1;
+}
+.day-details-card .category-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: inherit;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+.day-details-card .category-icon {
+    font-size: 2.1em;
+    margin-right: 0.5rem;
+    filter: drop-shadow(0 1px 2px #e0e7ff);
+}
+.day-details-card .fs-5 {
+    font-size: 1.18rem !important;
+}
+.day-details-card .text-muted {
+    margin-top: 0.2rem;
+}
+</style>
+
+<style>
+.calendar-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin: 0 1px;
+    vertical-align: middle;
+}
+.calendar-dot-receita { background: #22c55e; border: 1px solid #16a34a; }
+.calendar-dot-despesa { background: #ef4444; border: 1px solid #b91c1c; }
+.calendar-dot-invoice { background: #2563eb; border: 1px solid #1e40af; }
+</style>
+
+<div class="container-fluid px-2">
+    <div class="dashboard-header mb-2">
+        <div class="dashboard-header-left">
+            <span class="dashboard-header-title">
+                <i class="fa-solid fa-gauge-high"></i> Dashboard Financeiro
+            </span>
+            <span class="dashboard-header-subtitle">
+                <i class="fa-regular fa-calendar-days"></i> Visão geral do caixa
+            </span>
+        </div>
+        <button class="dashboard-header-action" onclick="window.location.href='{{ route('cashbook.create') }}'">
+            <i class="fa-solid fa-plus"></i> Nova Transação
+        </button>
+    </div>
+
+    <div class="dashboard-row-flex flex-wrap flex-md-nowrap">
+        <div class="dashboard-calendar-flat shadow-lg border-0 mb-2 me-md-3 p-2"
+            style="transition: box-shadow 0.2s; width: auto; min-width: unset; max-width: unset;">
+            <div class="calendar-label mb-1">
+                <i class="fa-regular fa-calendar-days"></i> Calendário
+            </div>
+            <div id="dashboardCalendar"></div>
+        </div>
+
+        <div class="flex-grow-1 ">
+            <div class="dashboard-summary-row">
+                <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
+                    style="cursor:pointer;">
+                    <span class="dashboard-summary-icon text-success"><i class="bi bi-arrow-up"></i></span>
+                    <div class="dashboard-summary-label">Receitas</div>
+                    <div class="dashboard-summary-value text-success">
+                        R$ {{ number_format($totalReceitas ?? 0, 2, ',', '.') }}
+                    </div>
                 </div>
-                <div class="row text-center mb-4">
-                    <div class="col-4">
-                        <div class="icon-circle bg-success mb-2">
-                            <i class="fas fa-arrow-up fa-lg text-white"></i>
-                        </div>
-                        <div class="small text-muted">Receitas</div>
-                        <div class="fw-bolder text-success fs-5 mt-1">
-                            R$ {{ number_format($totalReceitas ?? 0, 2, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="icon-circle bg-danger mb-2">
-                            <i class="fas fa-arrow-down fa-lg text-white"></i>
-                        </div>
-                        <div class="small text-muted">Despesas</div>
-                        <div class="fw-bolder text-danger fs-5 mt-1">
-                            R$ {{ number_format($totalDespesas ?? 0, 2, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="icon-circle bg-secondary mb-2">
-                            <i class="fas fa-balance-scale fa-lg text-white"></i>
-                        </div>
-                        <div class="small text-muted">Saldo Geral</div>
-                        <div class="fw-bolder {{ ($saldoTotal ?? 0) >= 0 ? 'text-success' : 'text-danger' }} fs-5 mt-1">
-                            R$ {{ number_format($saldoTotal ?? 0, 2, ',', '.') }}
-                        </div>
+                <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
+                    style="cursor:pointer;">
+                    <span class="dashboard-summary-icon text-danger"><i class="bi bi-arrow-down"></i></span>
+                    <div class="dashboard-summary-label">Despesas</div>
+                    <div class="dashboard-summary-value text-danger">
+                        R$ {{ number_format($totalDespesas ?? 0, 2, ',', '.') }}
                     </div>
                 </div>
-                <hr class="my-3">
-                <h6 class="mb-4 text-uppercase text-primary fw-bold letter-spacing-1">
-                    <i class="fas fa-calendar-alt me-2"></i>Último mês com movimentação
-                </h6>
-                <div class="row text-center">
-                    <div class="col-12 mb-3">
-                        <span class="badge bg-info fs-6 px-3 py-2 shadow-sm">
-                            <i class="fas fa-calendar-alt me-1"></i>
-                            <span id="nomeUltimoMes">{{ $nomeUltimoMes }}</span>
-                        </span>
+                <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
+                    style="cursor:pointer;">
+                    <span class="dashboard-summary-icon text-secondary"><i class="bi bi-bar-chart-line"></i></span>
+                    <div class="dashboard-summary-label">Saldo Geral</div>
+                    <div class="dashboard-summary-value {{ ($saldoTotal ?? 0) >= 0 ? 'text-success' : 'text-danger' }}">
+                        R$ {{ number_format($saldoTotal ?? 0, 2, ',', '.') }}
                     </div>
-                    <div class="col-4">
-                        <div class="icon-circle bg-success mb-2">
-                            <i class="fas fa-arrow-up fa-lg text-white"></i>
-                        </div>
-                        <div class="small text-muted">Receitas</div>
-                        <div id="receitaUltimoMes" class="fw-bolder text-success fs-6 mt-1">
+                </div>
+            </div>
+            <div class="dashboard-lastmonth-card shadow-lg border-0 "
+                style=" padding: 0.7rem 0.7rem 0.7rem 0.7rem; transition: box-shadow 0.2s;">
+                <span class="dashboard-lastmonth-badge mb-2" style="font-size:0.95rem; padding:0.2rem 1rem;">
+                    <i class="bi bi-calendar2-week me-1"></i>
+                    <span id="nomeUltimoMes">{{ $nomeUltimoMes }}</span>
+                </span>
+                <div
+                    class="dashboard-lastmonth-values mt-1 d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                    <div class="dashboard-lastmonth-value">
+                        <div class="dashboard-lastmonth-label">Receitas</div>
+                        <div id="receitaUltimoMes" class="dashboard-lastmonth-amount text-success"
+                            style="font-size:0.98rem;">
                             R$ {{ number_format($receitaUltimoMes ?? 0, 2, ',', '.') }}
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="icon-circle bg-danger mb-2">
-                            <i class="fas fa-arrow-down fa-lg text-white"></i>
-                        </div>
-                        <div class="small text-muted">Despesas</div>
-                        <div id="despesaUltimoMes" class="fw-bolder text-danger fs-6 mt-1">
+                    <div class="dashboard-lastmonth-value">
+                        <div class="dashboard-lastmonth-label">Despesas</div>
+                        <div id="despesaUltimoMes" class="dashboard-lastmonth-amount text-danger"
+                            style="font-size:0.98rem;">
                             R$ {{ number_format($despesaUltimoMes ?? 0, 2, ',', '.') }}
                         </div>
                     </div>
-                    <div class="col-4">
-                        <div class="icon-circle bg-secondary mb-2">
-                            <i class="fas fa-balance-scale fa-lg text-white"></i>
-                        </div>
-                        <div class="small text-muted">Saldo</div>
-                        <div id="saldoUltimoMes" class="fw-bolder {{ ($saldoUltimoMes ?? 0) >= 0 ? 'text-success' : 'text-danger' }} fs-6 mt-1">
+                    <div class="dashboard-lastmonth-value">
+                        <div class="dashboard-lastmonth-label">Saldo</div>
+                        <div id="saldoUltimoMes"
+                            class="dashboard-lastmonth-amount {{ ($saldoUltimoMes ?? 0) >= 0 ? 'text-success' : 'text-danger' }}"
+                            style="font-size:0.98rem;">
                             R$ {{ number_format($saldoUltimoMes ?? 0, 2, ',', '.') }}
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <style>
-        .icon-circle {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-        }
-        .letter-spacing-1 {
-            letter-spacing: 1px;
-        }
-    </style>
-
-    <div class="col-md-8 mb-4">
-        <div class="card shadow border-0 h-100">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <h6 class="text-uppercase text-secondary fw-bold mb-0">Receitas x Despesas por mês</h6>
-                    <form method="GET" class="d-inline-block" id="formAno" onsubmit="return false;">
-                        <select name="ano" id="anoSelect" class="form-select form-select-sm" style="width:auto;display:inline-block;">
-                            @for($y = date('Y'); $y >= (date('Y')-5); $y--)
-                                <option value="{{ $y }}" @if($ano == $y) selected @endif>{{ $y }}</option>
+        <div class="dashboard-graph-card">
+            <div class="dashboard-section-title mb-1">
+                <i class="bi bi-bar-chart-fill me-2"></i>Receitas x Despesas
+                <form method="GET" class="d-inline-block float-end" id="formAno" onsubmit="return false;"
+                    style="float:right;">
+                    <select name="ano" id="anoSelect" class="form-select form-select-sm"
+                        style="width:auto;display:inline-block;">
+                        @for($y = date('Y'); $y >= (date('Y')-5); $y--)
+                        <option value="{{ $y }}" @if($ano==$y) selected @endif>{{ $y }}</option>
+                        @endfor
+                    </select>
+                </form>
+            </div>
+            <div style="width:100%;">
+                <canvas id="cashbookChart" height="70"></canvas>
+            </div>
+            <div class="card dashboard-card h-100 mt-2">
+                <div class="card-header pb-0 pt-1 d-flex justify-content-between align-items-center">
+                    <span class="dashboard-section-title"><i class="bi bi-calendar3-week me-2"></i>Diário
+                        Invoices</span>
+                    <div>
+                        <select id="mesInvoicesSelect" class="form-select form-select-sm d-inline-block"
+                            style="width:auto;">
+                            @for($m = 1; $m <= 12; $m++)
+                                <option value="{{ $m }}" @if($mesInvoices==$m) selected @endif>
+                                    {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
+                                </option>
                             @endfor
                         </select>
-                    </form>
+                        <select id="anoInvoicesSelect" class="form-select form-select-sm d-inline-block"
+                            style="width:auto;">
+                            @for($y = date('Y'); $y >= (date('Y')-5); $y--)
+                                <option value="{{ $y }}" @if($anoInvoices==$y) selected @endif>{{ $y }}</option>
+                            @endfor
+                        </select>
+                    </div>
                 </div>
-                <canvas id="cashbookChart" height="120"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- ROW: Bancos e Invoices --}}
-<div class="row mt-4">
-    <div class="col-md-12 mb-4">
-        <div class="card shadow border-0">
-            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                <h6 class="mb-0">Resumo dos Bancos</h6>
-                <span class="small text-muted">Total de Bancos: {{ $totalBancos }}</span>
-            </div>
-            <div class="card-body table-responsive">
-                <table class="table table-bordered table-sm align-middle">
-                    <thead>
-                        <tr>
-                            <th>Banco</th>
-                            <th>Descrição</th>
-                            <th>Qtd. Invoices</th>
-                            <th>Total Invoices</th>
-                            <th>Média Invoices</th>
-                            <th>Maior Invoice</th>
-                            <th>Menor Invoice</th>
-                            <th>Saldo (Entradas - Saídas)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($bancosInfo as $banco)
-                            <tr>
-                                <td>{{ $banco['nome'] }}</td>
-                                <td>{{ $banco['descricao'] }}</td>
-                                <td>{{ $banco['qtd_invoices'] }}</td>
-                                <td>R$ {{ number_format($banco['total_invoices'], 2, ',', '.') }}</td>
-                                <td>R$ {{ number_format($banco['media_invoices'], 2, ',', '.') }}</td>
-                                <td>
-                                    @if($banco['maior_invoice'])
-                                        R$ {{ number_format($banco['maior_invoice']->value, 2, ',', '.') }}
-                                        <br>
-                                        <small class="text-muted">{{ $banco['maior_invoice']->description }}</small>
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td>
-                                    @if($banco['menor_invoice'])
-                                        R$ {{ number_format($banco['menor_invoice']->value, 2, ',', '.') }}
-                                        <br>
-                                        <small class="text-muted">{{ $banco['menor_invoice']->description }}</small>
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td class="{{ $banco['saldo'] >= 0 ? 'text-success' : 'text-danger' }}">
-                                    R$ {{ number_format($banco['saldo'], 2, ',', '.') }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr class="fw-bold">
-                            <td colspan="3">Totais Gerais</td>
-                            <td>R$ {{ number_format($totalInvoicesBancos, 2, ',', '.') }}</td>
-                            <td colspan="3"></td>
-                            <td>R$ {{ number_format($saldoTotalBancos, 2, ',', '.') }}</td>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- ROW: Gráficos e Informações de Bancos e Invoices --}}
-<div class="row mt-4">
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header pb-0"><h6>Saldo por Banco</h6></div>
-            <div class="card-body">
-                <canvas id="bancosSaldoChart" height="120"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header pb-0"><h6>Total de Invoices por Banco</h6></div>
-            <div class="card-body">
-                <canvas id="bancosInvoicesChart" height="120"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="row mt-2">
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header pb-0"><h6>Distribuição de Saídas (Invoices)</h6></div>
-            <div class="card-body">
-                <canvas id="bancosSaidasChart" height="120"></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col-md-6 mb-4">
-        <div class="card">
-            <div class="card-header pb-0"><h6>Evolução do Saldo Total dos Bancos (12 meses)</h6></div>
-            <div class="card-body">
-                <canvas id="bancosEvolucaoSaldoChart" height="120"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- ROW: Gráfico Diário de Invoices --}}
-<div class="row mt-4">
-    <div class="col-md-12 mb-4">
-        <div class="card">
-            <div class="card-header pb-0 d-flex justify-content-between align-items-center">
-                <h6>Gráfico Diário de Invoices (Saídas por Dia)</h6>
-                <div>
-                    <select id="mesInvoicesSelect" class="form-select form-select-sm d-inline-block" style="width:auto;">
-                        @for($m = 1; $m <= 12; $m++)
-                            <option value="{{ $m }}" @if($mesInvoices == $m) selected @endif>
-                                {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
-                            </option>
-                        @endfor
-                    </select>
-                    <select id="anoInvoicesSelect" class="form-select form-select-sm d-inline-block" style="width:auto;">
-                        @for($y = date('Y'); $y >= (date('Y')-5); $y--)
-                            <option value="{{ $y }}" @if($anoInvoices == $y) selected @endif>{{ $y }}</option>
-                        @endfor
-                    </select>
+                <div class="card-body p-1">
+                    <canvas id="invoicesDiarioChart" height="60"></canvas>
                 </div>
             </div>
-            <div class="card-body">
-                <canvas id="invoicesDiarioChart" height="120"></canvas>
-            </div>
         </div>
     </div>
+    <div class="row ">
+      <div class="col-md-6">
+        <div id="dayDetailsContainer" class="mt-3"></div>
+      </div>
+    </div>
+
 </div>
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/pt.js"></script>
+<script>
+// Inicializa variáveis globais para os marcadores do calendário
+let cashbookDays = {!! json_encode($cashbookDays) !!};
+let invoiceDays = {!! json_encode($invoiceDays) !!};
+
+// Função para atualizar os marcadores do calendário
+function updateCalendarMarkers(fp) {
+    const currentMonth = fp.currentMonth + 1; // Flatpickr: 0 = Jan
+    const currentYear = fp.currentYear;
+    fetch(`{{ route('dashboard.cashbook.calendarMarkers') }}?mes=${currentMonth}&ano=${currentYear}`)
+        .then(res => res.json())
+        .then(data => {
+            cashbookDays = data.cashbookDays;
+            invoiceDays = data.invoiceDays;
+            fp.redraw();
+        });
+}
+
+var calendar = flatpickr("#dashboardCalendar", {
+    inline: true,
+    locale: "pt",
+    defaultDate: "today",
+    disableMobile: true,
+    onDayCreate: function(dObj, dStr, fp, dayElem) {
+        const date = dayElem.dateObj;
+        if (!date) return;
+        const yyyy = date.getFullYear();
+        const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+        const dd = date.getDate().toString().padStart(2, '0');
+        const dateStr = `${yyyy}-${mm}-${dd}`;
+        let dots = '';
+        if (cashbookDays[dateStr]) {
+            if (cashbookDays[dateStr].receita) {
+                dots += '<span class="calendar-dot calendar-dot-receita" title="Receita"></span>';
+            }
+            if (cashbookDays[dateStr].despesa) {
+                dots += '<span class="calendar-dot calendar-dot-despesa" title="Despesa"></span>';
+            }
+        }
+        if (invoiceDays.includes(dateStr)) {
+            dots += '<span class="calendar-dot calendar-dot-invoice" title="Invoice"></span>';
+        }
+        if (dots) {
+            const dotWrapper = document.createElement('div');
+            dotWrapper.innerHTML = dots;
+            dotWrapper.style.marginTop = '2px';
+            dotWrapper.style.textAlign = 'center';
+            dayElem.appendChild(dotWrapper);
+        }
+    },
+    onMonthChange: function(selectedDates, dateStr, fp) {
+        updateCalendarMarkers(fp);
+    },
+    onYearChange: function(selectedDates, dateStr, fp) {
+        updateCalendarMarkers(fp);
+    },
+    onChange: function(selectedDates, dateStr, fp) {
+        if (selectedDates.length > 0) {
+            const date = selectedDates[0];
+            const yyyy = date.getFullYear();
+            const mm = (date.getMonth() + 1).toString().padStart(2, '0');
+            const dd = date.getDate().toString().padStart(2, '0');
+            const dateStrApi = `${yyyy}-${mm}-${dd}`;
+            fetch(`{{ route('dashboard.cashbook.dayDetails') }}?date=${dateStrApi}`)
+                .then(res => res.json())
+                .then(data => {
+                    let html = '';
+                    html += `<div class='mb-3 day-details-area-title'><i class='bi bi-calendar-event-fill'></i> <span>Detalhes do dia</span> <span class='badge bg-primary ms-2'>${dd}/${mm}/${yyyy}</span></div>`;
+                    // Receitas
+                    html += `<div class="day-details-group day-details-group-receita mb-4">
+                        <div class="fw-bold mb-2 text-success"><i class="bi bi-arrow-up-circle"></i> Receitas</div>`;
+                    if (data.receitas && data.receitas.length > 0) {
+                        html += `<div class="row g-3">`;
+                        data.receitas.forEach(function(r) {
+                            html += `<div class="col-md-6">
+                                <div class="day-details-card" style="border-left: 6px solid ${r.category_color || '#22c55e'};">
+                                    <span class="card-action-icon"><i class="fa fa-pen"></i></span>
+                                    <div class="d-flex align-items-center mb-2 category-title">`;
+                            if (r.category_icon) html += `<span class="category-icon" style="color:${r.category_color || '#22c55e'}"><i class="${r.category_icon}"></i></span>`;
+                            html += `<span class="fw-bold" style="color:${r.category_color || '#22c55e'}">${r.category || 'Sem categoria'}</span>`;
+                            html += `</div>
+                                    <div class="fs-5 fw-bold text-success">R$ ${parseFloat(r.value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                                    <div class="text-muted small">${r.description || ''}</div>
+                                </div>
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += '<div class="text-muted small">Nenhuma receita</div>';
+                    }
+                    html += `</div>`;
+                    // Despesas
+                    html += `<div class="day-details-group day-details-group-despesa mb-4">
+                        <div class="fw-bold mb-2 text-danger"><i class="bi bi-arrow-down-circle"></i> Despesas</div>`;
+                    if (data.despesas && data.despesas.length > 0) {
+                        html += `<div class="row g-3">`;
+                        data.despesas.forEach(function(d) {
+                            html += `<div class="col-md-6">
+                                <div class="day-details-card" style="border-left: 6px solid ${d.category_color || '#ef4444'};">
+                                    <span class="card-action-icon"><i class="fa fa-pen"></i></span>
+                                    <div class="d-flex align-items-center mb-2 category-title">`;
+                            if (d.category_icon) html += `<span class="category-icon" style="color:${d.category_color || '#ef4444'}"><i class="${d.category_icon}"></i></span>`;
+                            html += `<span class="fw-bold" style="color:${d.category_color || '#ef4444'}">${d.category || 'Sem categoria'}</span>`;
+                            html += `</div>
+                                    <div class="fs-5 fw-bold text-danger">R$ ${parseFloat(d.value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                                    <div class="text-muted small">${d.description || ''}</div>
+                                </div>
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += '<div class="text-muted small">Nenhuma despesa</div>';
+                    }
+                    html += `</div>`;
+                    // Invoices
+                    html += `<div class="day-details-group day-details-group-invoice mb-4">
+                        <div class="fw-bold mb-2 text-primary"><i class="bi bi-credit-card"></i> Invoices</div>`;
+                    if (data.invoices && data.invoices.length > 0) {
+                        html += `<div class="row g-3">`;
+                        data.invoices.forEach(function(i) {
+                            html += `<div class="col-md-6">
+                                <div class="day-details-card" style="border-left: 6px solid ${i.category_color || '#2563eb'};">
+                                    <span class="card-action-icon"><i class="fa fa-pen"></i></span>
+                                    <div class="d-flex align-items-center mb-2 category-title">`;
+                            if (i.category_icon) html += `<span class="category-icon" style="color:${i.category_color || '#2563eb'}"><i class="${i.category_icon}"></i></span>`;
+                            html += `<span class="fw-bold" style="color:${i.category_color || '#2563eb'}">${i.category || 'Sem categoria'}</span>`;
+                            html += `</div>
+                                    <div class="fs-5 fw-bold text-primary">R$ ${parseFloat(i.value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                                    <div class="text-muted small">${i.description || ''}</div>
+                                </div>
+                            </div>`;
+                        });
+                        html += `</div>`;
+                    } else {
+                        html += '<div class="text-muted small">Nenhum invoice</div>';
+                    }
+                    html += `</div>`;
+                    document.getElementById('dayDetailsContainer').innerHTML = html;
+                })
+                .catch(() => {
+                    document.getElementById('dayDetailsContainer').innerHTML = '<div class="alert alert-danger">Erro ao buscar detalhes do dia.</div>';
+                });
+        }
+    }
+});
+// Atualiza marcadores ao carregar a página
+updateCalendarMarkers(calendar);
+
+// Ao carregar a página, já mostra os detalhes do dia atual
+window.addEventListener('DOMContentLoaded', function() {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = (today.getMonth() + 1).toString().padStart(2, '0');
+    const dd = today.getDate().toString().padStart(2, '0');
+    const dateStrApi = `${yyyy}-${mm}-${dd}`;
+    // Simula seleção do dia atual
+    fetch(`{{ route('dashboard.cashbook.dayDetails') }}?date=${dateStrApi}`)
+        .then(res => res.json())
+        .then(data => {
+            let html = '';
+            html += `<div class='mb-3 day-details-area-title'><i class='bi bi-calendar-event-fill'></i> <span>Detalhes do dia</span> <span class='badge bg-primary ms-2'>${dd}/${mm}/${yyyy}</span></div>`;
+            // Receitas
+            html += `<div class="day-details-group day-details-group-receita mb-4">
+                <div class="fw-bold mb-2 text-success"><i class="bi bi-arrow-up-circle"></i> Receitas</div>`;
+            if (data.receitas && data.receitas.length > 0) {
+                html += `<div class="row g-3">`;
+                data.receitas.forEach(function(r) {
+                    html += `<div class="col-md-6">
+                        <div class="day-details-card" style="border-left: 6px solid ${r.category_color || '#22c55e'};">
+                            <span class="card-action-icon"><i class="fa fa-pen"></i></span>
+                            <div class="d-flex align-items-center mb-2 category-title">`;
+                    if (r.category_icon) html += `<span class="category-icon" style="color:${r.category_color || '#22c55e'}"><i class="${r.category_icon}"></i></span>`;
+                    html += `<span class="fw-bold" style="color:${r.category_color || '#22c55e'}">${r.category || 'Sem categoria'}</span>`;
+                    html += `</div>
+                            <div class="fs-5 fw-bold text-success">R$ ${parseFloat(r.value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            <div class="text-muted small">${r.description || ''}</div>
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += '<div class="text-muted small">Nenhuma receita</div>';
+            }
+            html += `</div>`;
+            // Despesas
+            html += `<div class="day-details-group day-details-group-despesa mb-4">
+                <div class="fw-bold mb-2 text-danger"><i class="bi bi-arrow-down-circle"></i> Despesas</div>`;
+            if (data.despesas && data.despesas.length > 0) {
+                html += `<div class="row g-3">`;
+                data.despesas.forEach(function(d) {
+                    html += `<div class="col-md-6">
+                        <div class="day-details-card" style="border-left: 6px solid ${d.category_color || '#ef4444'};">
+                            <span class="card-action-icon"><i class="fa fa-pen"></i></span>
+                            <div class="d-flex align-items-center mb-2 category-title">`;
+                    if (d.category_icon) html += `<span class="category-icon" style="color:${d.category_color || '#ef4444'}"><i class="${d.category_icon}"></i></span>`;
+                    html += `<span class="fw-bold" style="color:${d.category_color || '#ef4444'}">${d.category || 'Sem categoria'}</span>`;
+                    html += `</div>
+                            <div class="fs-5 fw-bold text-danger">R$ ${parseFloat(d.value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            <div class="text-muted small">${d.description || ''}</div>
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += '<div class="text-muted small">Nenhuma despesa</div>';
+            }
+            html += `</div>`;
+            // Invoices
+            html += `<div class="day-details-group day-details-group-invoice mb-4">
+                <div class="fw-bold mb-2 text-primary"><i class="bi bi-credit-card"></i> Invoices</div>`;
+            if (data.invoices && data.invoices.length > 0) {
+                html += `<div class="row g-3">`;
+                data.invoices.forEach(function(i) {
+                    html += `<div class="col-md-6">
+                        <div class="day-details-card" style="border-left: 6px solid ${i.category_color || '#2563eb'};">
+                            <span class="card-action-icon"><i class="fa fa-pen"></i></span>
+                            <div class="d-flex align-items-center mb-2 category-title">`;
+                    if (i.category_icon) html += `<span class="category-icon" style="color:${i.category_color || '#2563eb'}"><i class="${i.category_icon}"></i></span>`;
+                    html += `<span class="fw-bold" style="color:${i.category_color || '#2563eb'}">${i.category || 'Sem categoria'}</span>`;
+                    html += `</div>
+                            <div class="fs-5 fw-bold text-primary">R$ ${parseFloat(i.value).toLocaleString('pt-BR', {minimumFractionDigits: 2})}</div>
+                            <div class="text-muted small">${i.description || ''}</div>
+                        </div>
+                    </div>`;
+                });
+                html += `</div>`;
+            } else {
+                html += '<div class="text-muted small">Nenhum invoice</div>';
+            }
+            html += `</div>`;
+            document.getElementById('dayDetailsContainer').innerHTML = html;
+        })
+        .catch(() => {
+            document.getElementById('dayDetailsContainer').innerHTML = '<div class="alert alert-danger">Erro ao buscar detalhes do dia.</div>';
+        });
+});
+</script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    let cashbookChart;
-    const meses = {!! json_encode(array_values($meses)) !!};
+const meses = {!! json_encode(array_values($meses)) !!};
+let cashbookChart;
 
-    function renderChart(receitas, despesas) {
-        const ctx = document.getElementById('cashbookChart').getContext('2d');
-        if (cashbookChart) cashbookChart.destroy();
-        cashbookChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: meses,
-                datasets: [
-                    {
-                        label: 'Receitas',
-                        backgroundColor: 'rgba(40, 167, 69, 0.7)',
-                        borderColor: 'rgba(40, 167, 69, 1)',
-                        borderWidth: 1,
-                        data: receitas
-                    },
-                    {
-                        label: 'Despesas',
-                        backgroundColor: 'rgba(220, 53, 69, 0.7)',
-                        borderColor: 'rgba(220, 53, 69, 1)',
-                        borderWidth: 1,
-                        data: despesas
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: { position: 'top' }
+function renderChart(receitas, despesas) {
+    const ctx = document.getElementById('cashbookChart').getContext('2d');
+    if (cashbookChart) cashbookChart.destroy();
+    cashbookChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: meses,
+            datasets: [
+                {
+                    label: 'Receitas',
+                    backgroundColor: 'rgba(40, 167, 69, 0.7)',
+                    borderColor: 'rgba(40, 167, 69, 1)',
+                    borderWidth: 1,
+                    data: receitas
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                            }
+                {
+                    label: 'Despesas',
+                    backgroundColor: 'rgba(220, 53, 69, 0.7)',
+                    borderColor: 'rgba(220, 53, 69, 1)',
+                    borderWidth: 1,
+                    data: despesas
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'top' }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                         }
                     }
                 }
             }
-        }); // <-- FECHA Chart
-    } // <-- FECHA FUNÇÃO
-
-    renderChart({!! json_encode($dadosReceita) !!}, {!! json_encode($dadosDespesa) !!});
-
-    document.getElementById('anoSelect').addEventListener('change', function() {
-        const ano = this.value;
-        fetch("{{ route('dashboard.cashbookChartData') }}?ano=" + ano)
-            .then(res => res.json())
-            .then(function(data) {
-                renderChart(data.dadosReceita, data.dadosDespesa);
-                document.getElementById('receitaUltimoMes').innerHTML =
-                    'R$ ' + (data.receitaUltimoMes).toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                document.getElementById('despesaUltimoMes').innerHTML =
-                    'R$ ' + (data.despesaUltimoMes).toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                document.getElementById('saldoUltimoMes').innerHTML =
-                    'R$ ' + (data.saldoUltimoMes).toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                document.getElementById('saldoUltimoMes').className =
-                    'fw-bolder mt-2 ' + (data.saldoUltimoMes >= 0 ? 'text-success' : 'text-danger');
-                document.getElementById('nomeUltimoMes').innerText = data.nomeUltimoMes;
-            });
-    });
-
-    // Gráfico de Barras: Saldo por Banco
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctxBancosSaldo = document.getElementById('bancosSaldoChart');
-        if (ctxBancosSaldo) {
-            new Chart(ctxBancosSaldo.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($bancosInfo->pluck('nome')) !!},
-                    datasets: [{
-                        label: 'Saldo',
-                        data: {!! json_encode($bancosInfo->pluck('saldo')) !!},
-                        backgroundColor: {!! json_encode($bancosInfo->pluck('saldo')->map(function($v) { return $v >= 0 ? 'rgba(40,167,69,0.7)' : 'rgba(220,53,69,0.7)'; })->values()) !!}
-                    }] // <-- FECHA O ARRAY DE DATASETS
-                }, // <-- FECHA O OBJETO DATA
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
         }
     });
+}
 
-    // Gráfico de Barras: Total de Invoices por Banco
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctxBancosInvoices = document.getElementById('bancosInvoicesChart');
-        if (ctxBancosInvoices) {
-            new Chart(ctxBancosInvoices.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: {!! json_encode($bancosInfo->pluck('nome')) !!},
-                    datasets: [{
-                        label: 'Total de Invoices',
-                        data: {!! json_encode($bancosInfo->pluck('total_invoices')) !!},
-                        backgroundColor: 'rgba(54, 162, 235, 0.7)'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: true } }
-                }
-            });
-        }
-    });
+renderChart({!! json_encode($dadosReceita) !!}, {!! json_encode($dadosDespesa) !!});
 
-    // Gráfico de Pizza: Saídas (Invoices)
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctxBancosSaidas = document.getElementById('bancosSaidasChart');
-        if (ctxBancosSaidas) {
-            new Chart(ctxBancosSaidas.getContext('2d'), {
-                type: 'pie',
-                data: {
-                    labels: {!! json_encode($bancosInfo->pluck('nome')) !!},
-                    datasets: [{
-                        data: {!! json_encode($bancosInfo->pluck('saidas')) !!},
-                        backgroundColor: [
-                            'rgba(220, 53, 69, 0.7)',
-                            'rgba(255, 159, 64, 0.7)',
-                            'rgba(255, 206, 86, 0.7)',
-                            'rgba(75, 192, 192, 0.7)',
-                            'rgba(54, 162, 235, 0.7)',
-                            'rgba(153, 102, 255, 0.7)'
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { position: 'top' } }
-                }
-            });
-        }
-    });
+document.getElementById('anoSelect').addEventListener('change', function() {
+    const ano = this.value;
+    fetch("{{ route('dashboard.cashbookChartData') }}?ano=" + ano)
+        .then(res => res.json())
+        .then(function(data) {
+            renderChart(data.dadosReceita, data.dadosDespesa);
+            document.getElementById('receitaUltimoMes').innerHTML =
+                'R$ ' + (data.receitaUltimoMes).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('despesaUltimoMes').innerHTML =
+                'R$ ' + (data.despesaUltimoMes).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('saldoUltimoMes').innerHTML =
+                'R$ ' + (data.saldoUltimoMes).toLocaleString('pt-BR', {minimumFractionDigits: 2});
+            document.getElementById('saldoUltimoMes').className =
+                'dashboard-lastmonth-amount ' + (data.saldoUltimoMes >= 0 ? 'text-success' : 'text-danger');
+            document.getElementById('nomeUltimoMes').innerText = data.nomeUltimoMes;
+        });
+});
 
-    // Gráfico de Linha: Evolução do Saldo Total dos Bancos (últimos 12 meses)
-    document.addEventListener('DOMContentLoaded', function() {
-        const ctxBancosEvolucao = document.getElementById('bancosEvolucaoSaldoChart');
-        if (ctxBancosEvolucao) {
-            new Chart(ctxBancosEvolucao.getContext('2d'), {
-                type: 'line',
-                data: {
-                    labels: {!! json_encode($bancosEvolucaoMeses) !!},
-                    datasets: [{
-                        label: 'Saldo Acumulado',
-                        data: {!! json_encode($bancosEvolucaoSaldos) !!},
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: false } }
-                }
-            });
-        }
-    });
-
-    // Gráfico Diário de Invoices (Saídas por Dia - mês/ano dinâmico)
-    let invoicesDiarioChart;
-    function renderInvoicesDiarioChart(labels, values) {
-        const ctx = document.getElementById('invoicesDiarioChart').getContext('2d');
-        if (invoicesDiarioChart) invoicesDiarioChart.destroy();
-        invoicesDiarioChart = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Saídas (Invoices)',
-                    data: values,
-                    backgroundColor: 'rgba(220, 53, 69, 0.7)'
-                }]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { display: false } },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2});
-                            }
+let invoicesDiarioChart;
+function renderInvoicesDiarioChart(labels, values) {
+    const ctx = document.getElementById('invoicesDiarioChart').getContext('2d');
+    if (invoicesDiarioChart) invoicesDiarioChart.destroy();
+    invoicesDiarioChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Saídas (Invoices)',
+                data: values,
+                backgroundColor: 'rgba(220, 53, 69, 0.7)'
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return 'R$ ' + value.toLocaleString('pt-BR', {minimumFractionDigits: 2});
                         }
                     }
                 }
-            } // <-- FALTAVA FECHAR ESTE OBJETO options
-        }); // <-- FECHA O Chart
-    }
+            }
+        }
+    });
+}
 
-    // Inicializa com os dados do blade
-    renderInvoicesDiarioChart({!! json_encode($diasInvoices) !!}, {!! json_encode($valoresInvoices) !!});
+renderInvoicesDiarioChart({!! json_encode($diasInvoices) !!}, {!! json_encode($valoresInvoices) !!});
 
-    // Troca dinâmica de mês/ano
-    document.getElementById('mesInvoicesSelect').addEventListener('change', updateInvoicesDiarioChart);
-    document.getElementById('anoInvoicesSelect').addEventListener('change', updateInvoicesDiarioChart);
+document.getElementById('mesInvoicesSelect').addEventListener('change', updateInvoicesDiarioChart);
+document.getElementById('anoInvoicesSelect').addEventListener('change', updateInvoicesDiarioChart);
 
-    function updateInvoicesDiarioChart() {
-        const mes = document.getElementById('mesInvoicesSelect').value;
-        const ano = document.getElementById('anoInvoicesSelect').value;
-        fetch("{{ route('dashboard.invoicesDailyChartData') }}?mes=" + mes + "&ano=" + ano)
-            .then(res => res.json())
-            .then(function(data) {
-                renderInvoicesDiarioChart(data.diasInvoices, data.valoresInvoices);
-            });
-    }
+function updateInvoicesDiarioChart() {
+    const mes = document.getElementById('mesInvoicesSelect').value;
+    const ano = document.getElementById('anoInvoicesSelect').value;
+    fetch("{{ route('dashboard.invoicesDailyChartData') }}?mes=" + mes + "&ano=" + ano)
+        .then(res => {
+            if (!res.ok) throw new Error('Erro ao buscar dados');
+            return res.json();
+        })
+        .then(function(data) {
+            renderInvoicesDiarioChart(data.diasInvoices, data.valoresInvoices);
+        })
+        .catch(function(err) {
+            alert('Erro ao atualizar gráfico Diário Invoices');
+        });
+}
 </script>
 @endpush
 @endsection
