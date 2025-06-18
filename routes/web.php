@@ -149,6 +149,7 @@ Route::post('/invoices/{id}/toggle-dividida', [ClienteResumoController::class, '
 
     Route::get('/sales/search', [SaleController::class, 'search'])->name('sales.search');
 Route::get('/dashboard/invoices-daily-chart-data', [\App\Http\Controllers\DashboardController::class, 'invoicesDailyChartData'])->name('dashboard.invoicesDailyChartData');
+Route::get('/dashboard/invoices-daily-chart-data', [\App\Http\Controllers\DashboardCashbookController::class, 'invoicesDailyChartData'])->name('dashboard.invoicesDailyChartData');
 
 
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
@@ -207,6 +208,8 @@ Route::get('/clientes/{cliente}/transferencias-recebidas', [App\Http\Controllers
 Route::prefix('dashboard/cashbook')->middleware(['auth'])->group(function () {
     Route::get('/', [DashboardCashbookController::class, 'index'])->name('dashboard.cashbook');
     Route::get('/chart-data', [DashboardCashbookController::class, 'cashbookChartData'])->name('dashboard.cashbookChartData');
+    Route::get('/calendar-markers', [DashboardCashbookController::class, 'getCalendarMarkers'])->name('dashboard.cashbook.calendarMarkers');
+    Route::get('/day-details', [DashboardCashbookController::class, 'getDayDetails'])->name('dashboard.cashbook.dayDetails');
 });
 
 Route::prefix('dashboard/products')->middleware(['auth'])->group(function () {
