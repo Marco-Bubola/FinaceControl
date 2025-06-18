@@ -380,45 +380,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const transactionRows = document.getElementById('transactionRows');
                     transactionRows.innerHTML = ''; // Limpar as linhas existentes
                     data.transactions.forEach((transaction, index) => {
-                        transactionRows.innerHTML += `
-                <tr data-index="${index}">
-                    <td>
-                        <button type="button" class="btn btn-danger btn-sm remove-row" title="Remover">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </td>
-                    <td>
-                        <input type="date" name="transactions[${index}][date]" value="${transaction.invoice_date}" class="form-control" style="width: 130px;" required>
-                    </td>
-                    <td>
-                        <input type="number" name="transactions[${index}][value]" value="${transaction.valor}" class="form-control" style="width: 100px;" step="0.01" required>
-                    </td>
-                    <td>
-                        <input type="text" name="transactions[${index}][description]" value="${transaction.descricao}" class="form-control"  required>
-                    </td>
-                    <td>
-                        <input type="text" name="transactions[${index}][installments]" value="${transaction.parcelas}" class="form-control" style="width: 90px;" required>
-                    </td>
-                    <td>
-                        <select name="transactions[${index}][category_id]" class="form-control" style="width: 200px;" required>
-                            <option value="" disabled ${transaction.category_id ? '' : 'selected'}>Selecione</option>
-                            ${data.categories.map(category => {
-                                const isSelected = category.id == transaction.category_id ? 'selected' : '';
-                                return `<option value="${category.id}" ${isSelected}>${category.name}</option>`;
-                            }).join('')}
-                        </select>
-                    </td>
-                    <td>
-                        <select name="transactions[${index}][client_id]" class="form-control">
-                            <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
-                            ${data.clients.map(client => {
-                                const isSelected = client.id == transaction.client_id ? 'selected' : '';
-                                return `<option value="${client.id}" ${isSelected}>${client.name}</option>`;
-                            }).join('')}
-                        </select>
-                    </td>
-                </tr>
-            `;
+                        transactionRows.innerHTML += renderInvoiceRow(transaction, index, data);
                     });
                     // Adiciona funcionalidade de remoção de linha
                     const removeButtons = document.querySelectorAll('.remove-row');
@@ -471,4 +433,87 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     });
 });
+</script>
+<style>
+.input-icon-invoice {
+    position: absolute;
+    left: 13px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.18rem;
+    pointer-events: none;
+    opacity: 0.95;
+    z-index: 2;
+}
+.input-icon-invoice.icon-calendar { color: #ff9966; }
+.input-icon-invoice.icon-money { color: #2575fc; }
+.input-icon-invoice.icon-desc { color: #ff5e62; }
+.input-icon-invoice.icon-tags { color: #6a11cb; }
+.input-icon-invoice.icon-user { color: #a6c1ee; }
+.input-icon-invoice.icon-parcel { color: #f39c12; }
+.input-icon-invoice.input-icon-select { right: 13px; left: auto; }
+.stylish-table .input-group { position: relative; display: flex; align-items: center; width: 100%; }
+.stylish-table .input-group > .form-control,
+.stylish-table .input-group > select.form-control { width: 100%; padding-left: 2.5rem !important; padding-right: 2.5rem !important; }
+</style>
+<script>
+function renderInvoiceRow(transaction, index, data) {
+    return `
+    <tr data-index="${index}">
+        <td>
+            <button type="button" class="btn btn-danger btn-sm remove-row" title="Remover">
+                <i class="fa fa-trash"></i>
+            </button>
+        </td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="input-icon-invoice icon-calendar"><i class="fa fa-calendar-alt"></i></span>
+                <input type="date" name="transactions[${index}][date]" value="${transaction.invoice_date || ''}" class="form-control ms-0" style="width: 130px;" required>
+            </div>
+        </td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="input-icon-invoice icon-money"><i class="fa fa-dollar-sign"></i></span>
+                <input type="text" inputmode="decimal" pattern="^\\d+(\\.\\d{2})$" name="transactions[${index}][value]" value="${Number(transaction.valor).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}" class="form-control input-valor ms-0" style="width: 100px;" required placeholder="Value">
+            </div>
+        </td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="input-icon-invoice icon-desc"><i class="fa fa-align-left"></i></span>
+                <input type="text" name="transactions[${index}][description]" value="${transaction.descricao || ''}" class="form-control ms-0" required placeholder="Descrição">
+            </div>
+        </td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="input-icon-invoice icon-parcel"><i class="fa fa-layer-group"></i></span>
+                <input type="text" name="transactions[${index}][installments]" value="${transaction.parcelas || ''}" class="form-control ms-0" style="width: 90px;" required placeholder="Parcelas">
+            </div>
+        </td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="input-icon-invoice icon-tags"><i class="fa fa-tags"></i></span>
+                <select name="transactions[${index}][category_id]" class="form-control stylish-select-icon ms-0" style="width: 200px;" required>
+                    <option value="" disabled ${transaction.category_id ? '' : 'selected'}>Selecione</option>
+                    ${data.categories.map(category => {
+                        const isSelected = category.id == transaction.category_id ? 'selected' : '';
+                        return `<option value="${category.id}" ${isSelected}>${category.name}</option>`;
+                    }).join('')}
+                </select>
+            </div>
+        </td>
+        <td>
+            <div class="d-flex align-items-center gap-2">
+                <span class="input-icon-invoice icon-user"><i class="fa fa-user"></i></span>
+                <select name="transactions[${index}][client_id]" class="form-control stylish-select-icon ms-0">
+                    <option value="" ${!transaction.client_id ? 'selected' : ''}>Nenhum cliente</option>
+                    ${data.clients.map(client => {
+                        const isSelected = client.id == transaction.client_id ? 'selected' : '';
+                        return `<option value="${client.id}" ${isSelected}>${client.name}</option>`;
+                    }).join('')}
+                </select>
+            </div>
+        </td>
+    </tr>
+    `;
+}
 </script>
