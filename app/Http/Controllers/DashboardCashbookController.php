@@ -121,6 +121,37 @@ class DashboardCashbookController extends Controller
             $valoresInvoices[] = (float)$valorDia;
         }
 
+        // Dias do mês atual com receitas/despesas/invoices
+        $mesAtual = now()->month;
+        $anoAtual = now()->year;
+        $diasNoMes = \Carbon\Carbon::create($anoAtual, $mesAtual, 1)->daysInMonth;
+        $cashbookDays = [];
+        $invoiceDays = [];
+
+        for ($i = 1; $i <= $diasNoMes; $i++) {
+            $data = \Carbon\Carbon::create($anoAtual, $mesAtual, $i)->format('Y-m-d');
+            $receita = Cashbook::where('user_id', $userId)
+                ->where('type_id', 1)
+                ->whereDate('date', $data)
+                ->exists();
+            $despesa = Cashbook::where('user_id', $userId)
+                ->where('type_id', 2)
+                ->whereDate('date', $data)
+                ->exists();
+            if ($receita || $despesa) {
+                $cashbookDays[$data] = [
+                    'receita' => $receita,
+                    'despesa' => $despesa
+                ];
+            }
+            $hasInvoice = \App\Models\Invoice::where('user_id', $userId)
+                ->whereDate('invoice_date', $data)
+                ->exists();
+            if ($hasInvoice) {
+                $invoiceDays[] = $data;
+            }
+        }
+
         return view('dashboard.cashbook.index', compact(
             'totalReceitas',
             'totalDespesas',
@@ -145,7 +176,9 @@ class DashboardCashbookController extends Controller
             'diasInvoices',
             'valoresInvoices',
             'mesInvoices',
-            'anoInvoices'
+            'anoInvoices',
+            'cashbookDays',
+            'invoiceDays'
         ));
     }
 
@@ -197,4 +230,131 @@ class DashboardCashbookController extends Controller
             'despesaUltimoMes' => $despesaUltimoMes,
         ]);
     }
+
+    public function invoicesDailyChartData(Request $request)
+    {
+        $userId = \Auth::id();
+        $mes = $request->input('mes', now()->month);
+        $ano = $request->input('ano', now()->year);
+
+        $diasInvoices = [];
+        $valoresInvoices = [];
+        $diasNoMes = \Carbon\Carbon::create($ano, $mes, 1)->daysInMonth;
+        for ($i = 1; $i <= $diasNoMes; $i++) {
+            $data = \Carbon\Carbon::create($ano, $mes, $i);
+            $diasInvoices[] = $data->format('d/m');
+            $valorDia = \App\Models\Invoice::where('user_id', $userId)
+                ->whereDate('invoice_date', $data)
+                ->sum('value');
+            $valoresInvoices[] = (float)$valorDia;
+        }
+
+        return response()->json([
+            'diasInvoices' => $diasInvoices,
+            'valoresInvoices' => $valoresInvoices,
+        ]);
+    }
+/**
+     * Retorna os dias do mês/ano com receitas, despesas e invoices para o calendário (AJAX)
+     */
+    public function getCalendarMarkers(Request $request)
+    {
+        $userId = Auth::id();
+        $mes = $request->input('mes', now()->month);
+        $ano = $request->input('ano', now()->year);
+        $diasNoMes = \Carbon\Carbon::create($ano, $mes, 1)->daysInMonth;
+        $cashbookDays = [];
+        $invoiceDays = [];
+        for ($i = 1; $i <= $diasNoMes; $i++) {
+            $data = \Carbon\Carbon::create($ano, $mes, $i)->format('Y-m-d');
+            $receita = \App\Models\Cashbook::where('user_id', $userId)
+                ->where('type_id', 1)
+                ->whereDate('date', $data)
+                ->exists();
+            $despesa = \App\Models\Cashbook::where('user_id', $userId)
+                ->where('type_id', 2)
+                ->whereDate('date', $data)
+                ->exists();
+            if ($receita || $despesa) {
+                $cashbookDays[$data] = [
+                    'receita' => $receita,
+                    'despesa' => $despesa
+                ];
+            }
+            $hasInvoice = \App\Models\Invoice::where('user_id', $userId)
+                ->whereDate('invoice_date', $data)
+                ->exists();
+            if ($hasInvoice) {
+                $invoiceDays[] = $data;
+            }
+        }
+        return response()->json([
+            'cashbookDays' => $cashbookDays,
+            'invoiceDays' => $invoiceDays
+        ]);
+    }
+    
+    /**
+     * Retorna receitas, despesas e invoices de um dia específico (AJAX)
+     */
+    public function getDayDetails(Request $request)
+    {
+        $userId = Auth::id();
+        $date = $request->input('date'); // formato Y-m-d
+        if (!$date) {
+            return response()->json(['error' => 'Data não informada'], 400);
+        }
+        // Receitas
+        $receitas = \App\Models\Cashbook::where('user_id', $userId)
+            ->where('type_id', 1)
+            ->whereDate('date', $date)
+            ->with('category')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'value' => $item->value,
+                    'description' => $item->description,
+                    'category' => $item->category ? $item->category->name : null,
+                    'category_color' => $item->category ? $item->category->hexcolor_category : null,
+                    'category_icon' => $item->category ? $item->category->icone : null,
+                ];
+            });
+        // Despesas
+        $despesas = \App\Models\Cashbook::where('user_id', $userId)
+            ->where('type_id', 2)
+            ->whereDate('date', $date)
+            ->with('category')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'value' => $item->value,
+                    'description' => $item->description,
+                    'category' => $item->category ? $item->category->name : null,
+                    'category_color' => $item->category ? $item->category->hexcolor_category : null,
+                    'category_icon' => $item->category ? $item->category->icone : null,
+                ];
+            });
+        // Invoices
+        $invoices = \App\Models\Invoice::where('user_id', $userId)
+            ->whereDate('invoice_date', $date)
+            ->with('category')
+            ->get()
+            ->map(function($item) {
+                return [
+                    'value' => $item->value,
+                    'description' => $item->description,
+                    'category' => $item->category ? $item->category->name : null,
+                    'category_color' => $item->category ? $item->category->hexcolor_category : null,
+                    'category_icon' => $item->category ? $item->category->icone : null,
+                ];
+            });
+        return response()->json([
+            'receitas' => $receitas,
+            'despesas' => $despesas,
+            'invoices' => $invoices
+        ]);
+    }
 }
+
+// Todos os métodos presentes (index, cashbookChartData, invoicesDailyChartData) são utilizados pelos gráficos e pela view.
+// Nenhuma função extra para remover.
