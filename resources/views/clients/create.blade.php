@@ -141,7 +141,7 @@
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <form action="{{ route('clients.store') }}" method="POST" id="clientForm">
+            <form action="{{ route('clients.store') }}" method="POST" id="clientForm" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body">
                     <div class="container-fluid">
@@ -200,6 +200,66 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <div class="form-group input-group-custom">
+                                            <label>
+                                                <i class="bi bi-image"></i>
+                                                Foto ou Ícone do Cliente
+                                                <span class="text-muted">(Opcional)</span>
+                                            </label>
+                                            <div class="mb-2">
+                                                <button type="button" class="btn btn-outline-primary btn-sm me-2" id="btnEscolherImagem">Upload Imagem</button>
+                                                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnEscolherIcone">Escolher Ícone</button>
+                                            </div>
+                                            <div id="areaUploadImagem">
+                                                <input type="file" name="caminho_foto" id="caminho_foto" class="form-control mb-2" accept="image/*">
+                                            </div>
+                                            <div id="areaEscolherIcone" style="display:none;">
+                                                <input type="hidden" name="icone_cliente" id="icone_cliente">
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @php
+                                                    $icones = [
+                                                        'bi-person-circle','bi-person-fill','bi-person-badge','bi-emoji-smile','bi-emoji-sunglasses','bi-people-fill','bi-star-fill','bi-gem','bi-heart-fill','bi-briefcase-fill','bi-house-door-fill','bi-robot','bi-emoji-laughing','bi-emoji-wink','bi-emoji-heart-eyes'
+                                                    ];
+                                                    @endphp
+                                                    @foreach($icones as $icone)
+                                                    <button type="button" class="btn btn-light border btn-icone-cliente" data-icone="{{ $icone }}">
+                                                        <i class="bi {{ $icone }}" style="font-size:2rem;"></i>
+                                                    </button>
+                                                    @endforeach
+                                                </div>
+                                                <div class="mt-2 small text-muted">Clique em um ícone para selecionar</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const btnImg = document.getElementById('btnEscolherImagem');
+                                    const btnIcone = document.getElementById('btnEscolherIcone');
+                                    const areaImg = document.getElementById('areaUploadImagem');
+                                    const areaIcone = document.getElementById('areaEscolherIcone');
+                                    const inputIcone = document.getElementById('icone_cliente');
+                                    document.querySelectorAll('.btn-icone-cliente').forEach(btn => {
+                                        btn.addEventListener('click', function() {
+                                            document.querySelectorAll('.btn-icone-cliente').forEach(b => b.classList.remove('border-primary'));
+                                            btn.classList.add('border-primary');
+                                            inputIcone.value = btn.getAttribute('data-icone');
+                                        });
+                                    });
+                                    btnImg.addEventListener('click', function() {
+                                        areaImg.style.display = '';
+                                        areaIcone.style.display = 'none';
+                                        inputIcone.value = '';
+                                    });
+                                    btnIcone.addEventListener('click', function() {
+                                        areaImg.style.display = 'none';
+                                        areaIcone.style.display = '';
+                                        document.getElementById('caminho_foto').value = '';
+                                    });
+                                });
+                                </script>
                                 <!-- Endereço Completo -->
                                 <div id="addressFields" style="display: none;">
                                     <div class="form-section-title">
