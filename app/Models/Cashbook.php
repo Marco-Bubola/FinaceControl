@@ -23,6 +23,7 @@ class Cashbook extends Model
         'note',
         'segment_id',
         'client_id',
+        'cofrinho_id',
     ];
 
     public function user()
@@ -45,5 +46,9 @@ class Cashbook extends Model
     public function segment()
     {
         return $this->belongsTo(Segment::class, 'segment_id');
+    }
+    public function cofrinho()
+    {
+        return $this->belongsTo(Cofrinho::class, 'cofrinho_id');
     }
 }
