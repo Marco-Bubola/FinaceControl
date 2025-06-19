@@ -21,7 +21,7 @@ class ProductUploadController extends Controller
         'products.*.price_sale' => 'required|numeric',
         'products.*.quantity' => 'required|integer',
         'products.*.product_code' => 'required|string|max:255',
-        'products.*.status' => 'required|in:active,inactive',
+        'products.*.status' => 'required|in:ativo,inativo,descontinuado',
         'products.*.image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
     ]);
 
@@ -75,10 +75,12 @@ class ProductUploadController extends Controller
                         'price_sale' => $product['price_sale'],
                         'stock_quantity' => $product['quantity'],
                         'product_code' => $product['product_code'],
-                        'status' => $product['status'],
+                        'status' => $product['status'] ?? 'ativo',
+                        'tipo' => $product['tipo'] ?? 'simples',
+                        'custos_adicionais' => $product['custos_adicionais'] ?? 0,
                         'image' => $imageName,
                         'user_id' => Auth::check() ? Auth::id() : null,
-                        'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
+                        'category_id' => $product['category_id'] ?? 1,
                     ]);
                 }
             } else {
@@ -91,10 +93,12 @@ class ProductUploadController extends Controller
                     'price_sale' => $product['price_sale'],
                     'stock_quantity' => $product['quantity'],
                     'product_code' => $product['product_code'],
-                    'status' => $product['status'],
+                    'status' => $product['status'] ?? 'ativo',
+                    'tipo' => $product['tipo'] ?? 'simples',
+                    'custos_adicionais' => $product['custos_adicionais'] ?? 0,
                     'image' => $imageName,
                     'user_id' => Auth::check() ? Auth::id() : null,
-                    'category_id' => $product['category_id'] ?? 1,  // Defina o valor da categoria (1 como exemplo de categoria padrão)
+                    'category_id' => $product['category_id'] ?? 1,
                 ]);
             }
         } catch (\Exception $e) {
