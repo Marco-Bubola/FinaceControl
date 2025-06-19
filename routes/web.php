@@ -219,3 +219,8 @@ Route::prefix('dashboard/products')->middleware(['auth'])->group(function () {
 Route::prefix('dashboard/sales')->middleware(['auth'])->group(function () {
     Route::get('/', [DashboardSalesController::class, 'index'])->name('dashboard.sales');
 });
+
+Route::post('/parcelas/{id}/pagar', [App\Http\Controllers\SaleController::class, 'pagarParcela'])->name('parcelas.pagar');
+
+Route::post('products/kit/store', [App\Http\Controllers\ProductController::class, 'storeKit'])->name('products.kit.store');
+Route::put('products/kit/update/{id}', [App\Http\Controllers\ProductController::class, 'updateKit'])->name('products.kit.update');
