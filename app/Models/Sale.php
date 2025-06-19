@@ -44,6 +44,12 @@ class Sale extends Model
         return $this->hasMany(ModelsSalePayment::class);
     }
 
+    // Relacionamento com as parcelas da venda
+    public function parcelasVenda()
+    {
+        return $this->hasMany(VendaParcela::class, 'sale_id');
+    }
+
     // Método para calcular o total pago
     public function getTotalPaidAttribute()
     {
