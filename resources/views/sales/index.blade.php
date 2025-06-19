@@ -291,6 +291,13 @@
                                                     Adicionar Produto
                                                 </button>
                                             </li>
+                                            <li>
+                                                <button class="dropdown-item" data-bs-toggle="modal"
+                                                    data-bs-target="#modalParcelasVenda{{ $sale->id }}">
+                                                    <i class="bi bi-list-ol me-2 text-primary"></i>
+                                                    Parcelas
+                                                </button>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -380,6 +387,91 @@
                             </div>
                         </div>
                         @include('sales.paymentHistory')
+                        <!-- Modal de Parcelas -->
+                        <div class="modal fade" id="modalParcelasVenda{{ $sale->id }}" tabindex="-1" aria-labelledby="modalParcelasVendaLabel{{ $sale->id }}" aria-hidden="true">
+                          <div class="modal-dialog modal-lg modal-dialog-centered">
+                            <div class="modal-content rounded-4 shadow-lg">
+                              <div class="modal-header bg-primary text-white rounded-top-4">
+                                <h5 class="modal-title" id="modalParcelasVendaLabel{{ $sale->id }}">
+                                  <i class="bi bi-list-ol me-2"></i>Parcelas da Venda
+                                </h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                              </div>
+                              <div class="modal-body">
+                                <div class="table-responsive">
+                                  <table class="table table-bordered align-middle text-center">
+                                    <thead class="table-light">
+                                      <tr>
+                                        <th>#</th>
+                                        <th>Valor</th>
+                                        <th>Vencimento</th>
+                                        <th>Status</th>
+                                        <th>Ação</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                                      @foreach($sale->parcelasVenda as $parcela)
+                                      <tr>
+                                        <td>{{ $parcela->numero_parcela }}</td>
+                                        <td>R$ {{ number_format($parcela->valor, 2, ',', '.') }}</td>
+                                        <td>{{ \Carbon\Carbon::parse($parcela->data_vencimento)->format('d/m/Y') }}</td>
+                                        <td>
+                                          @if($parcela->status == 'pendente')
+                                            <span class="badge bg-warning text-dark">Pendente</span>
+                                          @elseif($parcela->status == 'paga')
+                                            <span class="badge bg-success">Paga</span>
+                                          @elseif($parcela->status == 'vencida')
+                                            <span class="badge bg-danger">Vencida</span>
+                                          @endif
+                                        </td>
+                                        <td>
+                                          @if($parcela->status == 'pendente')
+                                          <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#modalPagarParcelaIndex{{ $parcela->id }}">
+                                            <i class="bi bi-cash-coin"></i> Registrar Pagamento
+                                          </button>
+                                          <!-- Modal Registrar Pagamento -->
+                                          <div class="modal fade" id="modalPagarParcelaIndex{{ $parcela->id }}" tabindex="-1" aria-labelledby="modalPagarParcelaIndexLabel{{ $parcela->id }}" aria-hidden="true">
+                                            <div class="modal-dialog modal-dialog-centered">
+                                              <div class="modal-content rounded-4 shadow-lg">
+                                                <div class="modal-header bg-success text-white rounded-top-4">
+                                                  <h5 class="modal-title" id="modalPagarParcelaIndexLabel{{ $parcela->id }}">
+                                                    <i class="bi bi-cash-coin me-2"></i>Registrar Pagamento da Parcela #{{ $parcela->numero_parcela }}
+                                                  </h5>
+                                                  <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                                </div>
+                                                <form action="{{ route('parcelas.pagar', $parcela->id) }}" method="POST" class="needs-validation" novalidate>
+                                                  @csrf
+                                                  <div class="modal-body">
+                                                    <div class="mb-3">
+                                                      <label for="valor_pago_index_{{ $parcela->id }}" class="form-label">Valor Pago</label>
+                                                      <input type="number" step="0.01" class="form-control" id="valor_pago_index_{{ $parcela->id }}" name="valor_pago" value="{{ $parcela->valor }}" required>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                      <label for="payment_date_index_{{ $parcela->id }}" class="form-label">Data do Pagamento</label>
+                                                      <input type="date" class="form-control" id="payment_date_index_{{ $parcela->id }}" name="payment_date" value="{{ date('Y-m-d') }}" required>
+                                                    </div>
+                                                  </div>
+                                                  <div class="modal-footer">
+                                                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-success">Confirmar Pagamento</button>
+                                                  </div>
+                                                </form>
+                                              </div>
+                                            </div>
+                                          </div>
+                                          @else
+                                          <span class="text-muted">-</span>
+                                          @endif
+                                        </td>
+                                      </tr>
+                                      @endforeach
+                                    </tbody>
+                                  </table>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -412,6 +504,7 @@
       
         @endif
        <!-- Paginação -->
+        @if(!empty($isPaginated) && $isPaginated)
         <div class="d-flex justify-content-center mt-4">
             <nav>
                 <ul class="pagination">
@@ -462,6 +555,7 @@
                 </ul>
             </nav>
         </div>
+        @endif
     </div>
 </div>
 
