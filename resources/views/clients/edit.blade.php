@@ -147,120 +147,120 @@
                     @csrf
                     @method('PUT')
                     <div id="step1_edit{{ $client->id }}">
-                        <div class="modal-body">
-                            <div class="container-fluid">
-                                <div class="row justify-content-center">
-                                    <div class="col-md-10">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10">
+                                    <div class="form-section-title">
+                                        <i class="bi bi-person-badge"></i> Dados do Cliente
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group input-group-custom">
+                                                <label for="name{{ $client->id }}">
+                                                    <i class="bi bi-person-fill"></i>
+                                                    Nome do Cliente
+                                                    <span class="required-star">*</span>
+                                                </label>
+                                                <input type="text" name="name" id="name{{ $client->id }}" class="form-control"
+                                                    placeholder="Digite o nome do cliente" value="{{ $client->name }}" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group input-group-custom">
+                                                <label for="email{{ $client->id }}">
+                                                    <i class="bi bi-envelope-at-fill"></i>
+                                                    Email
+                                                    <span class="text-muted">(Opcional)</span>
+                                                </label>
+                                                <input type="email" name="email" id="email{{ $client->id }}" class="form-control"
+                                                    placeholder="Digite o email" value="{{ $client->email }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group input-group-custom">
+                                                <label for="phone{{ $client->id }}">
+                                                    <i class="bi bi-telephone-fill"></i>
+                                                    Telefone
+                                                    <span class="text-muted">(Opcional)</span>
+                                                </label>
+                                                <input type="text" name="phone" id="phone{{ $client->id }}" class="form-control"
+                                                    placeholder="(XX) XXXXX-XXXX" value="{{ $client->phone }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group input-group-custom">
+                                                <label for="cep{{ $client->id }}">
+                                                    <i class="bi bi-geo-alt-fill"></i>
+                                                    CEP
+                                                    <span class="text-muted">(Opcional)</span>
+                                                </label>
+                                                <input type="text" name="cep" id="cep{{ $client->id }}" class="form-control"
+                                                    placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()" value="{{ $client->cep }}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="addressFields" style="display: block;">
                                         <div class="form-section-title">
-                                            <i class="bi bi-person-badge"></i> Dados do Cliente
+                                            <i class="bi bi-geo-fill"></i> Endereço Completo
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="name{{ $client->id }}">
-                                                        <i class="bi bi-person-fill"></i>
-                                                        Nome do Cliente
-                                                        <span class="required-star">*</span>
+                                                    <label for="address{{ $client->id }}">
+                                                        <i class="bi bi-house-door-fill"></i>
+                                                        Endereço
+                                                        <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="text" name="name" id="name{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite o nome do cliente" value="{{ $client->name }}" required>
+                                                    <input type="text" name="address" id="address{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite o endereço" value="{{ $client->address }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="email{{ $client->id }}">
-                                                        <i class="bi bi-envelope-at-fill"></i>
-                                                        Email
+                                                    <label for="city{{ $client->id }}">
+                                                        <i class="bi bi-building"></i>
+                                                        Cidade
                                                         <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="email" name="email" id="email{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite o email" value="{{ $client->email }}">
+                                                    <input type="text" name="city" id="city{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite a cidade" value="{{ $client->city }}">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="phone{{ $client->id }}">
-                                                        <i class="bi bi-telephone-fill"></i>
-                                                        Telefone
+                                                    <label for="state{{ $client->id }}">
+                                                        <i class="bi bi-flag-fill"></i>
+                                                        Estado
                                                         <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="text" name="phone" id="phone{{ $client->id }}" class="form-control"
-                                                        placeholder="(XX) XXXXX-XXXX" value="{{ $client->phone }}">
+                                                    <input type="text" name="state" id="state{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite o estado" value="{{ $client->state }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="cep{{ $client->id }}">
-                                                        <i class="bi bi-geo-alt-fill"></i>
-                                                        CEP
+                                                    <label for="district{{ $client->id }}">
+                                                        <i class="bi bi-signpost-split-fill"></i>
+                                                        Bairro
                                                         <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="text" name="cep" id="cep{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()" value="{{ $client->cep }}">
+                                                    <input type="text" name="district" id="district{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite o bairro" value="{{ $client->district }}">
                                                 </div>
                                             </div>
                                         </div>
-                                        <div id="addressFields" style="display: block;">
-                                            <div class="form-section-title">
-                                                <i class="bi bi-geo-fill"></i> Endereço Completo
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-6">
-                                                    <div class="form-group input-group-custom">
-                                                        <label for="address{{ $client->id }}">
-                                                            <i class="bi bi-house-door-fill"></i>
-                                                            Endereço
-                                                            <span class="text-muted">(Opcional)</span>
-                                                        </label>
-                                                        <input type="text" name="address" id="address{{ $client->id }}" class="form-control"
-                                                            placeholder="Digite o endereço" value="{{ $client->address }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group input-group-custom">
-                                                        <label for="city{{ $client->id }}">
-                                                            <i class="bi bi-building"></i>
-                                                            Cidade
-                                                            <span class="text-muted">(Opcional)</span>
-                                                        </label>
-                                                        <input type="text" name="city" id="city{{ $client->id }}" class="form-control"
-                                                            placeholder="Digite a cidade" value="{{ $client->city }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="row mb-3">
-                                                <div class="col-md-6">
-                                                    <div class="form-group input-group-custom">
-                                                        <label for="state{{ $client->id }}">
-                                                            <i class="bi bi-flag-fill"></i>
-                                                            Estado
-                                                            <span class="text-muted">(Opcional)</span>
-                                                        </label>
-                                                        <input type="text" name="state" id="state{{ $client->id }}" class="form-control"
-                                                            placeholder="Digite o estado" value="{{ $client->state }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <div class="form-group input-group-custom">
-                                                        <label for="district{{ $client->id }}">
-                                                            <i class="bi bi-signpost-split-fill"></i>
-                                                            Bairro
-                                                            <span class="text-muted">(Opcional)</span>
-                                                        </label>
-                                                        <input type="text" name="district" id="district{{ $client->id }}" class="form-control"
-                                                            placeholder="Digite o bairro" value="{{ $client->district }}">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-12 text-center mt-3">
-                                                <div class="modal-footer d-flex justify-content-center">
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center mt-3">
+                                            <div class="modal-footer d-flex justify-content-center">
                                                     <button type="button" class="btn btn-primary" id="btnNextStepEdit{{ $client->id }}">
                                                         Próximo <i class="bi bi-arrow-right"></i>
-                                                    </button>
+                                                </button>
                                                 </div>
                                             </div>
                                         </div>
