@@ -17,6 +17,7 @@
         "laravel/tinker": "^2.6",
         "laravel/ui": "^4.6",
         "smalot/pdfparser": "^2.11",
+        "spatie/laravel-permission": "^6.20",
         "twbs/bootstrap": "^5.3"
     },
     "require-dev": {
