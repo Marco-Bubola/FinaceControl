@@ -193,6 +193,34 @@
                             <div class="row" id="selected-products-summary">
                                 <!-- Aqui os produtos selecionados serão inseridos dinamicamente -->
                             </div>
+
+                            <!-- Tipo de Pagamento e Parcelas -->
+                            <div class="row mt-4 justify-content-center">
+                                <div class="col-md-4">
+                                    <label for="tipo_pagamento" class="form-label"><i class="bi bi-credit-card-2-front"></i> Tipo de Pagamento</label>
+                                    <select name="tipo_pagamento" id="tipo_pagamento" class="form-select" required>
+                                        <option value="a_vista">À vista</option>
+                                        <option value="parcelado">Parcelado</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-4" id="parcelas-group" style="display:none;">
+                                    <label for="parcelas" class="form-label"><i class="bi bi-list-ol"></i> Parcelas</label>
+                                    <input type="number" name="parcelas" id="parcelas" class="form-control" min="2" max="36" value="2">
+                                </div>
+                            </div>
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function() {
+                                    const tipoPagamento = document.getElementById('tipo_pagamento');
+                                    const parcelasGroup = document.getElementById('parcelas-group');
+                                    tipoPagamento.addEventListener('change', function() {
+                                        if (tipoPagamento.value === 'parcelado') {
+                                            parcelasGroup.style.display = '';
+                                        } else {
+                                            parcelasGroup.style.display = 'none';
+                                        }
+                                    });
+                                });
+                            </script>
                         </div>
 
                         <div class="modal-footer d-flex justify-content-center">
