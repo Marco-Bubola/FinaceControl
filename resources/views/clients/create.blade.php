@@ -143,188 +143,125 @@
             </div>
             <form action="{{ route('clients.store') }}" method="POST" id="clientForm" enctype="multipart/form-data">
                 @csrf
-                <div class="modal-body">
-                    <div class="container-fluid">
-                        <div class="row justify-content-center">
-                            <div class="col-md-10">
-                                <!-- Dados do Cliente -->
-                                <div class="form-section-title">
-                                    <i class="bi bi-person-badge"></i> Dados do Cliente
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group input-group-custom">
-                                            <label for="name">
-                                                <i class="bi bi-person-fill"></i>
-                                                Nome do Cliente
-                                                <span class="required-star">*</span>
-                                            </label>
-                                            <input type="text" name="name" id="name" class="form-control"
-                                                placeholder="Digite o nome do cliente" required>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group input-group-custom">
-                                            <label for="email">
-                                                <i class="bi bi-envelope-at-fill"></i>
-                                                Email
-                                                <span class="text-muted">(Opcional)</span>
-                                            </label>
-                                            <input type="email" name="email" id="email" class="form-control"
-                                                placeholder="Digite o email"
-                                                pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group input-group-custom">
-                                            <label for="phone">
-                                                <i class="bi bi-telephone-fill"></i>
-                                                Telefone
-                                                <span class="text-muted">(Opcional)</span>
-                                            </label>
-                                            <input type="text" name="phone" id="phone" class="form-control"
-                                                placeholder="(XX) XXXXX-XXXX">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <div class="form-group input-group-custom">
-                                            <label for="cep">
-                                                <i class="bi bi-geo-alt-fill"></i>
-                                                CEP
-                                                <span class="text-muted">(Opcional)</span>
-                                            </label>
-                                            <input type="text" name="cep" id="cep" class="form-control"
-                                                placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="row mb-3">
-                                    <div class="col-md-6">
-                                        <div class="form-group input-group-custom">
-                                            <label>
-                                                <i class="bi bi-image"></i>
-                                                Foto ou Ícone do Cliente
-                                                <span class="text-muted">(Opcional)</span>
-                                            </label>
-                                            <div class="mb-2">
-                                                <button type="button" class="btn btn-outline-primary btn-sm me-2" id="btnEscolherImagem">Upload Imagem</button>
-                                                <button type="button" class="btn btn-outline-secondary btn-sm" id="btnEscolherIcone">Escolher Ícone</button>
-                                            </div>
-                                            <div id="areaUploadImagem">
-                                                <input type="file" name="caminho_foto" id="caminho_foto" class="form-control mb-2" accept="image/*">
-                                            </div>
-                                            <div id="areaEscolherIcone" style="display:none;">
-                                                <input type="hidden" name="icone_cliente" id="icone_cliente">
-                                                <div class="d-flex flex-wrap gap-2">
-                                                    @php
-                                                    $icones = [
-                                                        'bi-person-circle','bi-person-fill','bi-person-badge','bi-emoji-smile','bi-emoji-sunglasses','bi-people-fill','bi-star-fill','bi-gem','bi-heart-fill','bi-briefcase-fill','bi-house-door-fill','bi-robot','bi-emoji-laughing','bi-emoji-wink','bi-emoji-heart-eyes'
-                                                    ];
-                                                    @endphp
-                                                    @foreach($icones as $icone)
-                                                    <button type="button" class="btn btn-light border btn-icone-cliente" data-icone="{{ $icone }}">
-                                                        <i class="bi {{ $icone }}" style="font-size:2rem;"></i>
-                                                    </button>
-                                                    @endforeach
-                                                </div>
-                                                <div class="mt-2 small text-muted">Clique em um ícone para selecionar</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <script>
-                                document.addEventListener('DOMContentLoaded', function() {
-                                    const btnImg = document.getElementById('btnEscolherImagem');
-                                    const btnIcone = document.getElementById('btnEscolherIcone');
-                                    const areaImg = document.getElementById('areaUploadImagem');
-                                    const areaIcone = document.getElementById('areaEscolherIcone');
-                                    const inputIcone = document.getElementById('icone_cliente');
-                                    document.querySelectorAll('.btn-icone-cliente').forEach(btn => {
-                                        btn.addEventListener('click', function() {
-                                            document.querySelectorAll('.btn-icone-cliente').forEach(b => b.classList.remove('border-primary'));
-                                            btn.classList.add('border-primary');
-                                            inputIcone.value = btn.getAttribute('data-icone');
-                                        });
-                                    });
-                                    btnImg.addEventListener('click', function() {
-                                        areaImg.style.display = '';
-                                        areaIcone.style.display = 'none';
-                                        inputIcone.value = '';
-                                    });
-                                    btnIcone.addEventListener('click', function() {
-                                        areaImg.style.display = 'none';
-                                        areaIcone.style.display = '';
-                                        document.getElementById('caminho_foto').value = '';
-                                    });
-                                });
-                                </script>
-                                <!-- Endereço Completo -->
-                                <div id="addressFields" style="display: none;">
+                <div id="step1">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10">
+                                    <!-- Dados do Cliente -->
                                     <div class="form-section-title">
-                                        <i class="bi bi-geo-fill"></i> Endereço Completo
+                                        <i class="bi bi-person-badge"></i> Dados do Cliente
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group input-group-custom">
-                                                <label for="address">
-                                                    <i class="bi bi-house-door-fill"></i>
-                                                    Endereço
-                                                    <span class="text-muted">(Opcional)</span>
+                                                <label for="name">
+                                                    <i class="bi bi-person-fill"></i>
+                                                    Nome do Cliente
+                                                    <span class="required-star">*</span>
                                                 </label>
-                                                <input type="text" name="address" id="address" class="form-control"
-                                                    placeholder="Digite o endereço">
+                                                <input type="text" name="name" id="name" class="form-control"
+                                                    placeholder="Digite o nome do cliente" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group input-group-custom">
-                                                <label for="city">
-                                                    <i class="bi bi-building"></i>
-                                                    Cidade
+                                                <label for="email">
+                                                    <i class="bi bi-envelope-at-fill"></i>
+                                                    Email
                                                     <span class="text-muted">(Opcional)</span>
                                                 </label>
-                                                <input type="text" name="city" id="city" class="form-control"
-                                                    placeholder="Digite a cidade">
+                                                <input type="email" name="email" id="email" class="form-control"
+                                                    placeholder="Digite o email"
+                                                    pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group input-group-custom">
-                                                <label for="state">
-                                                    <i class="bi bi-flag-fill"></i>
-                                                    Estado
+                                                <label for="phone">
+                                                    <i class="bi bi-telephone-fill"></i>
+                                                    Telefone
                                                     <span class="text-muted">(Opcional)</span>
                                                 </label>
-                                                <input type="text" name="state" id="state" class="form-control"
-                                                    placeholder="Digite o estado">
+                                                <input type="text" name="phone" id="phone" class="form-control"
+                                                    placeholder="(XX) XXXXX-XXXX">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group input-group-custom">
-                                                <label for="district">
-                                                    <i class="bi bi-signpost-split-fill"></i>
-                                                    Bairro
+                                                <label for="cep">
+                                                    <i class="bi bi-geo-alt-fill"></i>
+                                                    CEP
                                                     <span class="text-muted">(Opcional)</span>
                                                 </label>
-                                                <input type="text" name="district" id="district" class="form-control"
-                                                    placeholder="Digite o bairro">
+                                                <input type="text" name="cep" id="cep" class="form-control"
+                                                    placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()">
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <!-- Botões -->
-                                <div class="row">
-                                    <div class="col-md-12 text-center mt-3">
-                                        <div class="modal-footer d-flex justify-content-center">
-                                            <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
-                                                <i class="bi bi-x-circle"></i> Cancelar
-                                            </button>
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="bi bi-person-plus"></i>
-                                                Adicionar Cliente
-                                            </button>
+                                    <!-- Endereço Completo -->
+                                    <div id="addressFields" style="display: none;">
+                                        <div class="form-section-title">
+                                            <i class="bi bi-geo-fill"></i> Endereço Completo
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-group input-group-custom">
+                                                    <label for="address">
+                                                        <i class="bi bi-house-door-fill"></i>
+                                                        Endereço
+                                                        <span class="text-muted">(Opcional)</span>
+                                                    </label>
+                                                    <input type="text" name="address" id="address" class="form-control"
+                                                        placeholder="Digite o endereço">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group input-group-custom">
+                                                    <label for="city">
+                                                        <i class="bi bi-building"></i>
+                                                        Cidade
+                                                        <span class="text-muted">(Opcional)</span>
+                                                    </label>
+                                                    <input type="text" name="city" id="city" class="form-control"
+                                                        placeholder="Digite a cidade">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                            <div class="col-md-6">
+                                                <div class="form-group input-group-custom">
+                                                    <label for="state">
+                                                        <i class="bi bi-flag-fill"></i>
+                                                        Estado
+                                                        <span class="text-muted">(Opcional)</span>
+                                                    </label>
+                                                    <input type="text" name="state" id="state" class="form-control"
+                                                        placeholder="Digite o estado">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group input-group-custom">
+                                                    <label for="district">
+                                                        <i class="bi bi-signpost-split-fill"></i>
+                                                        Bairro
+                                                        <span class="text-muted">(Opcional)</span>
+                                                    </label>
+                                                    <input type="text" name="district" id="district" class="form-control"
+                                                        placeholder="Digite o bairro">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-12 text-center mt-3">
+                                            <div class="modal-footer d-flex justify-content-center">
+                                                <button type="button" class="btn btn-primary" id="btnNextStep">
+                                                    Próximo <i class="bi bi-arrow-right"></i>
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -332,7 +269,95 @@
                         </div>
                     </div>
                 </div>
+                <div id="step2" style="display:none;">
+                    <div class="modal-body">
+                        <div class="container-fluid">
+                            <div class="row justify-content-center">
+                                <div class="col-md-10">
+                                    <div class="form-section-title">
+                                        <i class="bi bi-person-circle"></i> Escolha um Avatar
+                                    </div>
+                                    <input type="hidden" name="avatar_cliente" id="avatar_cliente">
+                                    <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                        @php
+                                        $avatares = [
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&hairColor=Brown&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Light',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&hairColor=Black&clotheType=Hoodie&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Brown',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads01&hairColor=Blonde&clotheType=GraphicShirt&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=DarkBrown',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairCurly&hairColor=Red&clotheType=BlazerSweater&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Black',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=NoHair&clotheType=ShirtCrewNeck&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Tanned',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortWaved&hairColor=SilverGray&clotheType=Hoodie&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=Yellow',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight2&hairColor=Auburn&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Pale',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairFrizzle&hairColor=Brown&clotheType=ShirtCrewNeck&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Light',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&hairColor=Black&clotheType=Hoodie&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=DarkBrown',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairCurvy&hairColor=Red&clotheType=BlazerSweater&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Brown',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairTheCaesar&hairColor=SilverGray&clotheType=ShirtCrewNeck&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=Black',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairBigHair&hairColor=Blonde&clotheType=GraphicShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Yellow',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairSides&hairColor=Auburn&clotheType=BlazerShirt&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Pale',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairMiaWallace&hairColor=Brown&clotheType=Hoodie&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=Tanned',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairRound&hairColor=Black&clotheType=BlazerSweater&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Light',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraightStrand&hairColor=Red&clotheType=ShirtCrewNeck&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Brown',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads02&hairColor=SilverGray&clotheType=GraphicShirt&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=DarkBrown',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=LongHairNotTooLong&hairColor=Blonde&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Black',
+                                            'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&hairColor=Brown&clotheType=Hoodie&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Yellow',
+                                        ];
+                                        @endphp
+                                        @foreach($avatares as $avatar)
+                                        <button type="button" class="btn btn-light border btn-avatar-cliente" data-avatar="{{ $avatar }}">
+                                            <img src="{{ $avatar }}" alt="Avatar" style="width:72px; height:72px; border-radius:50%;">
+                                        </button>
+                                        @endforeach
+                                    </div>
+                                    <div class="mt-3 text-center">
+                                        <button type="button" class="btn btn-secondary me-2" id="btnPrevStep">
+                                            <i class="bi bi-arrow-left"></i> Voltar
+                                        </button>
+                                        <button type="submit" class="btn btn-success" id="btnSalvarCliente" disabled>
+                                            <i class="bi bi-person-plus"></i> Adicionar Cliente
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </form>
+            <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const step1 = document.getElementById('step1');
+                const step2 = document.getElementById('step2');
+                const btnNext = document.getElementById('btnNextStep');
+                const btnPrev = document.getElementById('btnPrevStep');
+                const btnSalvar = document.getElementById('btnSalvarCliente');
+                const inputNome = document.getElementById('name');
+                const inputAvatar = document.getElementById('avatar_cliente');
+                // Avançar para step 2
+                btnNext.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    if(inputNome.value.trim() !== '') {
+                        step1.style.display = 'none';
+                        step2.style.display = '';
+                    } else {
+                        inputNome.focus();
+                    }
+                });
+                // Voltar para step 1
+                btnPrev.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    step2.style.display = 'none';
+                    step1.style.display = '';
+                });
+                // Selecionar avatar
+                document.querySelectorAll('.btn-avatar-cliente').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        document.querySelectorAll('.btn-avatar-cliente').forEach(b => b.classList.remove('border-primary'));
+                        btn.classList.add('border-primary');
+                        inputAvatar.value = btn.getAttribute('data-avatar');
+                        btnSalvar.disabled = false;
+                    });
+                });
+            });
+            </script>
         </div>
     </div>
 </div>
