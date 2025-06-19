@@ -143,211 +143,218 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('clients.update', $client->id) }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('clients.update', $client->id) }}" method="POST">
                     @csrf
                     @method('PUT')
-                    <div class="modal-body">
-                        <div class="container-fluid">
-                            <div class="row justify-content-center">
-                                <div class="col-md-10">
-                                    <div class="form-section-title">
-                                        <i class="bi bi-person-badge"></i> Dados do Cliente
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="form-group input-group-custom">
-                                                <label for="name{{ $client->id }}">
-                                                    <i class="bi bi-person-fill"></i>
-                                                    Nome do Cliente
-                                                    <span class="required-star">*</span>
-                                                </label>
-                                                <input type="text" name="name" id="name{{ $client->id }}" class="form-control"
-                                                    placeholder="Digite o nome do cliente" value="{{ $client->name }}" required>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group input-group-custom">
-                                                <label for="email{{ $client->id }}">
-                                                    <i class="bi bi-envelope-at-fill"></i>
-                                                    Email
-                                                    <span class="text-muted">(Opcional)</span>
-                                                </label>
-                                                <input type="email" name="email" id="email{{ $client->id }}" class="form-control"
-                                                    placeholder="Digite o email" value="{{ $client->email }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="form-group input-group-custom">
-                                                <label for="phone{{ $client->id }}">
-                                                    <i class="bi bi-telephone-fill"></i>
-                                                    Telefone
-                                                    <span class="text-muted">(Opcional)</span>
-                                                </label>
-                                                <input type="text" name="phone" id="phone{{ $client->id }}" class="form-control"
-                                                    placeholder="(XX) XXXXX-XXXX" value="{{ $client->phone }}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <div class="form-group input-group-custom">
-                                                <label for="cep{{ $client->id }}">
-                                                    <i class="bi bi-geo-alt-fill"></i>
-                                                    CEP
-                                                    <span class="text-muted">(Opcional)</span>
-                                                </label>
-                                                <input type="text" name="cep" id="cep{{ $client->id }}" class="form-control"
-                                                    placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()" value="{{ $client->cep }}">
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div id="addressFields" style="display: block;">
+                    <div id="step1_edit{{ $client->id }}">
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-10">
                                         <div class="form-section-title">
-                                            <i class="bi bi-geo-fill"></i> Endereço Completo
+                                            <i class="bi bi-person-badge"></i> Dados do Cliente
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="address{{ $client->id }}">
-                                                        <i class="bi bi-house-door-fill"></i>
-                                                        Endereço
-                                                        <span class="text-muted">(Opcional)</span>
+                                                    <label for="name{{ $client->id }}">
+                                                        <i class="bi bi-person-fill"></i>
+                                                        Nome do Cliente
+                                                        <span class="required-star">*</span>
                                                     </label>
-                                                    <input type="text" name="address" id="address{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite o endereço" value="{{ $client->address }}">
+                                                    <input type="text" name="name" id="name{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite o nome do cliente" value="{{ $client->name }}" required>
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="city{{ $client->id }}">
-                                                        <i class="bi bi-building"></i>
-                                                        Cidade
+                                                    <label for="email{{ $client->id }}">
+                                                        <i class="bi bi-envelope-at-fill"></i>
+                                                        Email
                                                         <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="text" name="city" id="city{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite a cidade" value="{{ $client->city }}">
+                                                    <input type="email" name="email" id="email{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite o email" value="{{ $client->email }}">
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="state{{ $client->id }}">
-                                                        <i class="bi bi-flag-fill"></i>
-                                                        Estado
+                                                    <label for="phone{{ $client->id }}">
+                                                        <i class="bi bi-telephone-fill"></i>
+                                                        Telefone
                                                         <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="text" name="state" id="state{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite o estado" value="{{ $client->state }}">
+                                                    <input type="text" name="phone" id="phone{{ $client->id }}" class="form-control"
+                                                        placeholder="(XX) XXXXX-XXXX" value="{{ $client->phone }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-6">
                                                 <div class="form-group input-group-custom">
-                                                    <label for="district{{ $client->id }}">
-                                                        <i class="bi bi-signpost-split-fill"></i>
-                                                        Bairro
+                                                    <label for="cep{{ $client->id }}">
+                                                        <i class="bi bi-geo-alt-fill"></i>
+                                                        CEP
                                                         <span class="text-muted">(Opcional)</span>
                                                     </label>
-                                                    <input type="text" name="district" id="district{{ $client->id }}" class="form-control"
-                                                        placeholder="Digite o bairro" value="{{ $client->district }}">
+                                                    <input type="text" name="cep" id="cep{{ $client->id }}" class="form-control"
+                                                        placeholder="Digite o CEP" maxlength="9" onblur="searchAddressByCep()" value="{{ $client->cep }}">
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div class="row mb-3">
-                                        <div class="col-md-6">
-                                            <div class="form-group input-group-custom">
-                                                <label>
-                                                    <i class="bi bi-image"></i>
-                                                    Foto ou Ícone do Cliente
-                                                    <span class="text-muted">(Opcional)</span>
-                                                </label>
-                                                <div class="mb-2">
-                                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btnEscolherImagemEdit" data-id="{{ $client->id }}">Upload Imagem</button>
-                                                    <button type="button" class="btn btn-outline-secondary btn-sm btnEscolherIconeEdit" data-id="{{ $client->id }}">Escolher Ícone</button>
-                                                </div>
+                                        <div id="addressFields" style="display: block;">
+                                            <div class="form-section-title">
+                                                <i class="bi bi-geo-fill"></i> Endereço Completo
                                             </div>
-                                            <div id="areaUploadImagemEdit{{ $client->id }}" style="display: {{ $client->caminho_foto && !str_starts_with($client->caminho_foto, 'bi-') ? '' : 'none' }};">
-                                                <input type="file" name="caminho_foto" id="caminho_foto{{ $client->id }}" class="form-control mb-2" accept="image/*">
-                                                @if($client->caminho_foto && !str_starts_with($client->caminho_foto, 'bi-'))
-                                                    <div class="mt-2">
-                                                        <img src="{{ asset('storage/' . $client->caminho_foto) }}" alt="Foto do Cliente" style="max-width: 120px; border-radius: 8px; border: 1px solid #e3eafc;">
-                                                        <span class="d-block small text-muted">Foto atual</span>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-group input-group-custom">
+                                                        <label for="address{{ $client->id }}">
+                                                            <i class="bi bi-house-door-fill"></i>
+                                                            Endereço
+                                                            <span class="text-muted">(Opcional)</span>
+                                                        </label>
+                                                        <input type="text" name="address" id="address{{ $client->id }}" class="form-control"
+                                                            placeholder="Digite o endereço" value="{{ $client->address }}">
                                                     </div>
-                                                @endif
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group input-group-custom">
+                                                        <label for="city{{ $client->id }}">
+                                                            <i class="bi bi-building"></i>
+                                                            Cidade
+                                                            <span class="text-muted">(Opcional)</span>
+                                                        </label>
+                                                        <input type="text" name="city" id="city{{ $client->id }}" class="form-control"
+                                                            placeholder="Digite a cidade" value="{{ $client->city }}">
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div id="areaEscolherIconeEdit{{ $client->id }}" style="display: {{ $client->caminho_foto && str_starts_with($client->caminho_foto, 'bi-') ? '' : 'none' }};">
-                                                <input type="hidden" name="icone_cliente" id="icone_cliente_edit{{ $client->id }}" value="{{ str_starts_with($client->caminho_foto, 'bi-') ? $client->caminho_foto : '' }}">
-                                                <div class="d-flex flex-wrap gap-2">
-                                                    @php
-                                                    $icones = [
-                                                        'bi-person-circle','bi-person-fill','bi-person-badge','bi-emoji-smile','bi-emoji-sunglasses','bi-people-fill','bi-star-fill','bi-gem','bi-heart-fill','bi-briefcase-fill','bi-house-door-fill','bi-robot','bi-emoji-laughing','bi-emoji-wink','bi-emoji-heart-eyes'
-                                                    ];
-                                                    @endphp
-                                                    @foreach($icones as $icone)
-                                                    <button type="button" class="btn btn-light border btn-icone-cliente-edit {{ (str_starts_with($client->caminho_foto, 'bi-') && $client->caminho_foto == $icone) ? 'border-primary' : '' }}" data-icone="{{ $icone }}" data-id="{{ $client->id }}">
-                                                        <i class="bi {{ $icone }}" style="font-size:2rem;"></i>
+                                            <div class="row mb-3">
+                                                <div class="col-md-6">
+                                                    <div class="form-group input-group-custom">
+                                                        <label for="state{{ $client->id }}">
+                                                            <i class="bi bi-flag-fill"></i>
+                                                            Estado
+                                                            <span class="text-muted">(Opcional)</span>
+                                                        </label>
+                                                        <input type="text" name="state" id="state{{ $client->id }}" class="form-control"
+                                                            placeholder="Digite o estado" value="{{ $client->state }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group input-group-custom">
+                                                        <label for="district{{ $client->id }}">
+                                                            <i class="bi bi-signpost-split-fill"></i>
+                                                            Bairro
+                                                            <span class="text-muted">(Opcional)</span>
+                                                        </label>
+                                                        <input type="text" name="district" id="district{{ $client->id }}" class="form-control"
+                                                            placeholder="Digite o bairro" value="{{ $client->district }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-12 text-center mt-3">
+                                                <div class="modal-footer d-flex justify-content-center">
+                                                    <button type="button" class="btn btn-primary" id="btnNextStepEdit{{ $client->id }}">
+                                                        Próximo <i class="bi bi-arrow-right"></i>
                                                     </button>
-                                                    @endforeach
                                                 </div>
-                                                <div class="mt-2 small text-muted">Clique em um ícone para selecionar</div>
-                                                @if($client->caminho_foto && str_starts_with($client->caminho_foto, 'bi-'))
-                                                    <div class="mt-2">
-                                                        <i class="bi {{ $client->caminho_foto }}" style="font-size:2.5rem;"></i>
-                                                        <span class="d-block small text-muted">Ícone atual</span>
-                                                    </div>
-                                                @endif
-                                            </div>
-                                            <script>
-                                            document.addEventListener('DOMContentLoaded', function() {
-                                                document.querySelectorAll('.btnEscolherImagemEdit').forEach(btn => {
-                                                    btn.addEventListener('click', function() {
-                                                        const id = btn.getAttribute('data-id');
-                                                        document.getElementById('areaUploadImagemEdit'+id).style.display = '';
-                                                        document.getElementById('areaEscolherIconeEdit'+id).style.display = 'none';
-                                                        document.getElementById('icone_cliente_edit'+id).value = '';
-                                                    });
-                                                });
-                                                document.querySelectorAll('.btnEscolherIconeEdit').forEach(btn => {
-                                                    btn.addEventListener('click', function() {
-                                                        const id = btn.getAttribute('data-id');
-                                                        document.getElementById('areaUploadImagemEdit'+id).style.display = 'none';
-                                                        document.getElementById('areaEscolherIconeEdit'+id).style.display = '';
-                                                        if(document.getElementById('caminho_foto'+id)) document.getElementById('caminho_foto'+id).value = '';
-                                                    });
-                                                });
-                                                document.querySelectorAll('.btn-icone-cliente-edit').forEach(btn => {
-                                                    btn.addEventListener('click', function() {
-                                                        const id = btn.getAttribute('data-id');
-                                                        document.querySelectorAll('.btn-icone-cliente-edit[data-id="'+id+'"]').forEach(b => b.classList.remove('border-primary'));
-                                                        btn.classList.add('border-primary');
-                                                        document.getElementById('icone_cliente_edit'+id).value = btn.getAttribute('data-icone');
-                                                    });
-                                                });
-                                            });
-                                            </script>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12 text-center mt-3">
-                                            <div class="modal-footer d-flex justify-content-center">
-                                                <button type="button" class="btn btn-cancel" data-bs-dismiss="modal">
-                                                    <i class="bi bi-x-circle"></i> Cancelar
-                                                </button>
-                                                <button type="submit" class="btn btn-primary">
-                                                    <i class="bi bi-save"></i>
-                                                    Salvar Alterações
-                                                </button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Coluna da Direita (opcional para dados adicionais) -->
-                                <!-- <div class="col-md-4"></div> -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="step2_edit{{ $client->id }}" style="display:none;">
+                        <div class="modal-body">
+                            <div class="container-fluid">
+                                <div class="row justify-content-center">
+                                    <div class="col-md-10">
+                                        <div class="form-section-title">
+                                            <i class="bi bi-person-circle"></i> Escolha um Avatar
+                                        </div>
+                                        <input type="hidden" name="avatar_cliente" id="avatar_cliente_edit{{ $client->id }}" value="{{ $client->caminho_foto }}">
+                                        <div class="d-flex flex-wrap gap-3 justify-content-center">
+                                            @php
+                                            $avatares = [
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&hairColor=Brown&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Light',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight&hairColor=Black&clotheType=Hoodie&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Brown',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads01&hairColor=Blonde&clotheType=GraphicShirt&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=DarkBrown',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairCurly&hairColor=Red&clotheType=BlazerSweater&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Black',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=NoHair&clotheType=ShirtCrewNeck&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Tanned',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortWaved&hairColor=SilverGray&clotheType=Hoodie&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=Yellow',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraight2&hairColor=Auburn&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Pale',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairFrizzle&hairColor=Brown&clotheType=ShirtCrewNeck&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Light',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortCurly&hairColor=Black&clotheType=Hoodie&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=DarkBrown',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairCurvy&hairColor=Red&clotheType=BlazerSweater&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Brown',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairTheCaesar&hairColor=SilverGray&clotheType=ShirtCrewNeck&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=Black',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairBigHair&hairColor=Blonde&clotheType=GraphicShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Yellow',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairSides&hairColor=Auburn&clotheType=BlazerShirt&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Pale',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairMiaWallace&hairColor=Brown&clotheType=Hoodie&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=Tanned',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairRound&hairColor=Black&clotheType=BlazerSweater&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Light',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairStraightStrand&hairColor=Red&clotheType=ShirtCrewNeck&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Brown',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairDreads02&hairColor=SilverGray&clotheType=GraphicShirt&eyeType=Squint&eyebrowType=Default&mouthType=Default&skinColor=DarkBrown',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=LongHairNotTooLong&hairColor=Blonde&clotheType=BlazerShirt&eyeType=Default&eyebrowType=Default&mouthType=Smile&skinColor=Black',
+                                                'https://avataaars.io/?avatarStyle=Circle&topType=ShortHairShortFlat&hairColor=Brown&clotheType=Hoodie&eyeType=Happy&eyebrowType=RaisedExcited&mouthType=Smile&skinColor=Yellow',
+                                            ];
+                                            @endphp
+                                            @foreach($avatares as $avatar)
+                                            <button type="button" class="btn btn-light border btn-avatar-cliente-edit {{ $client->caminho_foto == $avatar ? 'border-primary' : '' }}" data-avatar="{{ $avatar }}" data-id="{{ $client->id }}">
+                                                <img src="{{ $avatar }}" alt="Avatar" style="width:72px; height:72px; border-radius:50%;">
+                                            </button>
+                                            @endforeach
+                                        </div>
+                                        <div class="mt-3 text-center">
+                                            <button type="button" class="btn btn-secondary me-2" id="btnPrevStepEdit{{ $client->id }}">
+                                                <i class="bi bi-arrow-left"></i> Voltar
+                                            </button>
+                                            <button type="submit" class="btn btn-success" id="btnSalvarClienteEdit{{ $client->id }}" {{ $client->caminho_foto ? '' : 'disabled' }}>
+                                                <i class="bi bi-save"></i> Salvar Alterações
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </form>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const step1 = document.getElementById('step1_edit{{ $client->id }}');
+                    const step2 = document.getElementById('step2_edit{{ $client->id }}');
+                    const btnNext = document.getElementById('btnNextStepEdit{{ $client->id }}');
+                    const btnPrev = document.getElementById('btnPrevStepEdit{{ $client->id }}');
+                    const btnSalvar = document.getElementById('btnSalvarClienteEdit{{ $client->id }}');
+                    const inputNome = document.getElementById('name{{ $client->id }}');
+                    const inputAvatar = document.getElementById('avatar_cliente_edit{{ $client->id }}');
+                    btnNext.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        if(inputNome.value.trim() !== '') {
+                            step1.style.display = 'none';
+                            step2.style.display = '';
+                        } else {
+                            inputNome.focus();
+                        }
+                    });
+                    btnPrev.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        step2.style.display = 'none';
+                        step1.style.display = '';
+                    });
+                    document.querySelectorAll('.btn-avatar-cliente-edit[data-id="{{ $client->id }}"]').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.btn-avatar-cliente-edit[data-id="{{ $client->id }}"]').forEach(b => b.classList.remove('border-primary'));
+                            btn.classList.add('border-primary');
+                            inputAvatar.value = btn.getAttribute('data-avatar');
+                            btnSalvar.disabled = false;
+                        });
+                    });
+                });
+                </script>
             </div>
         </div>
     </div>
