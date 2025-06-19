@@ -89,15 +89,27 @@ class ClientController extends Controller
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|max:15',
             'address' => 'nullable',
+            'caminho_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'icone_cliente' => 'nullable|string',
         ]);
 
-        // Criar o cliente
+        $caminhoFoto = null;
+        if ($request->filled('icone_cliente')) {
+            $caminhoFoto = $request->icone_cliente;
+        } elseif ($request->hasFile('caminho_foto')) {
+            $file = $request->file('caminho_foto');
+            $filename = 'cliente_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/profile_pictures', $filename);
+            $caminhoFoto = 'profile_pictures/' . $filename;
+        }
+
         Client::create([
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
-            'user_id' => Auth::id(), // Associar o cliente ao usuário autenticado
+            'user_id' => Auth::id(),
+            'caminho_foto' => $caminhoFoto,
         ]);
 
         return redirect()->route('clients.index')->with('success', 'Cliente criado com sucesso!');
@@ -119,15 +131,36 @@ class ClientController extends Controller
             'email' => 'nullable|email|max:255',
             'phone' => 'nullable|max:15',
             'address' => 'nullable',
+            'caminho_foto' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'icone_cliente' => 'nullable|string',
         ]);
 
         $client = Client::findOrFail($id);
-        $client->update([
+        $data = [
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
-        ]);
+        ];
+
+        if ($request->filled('icone_cliente')) {
+            // Remove imagem antiga se existir e for imagem
+            if ($client->caminho_foto && !str_starts_with($client->caminho_foto, 'bi-') && \Storage::exists('public/' . $client->caminho_foto)) {
+                \Storage::delete('public/' . $client->caminho_foto);
+            }
+            $data['caminho_foto'] = $request->icone_cliente;
+        } elseif ($request->hasFile('caminho_foto')) {
+            // Remove imagem antiga se existir e for imagem
+            if ($client->caminho_foto && !str_starts_with($client->caminho_foto, 'bi-') && \Storage::exists('public/' . $client->caminho_foto)) {
+                \Storage::delete('public/' . $client->caminho_foto);
+            }
+            $file = $request->file('caminho_foto');
+            $filename = 'cliente_' . time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('public/profile_pictures', $filename);
+            $data['caminho_foto'] = 'profile_pictures/' . $filename;
+        }
+
+        $client->update($data);
 
         return redirect()->route('clients.index')->with('success', 'Cliente atualizado com sucesso!');
     }
