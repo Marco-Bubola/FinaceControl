@@ -143,7 +143,7 @@
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form action="{{ route('clients.update', $client->id) }}" method="POST">
+                <form action="{{ route('clients.update', $client->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="modal-body">
@@ -252,6 +252,80 @@
                                                         placeholder="Digite o bairro" value="{{ $client->district }}">
                                                 </div>
                                             </div>
+                                        </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                        <div class="col-md-6">
+                                            <div class="form-group input-group-custom">
+                                                <label>
+                                                    <i class="bi bi-image"></i>
+                                                    Foto ou Ícone do Cliente
+                                                    <span class="text-muted">(Opcional)</span>
+                                                </label>
+                                                <div class="mb-2">
+                                                    <button type="button" class="btn btn-outline-primary btn-sm me-2 btnEscolherImagemEdit" data-id="{{ $client->id }}">Upload Imagem</button>
+                                                    <button type="button" class="btn btn-outline-secondary btn-sm btnEscolherIconeEdit" data-id="{{ $client->id }}">Escolher Ícone</button>
+                                                </div>
+                                            </div>
+                                            <div id="areaUploadImagemEdit{{ $client->id }}" style="display: {{ $client->caminho_foto && !str_starts_with($client->caminho_foto, 'bi-') ? '' : 'none' }};">
+                                                <input type="file" name="caminho_foto" id="caminho_foto{{ $client->id }}" class="form-control mb-2" accept="image/*">
+                                                @if($client->caminho_foto && !str_starts_with($client->caminho_foto, 'bi-'))
+                                                    <div class="mt-2">
+                                                        <img src="{{ asset('storage/' . $client->caminho_foto) }}" alt="Foto do Cliente" style="max-width: 120px; border-radius: 8px; border: 1px solid #e3eafc;">
+                                                        <span class="d-block small text-muted">Foto atual</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <div id="areaEscolherIconeEdit{{ $client->id }}" style="display: {{ $client->caminho_foto && str_starts_with($client->caminho_foto, 'bi-') ? '' : 'none' }};">
+                                                <input type="hidden" name="icone_cliente" id="icone_cliente_edit{{ $client->id }}" value="{{ str_starts_with($client->caminho_foto, 'bi-') ? $client->caminho_foto : '' }}">
+                                                <div class="d-flex flex-wrap gap-2">
+                                                    @php
+                                                    $icones = [
+                                                        'bi-person-circle','bi-person-fill','bi-person-badge','bi-emoji-smile','bi-emoji-sunglasses','bi-people-fill','bi-star-fill','bi-gem','bi-heart-fill','bi-briefcase-fill','bi-house-door-fill','bi-robot','bi-emoji-laughing','bi-emoji-wink','bi-emoji-heart-eyes'
+                                                    ];
+                                                    @endphp
+                                                    @foreach($icones as $icone)
+                                                    <button type="button" class="btn btn-light border btn-icone-cliente-edit {{ (str_starts_with($client->caminho_foto, 'bi-') && $client->caminho_foto == $icone) ? 'border-primary' : '' }}" data-icone="{{ $icone }}" data-id="{{ $client->id }}">
+                                                        <i class="bi {{ $icone }}" style="font-size:2rem;"></i>
+                                                    </button>
+                                                    @endforeach
+                                                </div>
+                                                <div class="mt-2 small text-muted">Clique em um ícone para selecionar</div>
+                                                @if($client->caminho_foto && str_starts_with($client->caminho_foto, 'bi-'))
+                                                    <div class="mt-2">
+                                                        <i class="bi {{ $client->caminho_foto }}" style="font-size:2.5rem;"></i>
+                                                        <span class="d-block small text-muted">Ícone atual</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            <script>
+                                            document.addEventListener('DOMContentLoaded', function() {
+                                                document.querySelectorAll('.btnEscolherImagemEdit').forEach(btn => {
+                                                    btn.addEventListener('click', function() {
+                                                        const id = btn.getAttribute('data-id');
+                                                        document.getElementById('areaUploadImagemEdit'+id).style.display = '';
+                                                        document.getElementById('areaEscolherIconeEdit'+id).style.display = 'none';
+                                                        document.getElementById('icone_cliente_edit'+id).value = '';
+                                                    });
+                                                });
+                                                document.querySelectorAll('.btnEscolherIconeEdit').forEach(btn => {
+                                                    btn.addEventListener('click', function() {
+                                                        const id = btn.getAttribute('data-id');
+                                                        document.getElementById('areaUploadImagemEdit'+id).style.display = 'none';
+                                                        document.getElementById('areaEscolherIconeEdit'+id).style.display = '';
+                                                        if(document.getElementById('caminho_foto'+id)) document.getElementById('caminho_foto'+id).value = '';
+                                                    });
+                                                });
+                                                document.querySelectorAll('.btn-icone-cliente-edit').forEach(btn => {
+                                                    btn.addEventListener('click', function() {
+                                                        const id = btn.getAttribute('data-id');
+                                                        document.querySelectorAll('.btn-icone-cliente-edit[data-id="'+id+'"]').forEach(b => b.classList.remove('border-primary'));
+                                                        btn.classList.add('border-primary');
+                                                        document.getElementById('icone_cliente_edit'+id).value = btn.getAttribute('data-icone');
+                                                    });
+                                                });
+                                            });
+                                            </script>
                                         </div>
                                     </div>
                                     <div class="row">
