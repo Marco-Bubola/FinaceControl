@@ -1,11 +1,79 @@
-/* Garantir que o conteúdo da descrição também seja truncado corretamente */
-.card-text {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 250px;
-    /* Ajuste de largura */
+:root {
+    /* Cores principais do tema (botões, destaques, links) - paleta lilás/lavanda */
+    --primary: #9575cd; /* Roxo médio para botões principais */
+    --primary-light: #d1c4e9; /* Lavanda clara para hover e gradientes */
+    --primary-dark: #512da8; /* Roxo escuro para variações e gradientes */
+    --primary-gradient: linear-gradient(90deg, #d1c4e9 0%, #9575cd 100%); /* Gradiente principal */
+    --primary-gradient-reverse: linear-gradient(90deg, #9575cd 0%, #d1c4e9 100%); /* Gradiente reverso */
+
+    /* Cores de sucesso (confirmações, badges de quantidade, botões de sucesso) */
+    --success: #f8bbd0; /* Rosa claro para sucesso */
+    --success-dark: #ba68c8; /* Lilás médio para hover */
+    --success-gradient: linear-gradient(90deg, #e6e6fa 0%, #f8bbd0 100%); /* Gradiente de sucesso */
+    --success-gradient-reverse: linear-gradient(90deg, #f8bbd0 0%, #e6e6fa 100%); /* Gradiente reverso de sucesso */
+
+    /* Cores de erro/alerta */
+    --danger: #ef9a9a; /* Vermelho rosado suave para erro */
+    --danger-light: #ffebee; /* Rosa muito claro para fundo de erro */
+    --warning: #ffe0b2; /* Laranja pastel para avisos */
+    --info: #b39ddb; /* Lilás para info */
+    --info-light: #ede7f6; /* Lilás claro para fundo de info */
+
+    /* Tons de cinza e neutros (backgrounds, textos, bordas) */
+    --gray-100: #f3f3f7; /* Fundo muito claro */
+    --gray-200: #e6e6fa; /* Fundo de cards, filtros */
+    --gray-300: #ede7f6; /* Fundo alternativo */
+    --gray-400: #bdbdbd; /* Bordas suaves */
+    --gray-500: #9575cd; /* Texto de botões, badge-price */
+    --gray-600: #7e57c2; /* Texto secundário */
+    --gray-700: #424242; /* Títulos, textos escuros */
+    --white: #fff; /* Fundo de cards, textos, ícones */
+    --black: #222; /* Ícones, textos escuros */
+
+    /* Sombras (cards, botões, badges) */
+    --shadow: rgba(149, 117, 205, 0.15); /* Sombra lilás claro */
+    --shadow-light: rgba(209, 196, 233, 0.12); /* Sombra leve lavanda */
+    --shadow-strong: rgba(81, 45, 168, 0.18); /* Sombra forte roxo escuro */
+    --shadow-success: rgba(248, 187, 208, 0.15); /* Sombra rosa claro sucesso */
+    --shadow-info: rgba(179, 157, 219, 0.08); /* Sombra info */
+    --shadow-info-strong: rgba(179, 157, 219, 0.04); /* Sombra info forte */
+    --shadow-card: rgba(149, 117, 205, 0.13); /* Sombra de cards */
+    --shadow-card2: #9575cd33; /* Sombra alternativa de cards */
+
+    /* Cores de cards (estilo Pokémon) */
+    --card-bg: #e6e6fa; /* Fundo do card: lilás claro */
+    --card-border: #b39ddb; /* Borda do card: lilás */
+    --card-accent: #ffe0b2; /* Acento/borda interna: laranja pastel */
+    --card-accent2: #f8bbd0; /* Acento secundário: rosa claro */
+    --card-danger: #ffebee; /* Fundo de badge de erro: rosa muito claro */
+    --card-text: #424242; /* Texto: cinza escuro */
+    --card-shadow: rgba(149, 117, 205, 0.13); /* Sombra lilás translúcido */
+    --card-shadow2: #9575cd33; /* Sombra alternativa lilás */
+
+    /* Novas variáveis para padronização de cores (harmonizadas com o novo estilo) */
+    --blue-light: #ede7f6; /* Lilás claro para borda/fundo de cards */
+    --blue-xlight: #f3f3f7; /* Muito claro para fundo */
+    --blue-strong: #9575cd; /* Roxo médio para destaque/badge */
+    --green-xlight: #f8bbd0; /* Rosa claro para fundo de badge-quantity */
+    --green-strong: #ba68c8; /* Lilás médio para texto de badge-quantity */
+    --gray-title: #424242; /* Título de produto (cinza escuro) */
+    --gray-description: #7e57c2; /* Descrição de produto (lilás escuro) */
+    --gold-semi: #f8bbd099; /* Rosa claro translúcido para acento de ícones de categoria */
+    --gradient-badge-price: linear-gradient(90deg, #f8bbd0 0%, #9575cd 100%); /* Gradiente badge-price */
+    --gradient-badge-sale: linear-gradient(90deg, #9575cd 0%, #ba68c8 100%); /* Gradiente badge-price-sale */
+    --purple-strong: #9575cd; /* Roxo médio para manter harmonia */
+    --blue-gradient-1: #f8bbd0; /* Gradiente badge-price/badge-sale */
+    --blue-gradient-2: #9575cd; /* Gradiente badge-price */
+    --badge-shadow-1: #9575cd33; /* Sombra lilás claro para badge-price */
+    --badge-shadow-2: #f8bbd011; /* Sombra rosa claro para badge-price */
+    --badge-shadow-3: #ba68c833; /* Sombra lilás médio para badge-price-sale */
+    --badge-shadow-4: #f8bbd011; /* Sombra rosa claro para badge-price-sale */
+    --badge-shadow-5: #f8bbd099; /* Sombra rosa claro translúcida para ícones de categoria */
+    --badge-shadow-6: #f8bbd099; /* Sombra rosa claro translúcida para ícones de categoria */
+    --badge-shadow-7: #f8bbd099; /* Sombra rosa claro translúcida para ícones de categoria */
 }
+
+
 
 
 /* Definir largura fixa para os botões e garantir que eles ocupem toda a largura do card */
@@ -20,7 +88,7 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    height: 100%;
+   
     /* Assegura que o card se expanda para preencher o espaço */
 }
 
@@ -35,7 +103,7 @@
 }
 
 .card-hover:hover {
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 6px 20px var(--shadow) !important;
     transform: scale(1.02);
     z-index: 2;
 }
@@ -46,47 +114,47 @@
 
 /* Filtros e Dropdowns */
 .btn-gradient-primary {
-    background: linear-gradient(90deg, #43e97b 0%, #38f9d7 100%);
+    background: var(--success-gradient);
     border: none;
-    color: #fff;
+    color: var(--white);
     font-weight: 600;
     transition: background 0.2s, box-shadow 0.2s;
 }
 
 .btn-gradient-primary:hover,
 .btn-gradient-success:hover {
-    background: linear-gradient(90deg, #38f9d7 0%, #43e97b 100%);
-    color: #fff;
-    box-shadow: 0 2px 12px rgba(67, 233, 123, 0.15);
+    background: var(--success-gradient-reverse);
+    color: var(--white);
+    box-shadow: 0 2px 12px var(--shadow-success);
 }
 
 .btn-gradient-success {
-    background: linear-gradient(90deg, #11998e 0%, #38ef7d 100%);
+    background: linear-gradient(90deg, var(--success-dark) 0%, var(--success) 100%);
     border: none;
-    color: #fff;
+    color: var(--white);
     font-weight: 600;
     transition: background 0.2s, box-shadow 0.2s;
 }
 
 .filter-section {
-    background: #f8f9fa;
+    background: var(--gray-100);
     border-radius: 0.75rem;
     padding: 0.75rem 1rem;
-    box-shadow: 0 1px 4px rgba(56, 249, 215, 0.04);
+    box-shadow: 0 1px 4px var(--shadow-info-strong);
     margin-bottom: 0.5rem;
     transition: box-shadow 0.2s;
 }
 
 .filter-section:focus-within,
 .filter-section:focus {
-    box-shadow: 0 0 0 2px #38f9d7;
+    box-shadow: 0 0 0 2px var(--info);
     outline: none;
 }
 
 .form-check-custom .form-check-input:checked {
-    background-color: #38f9d7;
-    border-color: #38f9d7;
-    box-shadow: 0 0 0 0.15rem rgba(56, 249, 215, .25);
+    background-color: var(--info);
+    border-color: var(--info);
+    box-shadow: 0 0 0 0.15rem var(--info);
 }
 
 .form-check-custom .form-check-input {
@@ -102,7 +170,7 @@
     cursor: pointer;
     font-weight: 500;
     margin-left: 0.3em;
-    color: #333;
+    color: var(--gray-700);
     transition: color 0.2s;
 }
 
@@ -115,13 +183,13 @@
 }
 
 .dropdown-menu .form-check-custom:hover {
-    background: #e9f7f7;
+    background: var(--info-light);
     border-radius: 0.5rem;
 }
 
 .dropdown-menu {
     border: none;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    box-shadow: 0 8px 32px var(--shadow-light);
 }
 
 .dropdown-header {
@@ -131,16 +199,16 @@
 }
 
 .btn-outline-secondary {
-    border: 1.5px solid #adb5bd;
-    color: #495057;
-    background: #fff;
+    border: 1.5px solid var(--gray-400);
+    color: var(--gray-500);
+    background: var(--white);
     font-weight: 600;
     transition: background 0.2s, color 0.2s;
 }
 
 .btn-outline-secondary:hover {
-    background: #f8f9fa;
-    color: #0d6efd;
+    background: var(--gray-100);
+    color: var(--primary);
 }
 
 @media (max-width: 600px) {
@@ -156,19 +224,19 @@
 /* Barra de Pesquisa */
 .search-bar-sales {
     border-radius: 2rem;
-    box-shadow: 0 2px 8px rgba(56, 249, 215, 0.08);
-    background: #fff;
+    box-shadow: 0 2px 8px var(--shadow-info);
+    background: var(--white);
     transition: box-shadow 0.2s;
 }
 
 .search-bar-sales:focus-within {
-    box-shadow: 0 0 0 3px #38f9d7;
+    box-shadow: 0 0 0 3px var(--info);
 }
 
 .search-bar-sales-icon {
     background: transparent;
     border: none;
-    color: #38f9d7;
+    color: var(--info);
     font-size: 1.3rem;
     border-radius: 2rem 0 0 2rem;
     padding-left: 1rem;
@@ -185,7 +253,7 @@
 }
 
 .search-bar-sales-input:focus {
-    background: #f8f9fa;
+    background: var(--gray-100);
     outline: none;
     box-shadow: none;
 }
@@ -203,7 +271,7 @@
 
 .animated-icon svg {
     animation: floatIcon 2.5s ease-in-out infinite;
-    filter: drop-shadow(0 4px 16px #e3eafc);
+    filter: drop-shadow(0 4px 16px var(--gray-200));
 }
 
 @keyframes floatIcon {
@@ -220,49 +288,47 @@
 
 .stylish-btn,
 .btn-xl {
-    background: linear-gradient(90deg, #6ea8fe 0%, #0d6efd 100%);
-    color: #fff;
+    background: var(--primary-gradient);
+    color: var(--white);
     border: none;
     border-radius: 2.5em;
     transition: background 0.2s, transform 0.15s;
-    box-shadow: 0 4px 24px rgba(13, 110, 253, 0.12);
+    box-shadow: 0 4px 24px var(--shadow-light);
     font-size: 1.25rem;
     padding: 0.9em 2.5em;
 }
 
 .stylish-btn:hover,
 .stylish-btn:focus {
-    background: linear-gradient(90deg, #0d6efd 0%, #6ea8fe 100%);
-    color: #fff;
+    background: var(--primary-gradient-reverse);
+    color: var(--white);
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 8px 32px rgba(13, 110, 253, 0.18);
+    box-shadow: 0 8px 32px var(--shadow-strong);
 }
 
 .product-card-modern {
-    border: none;
-    border-radius: 1.2em;
-    box-shadow: 0 2px 12px rgba(13, 110, 253, 0.07);
-    overflow: visible;
-    position: relative;
-    background: #fff;
+    border: 1.5px solid var(--blue-light);
+    border-radius: 1.5em;
+    background: linear-gradient(135deg, var(--blue-xlight) 0%, var(--blue-light) 100%);
+    box-shadow: 0 4px 18px 0 var(--shadow-light);
     transition: box-shadow 0.18s, transform 0.18s;
     min-height: 390px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    position: relative;
 }
 
 .product-card-modern:hover {
-    box-shadow: 0 8px 32px rgba(13, 110, 253, 0.13);
+    box-shadow: 0 8px 32px 0 var(--shadow-strong);
     transform: translateY(-2px) scale(1.01);
+    border-color: var(--blue-strong);
 }
 
 .product-card-modern .product-img-area {
-    position: relative;
-    background: #f8f9fa;
+    background: linear-gradient(120deg, var(--blue-xlight) 60%, var(--blue-light) 100%);
     border-top-left-radius: 1.2em;
     border-top-right-radius: 1.2em;
-    overflow: visible;
     min-height: 240px;
     display: flex;
     align-items: center;
@@ -270,86 +336,60 @@
 }
 
 .product-card-modern .product-img {
-    width: 100%;
-    height: 250px;
-    object-fit: cover;
     border-top-left-radius: 1.2em;
     border-top-right-radius: 1.2em;
     display: block;
+    background: var(--white);
 }
 
 .product-card-modern .badge-product-code {
-    position: absolute;
-    top: 0.7em;
-    left: 0.7em;
-    background: #343a40e6;
-    color: #fff;
+    background: var(--blue-strong);
+    color: var(--white);
     font-size: 0.98em;
     font-weight: 600;
     padding: 0.32em 0.95em;
     border-radius: 1.2em;
-    z-index: 2;
-    box-shadow: 0 2px 8px rgba(52, 58, 64, 0.13);
+    box-shadow: 0 2px 8px var(--badge-shadow-1);
     letter-spacing: 0.03em;
-    pointer-events: none;
-    display: flex;
-    align-items: center;
-    gap: 0.3em;
 }
 
 .product-card-modern .badge-quantity {
-    position: absolute;
-    bottom: 0.7em;
-    right: 0.7em;
-    background: #0dcaf0e6;
-    color: #0d6efd;
+    background: var(--green-xlight);
+    color: var(--green-strong);
     font-size: 1em;
     font-weight: 700;
     padding: 0.32em 1.1em;
     border-radius: 1.2em;
-    z-index: 2;
-    box-shadow: 0 2px 8px rgba(13, 202, 240, 0.13);
-    display: flex;
-    align-items: center;
-    gap: 0.3em;
+    box-shadow: 0 2px 8px var(--shadow-success);
 }
 
 .product-card-modern .category-icon-wrapper {
-    position: absolute;
-    left: 50%;
-    bottom: -28px;
-    transform: translateX(-50%);
-    z-index: 3;
-    background: #fff;
+    background: var(--white);
     border-radius: 50%;
-    box-shadow: 0 2px 12px rgba(13, 110, 253, 0.10);
-    width: 56px;
-    height: 56px;
+    box-shadow: 0 4px 16px var(--badge-shadow-5);
+    width: 62px;
+    height: 62px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 3px solid #f8f9fa;
+    border: 2px solid var(--blue-light);
 }
 
 .product-card-modern .category-icon {
     font-size: 2.1em;
-    color: inherit;
+    color: var(--blue-strong);
 }
 
 .product-card-modern .card-body {
-    padding: 2.2em 1em 1.1em 1em;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
+    padding: 2.2em 1em 0 1em;
     min-height: 180px;
-    position: relative;
+    background: transparent;
 }
 
 .product-card-modern .product-title {
     font-size: 1.13em;
     font-weight: 700;
-    color: #0d6efd;
+    color: var(--gray-title);
     margin-bottom: 0.15em;
     display: block;
     white-space: nowrap;
@@ -359,30 +399,16 @@
     text-align: center;
 }
 
-.product-card-modern .product-description {
-    font-size: 0.98em;
-    color: #6c757d;
-    margin-bottom: 0.6em;
-    display: flex;
-    align-items: center;
-    gap: 0.4em;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    justify-content: center;
-}
 
 .product-card-modern .price-area {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.2em;
-    margin-bottom: 0.7em;
+    position: relative;
+    min-height: 2.2em;
+    margin-bottom: 0em;
 }
 
 .product-card-modern .badge-price {
-    background: #f1f3f5;
-    color: #495057;
+    background: var(--gray-100);
+    color: var(--gray-500);
     font-size: 1.04em;
     font-weight: 600;
     border-radius: 1.2em;
@@ -390,12 +416,12 @@
     display: flex;
     align-items: center;
     gap: 0.3em;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+    box-shadow: 0 1px 4px var(--shadow);
 }
 
 .product-card-modern .badge-price-sale {
-    background: #eafbee;
-    color: #198754;
+    background: var(--green-xlight);
+    color: var(--green-strong);
     font-size: 1.09em;
     font-weight: 700;
     border-radius: 1.2em;
@@ -403,7 +429,7 @@
     display: flex;
     align-items: center;
     gap: 0.3em;
-    box-shadow: 0 1px 4px rgba(25, 135, 84, 0.07);
+    box-shadow: 0 1px 4px var(--shadow-success);
 }
 
 .product-card-modern .btn-action-group {
@@ -425,18 +451,18 @@
     justify-content: center;
     padding: 0;
     font-size: 1.1em;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 4px var(--shadow);
     border: none;
 }
 
 .product-card-modern .btn-action-group .btn-primary {
-    background: #0d6efd;
-    color: #fff;
+    background: var(--primary);
+    color: var(--white);
 }
 
 .product-card-modern .btn-action-group .btn-danger {
-    background: #dc3545;
-    color: #fff;
+    background: var(--danger);
+    color: var(--white);
 }
 
 .product-card-modern .out-of-stock {
@@ -444,16 +470,21 @@
     top: 0;
     left: 0;
     background: rgba(220, 53, 69, 0.9);
-    color: #fff;
+    color: var(--white);
     font-size: 0.98em;
     font-weight: 600;
     padding: 0.32em 0.95em;
     border-top-left-radius: 1.2em;
     border-bottom-right-radius: 1.2em;
-    z-index: 3;
+    z-index: 5;
     display: flex;
     align-items: center;
     gap: 0.3em;
+}
+
+/* Quando fora de estoque, empurra o código para baixo */
+.product-card-modern .out-of-stock + .badge-product-code {
+    top: 2.3em;
 }
 
 @media (max-width: 991px) {
@@ -483,4 +514,269 @@
     .product-card-modern {
         min-height: 300px;
     }
+}
+
+/* --- ESTILO CARTA POKEMON --- */
+.product-card-modern {
+    border: 2.5px solid var(--card-border);
+    background: var(--card-bg);
+    box-shadow: 0 4px 18px 0 var(--card-shadow);
+    border-radius: 1.7em;
+    position: relative;
+    overflow: visible;
+}
+.product-card-modern:before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 1.7em;
+    pointer-events: none;
+    box-shadow: 0 0 0 3px var(--card-accent) inset;
+    z-index: 99;
+}
+.product-card-modern .product-img-area {
+    background: var(--card-bg);
+    border-top-left-radius: 1.7em;
+    border-top-right-radius: 1.7em;
+    border-bottom: 4px solid var(--card-border);
+    box-shadow: 0 2px 16px var(--card-shadow2);
+    position: relative;
+    z-index: 2;
+    overflow: visible; /* Permite que o ícone da categoria fique fora da imagem sem ser cortado */
+}
+.product-card-modern .product-img {
+    border-top-left-radius: 1.7em;
+    border-top-right-radius: 1.7em;
+    border: 5px solid var(--card-accent);
+    box-shadow: 0 2px 16px var(--card-shadow2);
+    background: #fff;
+    z-index: 2;
+    position: relative;
+}
+.product-card-modern .category-icon-wrapper {
+    border: 5px solid var(--card-accent2);
+    background: var(--card-border);
+    box-shadow: 0 2px 16px var(--card-accent)99;
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    bottom: -32px;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+.product-card-modern .category-icon {
+    font-size: 2.5em;
+    color: #fffde7;
+    filter: drop-shadow(0 2px 6px var(--card-accent)99);
+}
+.product-card-modern .badge-product-code {
+    position: absolute;
+    top: 0.5em;
+    left: 0.5em;
+    background: linear-gradient(90deg, var(--card-accent2) 0%, var(--card-border) 100%);
+    color: var(--card-text);
+    font-size: 0.92em;
+    font-weight: 700;
+    padding: 0.18em 0.9em;
+    border-radius: 1.2em 0 1.2em 0;
+    z-index: 4;
+    box-shadow: 0 2px 8px var(--card-accent2)33, 0 1px 4px var(--card-border)11;
+    display: flex;
+    align-items: center;
+    gap: 0.3em;
+    border-bottom: 2px solid var(--card-border);
+    border-right: 2px solid var(--card-border);
+    text-shadow: 1px 1px 2px var(--card-border)99;
+}
+.product-card-modern .badge-quantity {
+    position: absolute;
+    bottom: 0.5em;
+    right: 0.5em;
+    background: linear-gradient(90deg, var(--card-danger) 0%, var(--card-accent2) 100%);
+    color: var(--card-text);
+    font-size: 0.78em;
+    font-weight: 700;
+    padding: 0.10em 0.55em;
+    border-radius: 1.2em 0 1.2em 0;
+    z-index: 4;
+    box-shadow: 0 2px 8px var(--card-danger)33, 0 1px 4px var(--card-accent2)11;
+    display: flex;
+    align-items: center;
+    gap: 0.2em;
+    border-bottom: 2px solid var(--card-accent2);
+    border-right: 2px solid var(--card-accent2);
+    text-shadow: 1px 1px 2px var(--card-danger)99;
+    min-width: 38px;
+    max-width: 80px;
+    justify-content: flex-end;
+}
+.product-card-modern .category-icon-wrapper,
+.product-card-modern .category-icon-wrapper-body {
+    border: 5px solid var(--gold-semi);
+    background: var(--gold-semi);
+    box-shadow: 0 2px 16px var(--gold-semi);
+    width: 64px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.product-card-modern .category-icon-wrapper {
+    position: absolute;
+    left: 50%;
+    bottom: -32px;
+    transform: translateX(-50%);
+    z-index: 3;
+}
+.product-card-modern .category-icon-wrapper-body {
+    position: static;
+    margin: 0 auto 0.5em auto;
+    z-index: 2;
+}
+.product-card-modern .category-icon {
+    font-size: 2.5em;
+    color: var(--white);
+    filter: drop-shadow(0 2px 6px var(--gold-semi));
+    display: block;
+}
+.product-card-modern .price-area {
+    position: relative;
+    min-height: 2.2em;
+    margin-bottom: 0.2em;
+}
+.product-card-modern .card-body {
+    position: relative;
+    flex: 1 1 0;
+    min-height: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.product-card-modern {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.product-card-modern {
+    display: flex;
+    flex-direction: column;
+}
+.product-card-modern .badge-price {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, var(--card-accent2) 0%, var(--card-border) 100%);
+    color: var(--card-text);
+    font-weight: 700;
+    font-size: 0.98em;
+    border-radius: 0 0 0 1.7em !important;
+    padding: 0.18em 1.1em 0.18em 1.2em;
+    box-shadow: 0 2px 8px var(--card-accent2)33, 0 1px 4px var(--card-border)11;
+    border: none;
+    z-index: 10;
+    display: block;
+    min-width: 60px;
+    text-align: left;
+}
+.product-card-modern .badge-price-sale {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, var(--card-danger) 0%, var(--card-accent2) 100%);
+    color: var(--card-text);
+    font-weight: 700;
+    font-size: 0.98em;
+    border-radius: 0 0 1.7em 0 !important;
+    padding: 0.18em 1.2em 0.18em 1.1em;
+    box-shadow: 0 2px 8px var(--card-danger)33, 0 1px 4px var(--card-accent2)11;
+    border: none;
+    z-index: 10;
+    display: block;
+    min-width: 60px;
+    text-align: right;
+}
+.product-card-modern .product-title {
+    font-family: 'Montserrat', 'Arial Black', sans-serif;
+    font-size: 0.98em;
+    color: var(--gray-title);
+    text-shadow: 0 1px 4px var(--white), 0 0 2px var(--white);
+    letter-spacing: 0.02em;
+    margin-bottom: 0.2em;
+    background: none;
+    border-radius: 0;
+    padding: 0;
+    text-align: center;
+    margin-top: 0.2em;
+    margin-bottom: 0.3em;
+    box-shadow: none;
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.product-card-modern .price-area {
+    position: relative;
+    min-height: 2.2em;
+    margin-bottom: 0.2em;
+}
+.product-card-modern .badge-price {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: var(--gradient-badge-price);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.98em;
+    border-radius: 1.2em 0 0.8em 0;
+    padding: 0.13em 0.9em;
+    box-shadow: 0 2px 8px var(--badge-shadow-1), 0 1px 4px var(--badge-shadow-2);
+    border-bottom: 2px solid var(--blue-gradient-2);
+    border-right: 2px solid var(--blue-gradient-2);
+    z-index: 2;
+    display: block;
+    min-width: 60px;
+    text-align: left;
+}
+.product-card-modern .badge-price-sale {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-badge-sale);
+    color: var(--white);
+    font-weight: 700;
+    font-size: 0.98em;
+    border-radius: 0 1.2em 0 0.8em;
+    padding: 0.13em 0.9em;
+    box-shadow: 0 2px 8px var(--badge-shadow-3), 0 1px 4px var(--badge-shadow-4);
+    border-bottom: 2px solid var(--blue-gradient-1);
+    border-left: 2px solid var(--blue-gradient-1);
+    z-index: 2;
+    display: block;
+    min-width: 60px;
+    text-align: right;
+}
+.product-card-modern .btn-action-group .btn-primary {
+    background: var(--card-accent2);
+    color: #fff;
+    border: 2px solid var(--card-accent);
+}
+.product-card-modern .btn-action-group .btn-danger {
+    background: var(--card-danger);
+    color: var(--card-text);
+    border: 2px solid var(--card-accent);
+}
+.product-card-modern .out-of-stock {
+    background: var(--card-danger);
+    color: var(--card-text);
+    border-top-left-radius: 1.7em;
+    border-bottom-right-radius: 1.7em;
+    border: 2px solid var(--card-accent);
+    box-shadow: 0 1px 4px var(--card-shadow2);
 }
