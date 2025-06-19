@@ -5,6 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * Model para componentes de kits de produtos.
+ * kit_produto_id: id do produto do tipo 'kit'
+ * componente_produto_id: id do produto componente
+ * quantidade: quantidade do componente no kit
+ */
 class ProdutoComponente extends Model
 {
     use HasFactory;
