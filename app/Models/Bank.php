@@ -20,6 +20,7 @@ class Bank extends Model
         'end_date',
         'registration_date',
         'user_id',
+        'caminho_icone',
     ];
 
     // Definindo a chave primária
