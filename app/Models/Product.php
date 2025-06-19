@@ -42,4 +42,9 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
+    // Se for kit, retorna os componentes
+    public function componentes()
+    {
+        return $this->hasMany(\App\Models\ProdutoComponente::class, 'kit_produto_id');
+    }
 }
