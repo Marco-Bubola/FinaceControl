@@ -15,16 +15,12 @@ class ProductController extends Controller
     {
         $userId = auth()->id();
 
-        // Inicializa a variável para rastrear se um filtro foi aplicado
-        $filterApplied = false;
-
         // Inicializa a consulta para produtos, filtrando pelo user_id
         $products = Product::where('user_id', $userId);
 
         // Filtro de pesquisa por nome ou código
         if ($request->has('search') && $request->search != '') {
             $searchTerm = str_replace('.', '', $request->search);
-
             $products->where(function ($q) use ($searchTerm) {
                 $q->where('name', 'like', '%' . $searchTerm . '%')
                     ->orWhere(DB::raw("REPLACE(product_code, '.', '')"), 'like', '%' . $searchTerm . '%');
@@ -36,33 +32,60 @@ class ProductController extends Controller
             $products->where('category_id', $request->category);
         }
 
-        // Filtro por data de criação, atualização ou outros
-        if ($request->has('filter') && $request->filter != '') {
-            $filterApplied = true;
-            switch ($request->filter) {
-                case 'created_at':
-                    $products->orderBy('created_at', 'desc');
-                    break;
-                case 'updated_at':
-                    $products->orderBy('updated_at', 'desc');
-                    break;
-                case 'name_asc':
-                    $products->orderBy('name', 'asc');
-                    break;
-                case 'name_desc':
-                    $products->orderBy('name', 'desc');
-                    break;
-                case 'price_asc':
-                    $products->orderBy('price', 'asc');
-                    break;
-                case 'price_desc':
-                    $products->orderBy('price', 'desc');
-                    break;
+        // Filtro de status
+        $statusValidos = ['ativo', 'inativo', 'descontinuado'];
+        if ($request->has('status_filtro') && in_array($request->status_filtro, $statusValidos)) {
+            $products->where('status', $request->status_filtro);
+        }
+
+        // Filtro por tipo (simples ou kit)
+        if ($request->has('tipo') && in_array($request->tipo, ['simples', 'kit'])) {
+            $products->where('tipo', $request->tipo);
+        }
+
+        // Filtro por faixa de preço
+        if ($request->has('preco_min') && is_numeric($request->preco_min)) {
+            $products->where('price_sale', '>=', $request->preco_min);
+        }
+        if ($request->has('preco_max') && is_numeric($request->preco_max)) {
+            $products->where('price_sale', '<=', $request->preco_max);
+        }
+
+        // Filtro por estoque
+        if ($request->has('estoque')) {
+            if ($request->estoque === 'zerado') {
+                $products->where('stock_quantity', 0);
+            } elseif ($request->estoque === 'abaixo' && is_numeric($request->estoque_valor)) {
+                $products->where('stock_quantity', '<', $request->estoque_valor);
             }
         }
 
-        // Ordenar produtos fora de estoque para o final apenas se nenhum filtro for aplicado
-        if (!$filterApplied) {
+        // Filtro por data de criação
+        if ($request->has('data_inicio') && $request->data_inicio) {
+            $products->whereDate('created_at', '>=', $request->data_inicio);
+        }
+        if ($request->has('data_fim') && $request->data_fim) {
+            $products->whereDate('created_at', '<=', $request->data_fim);
+        }
+
+        // Ordenação
+        if ($request->has('ordem') && $request->ordem !== '') {
+            switch ($request->ordem) {
+                case 'recentes':
+                    $products->orderBy('created_at', 'desc');
+                    break;
+                case 'antigas':
+                    $products->orderBy('created_at', 'asc');
+                    break;
+                case 'az':
+                    $products->orderBy('name', 'asc');
+                    break;
+                case 'za':
+                    $products->orderBy('name', 'desc');
+                    break;
+            }
+        } else {
+            // Ordenar produtos fora de estoque para o final se nenhuma ordenação for aplicada
             $products->orderByRaw('stock_quantity > 0 DESC');
         }
 
@@ -110,6 +133,12 @@ class ProductController extends Controller
     }
     public function store(Request $request)
     {
+        // Conversão correta dos valores monetários do formato brasileiro para americano
+        $request->merge([
+            'price' => str_replace(',', '.', str_replace('.', '', $request->price)),
+            'price_sale' => str_replace(',', '.', str_replace('.', '', $request->price_sale)),
+        ]);
+
         // Validação do formulário
         $request->validate([
             'name' => 'required|max:255',
@@ -118,8 +147,9 @@ class ProductController extends Controller
             'price_sale' => 'required|numeric',
             'stock_quantity' => 'required|integer',
             'category_id' => 'required|exists:category,id_category',
-            'product_code' => 'required', // Removemos 'unique' para permitir múltiplos com o mesmo código
+            'product_code' => 'required',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+            'status' => 'required|in:ativo,inativo,descontinuado',
         ]);
 
         // Tratamento da imagem
@@ -154,7 +184,9 @@ class ProductController extends Controller
                 'user_id' => Auth::id(),
                 'product_code' => $request->product_code,
                 'image' => $imageName,
-                'status' => $request->status ?? 'active',
+                'status' => $request->status,
+                'tipo' => 'simples',
+                'custos_adicionais' => 0,
             ]);
 
             return redirect()->route('products.index')->with('success', 'Produto adicionado com sucesso!');
@@ -172,6 +204,11 @@ class ProductController extends Controller
     // Método para atualizar um produto
     public function update(Request $request, $id)
     {
+        // Conversão correta dos valores monetários do formato brasileiro para americano
+        $request->merge([
+            'price' => str_replace(',', '.', str_replace('.', '', $request->price)),
+            'price_sale' => str_replace(',', '.', str_replace('.', '', $request->price_sale)),
+        ]);
         $request->validate([
             'name' => 'required|max:255',
             'description' => 'nullable|max:1000',
@@ -179,8 +216,10 @@ class ProductController extends Controller
             'price_sale' => 'required|numeric',
             'stock_quantity' => 'required|integer',
             'category_id' => 'required|exists:category,id_category',
-            'product_code' => 'required', // Ignora o produto atual
+            'product_code' => 'required',
             'image' => 'nullable|image|mimes:jpg,png,jpeg,gif,webp|max:2048',
+            'status' => 'required|in:ativo,inativo,descontinuado',
+            // Não validar tipo nem custos_adicionais para edição manual
         ]);
 
         $product = Product::findOrFail($id);
@@ -202,9 +241,83 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'product_code' => $request->product_code,
             'image' => $imageName,
-            'status' => $request->status ?? 'active',
+            'status' => $request->status,
+            'tipo' => 'simples',
+            'custos_adicionais' => 0,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Produto atualizado com sucesso!');
+    }
+
+    public function storeKit(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|max:255',
+            'price' => 'required|numeric|min:0',
+            'price_sale' => 'required|numeric|min:0',
+            'produtos' => 'required|array',
+        ]);
+
+        // Cria o produto do tipo kit
+        $kit = Product::create([
+            'name' => $request->name,
+            'description' => null,
+            'price' => $request->price,
+            'price_sale' => $request->price_sale,
+            'stock_quantity' => 0, // O estoque do kit é gerenciado via componentes
+            'category_id' => 1, // Pode ser ajustado se desejar selecionar categoria
+            'user_id' => auth()->id(),
+            'product_code' => 'KIT-' . strtoupper(uniqid()),
+            'image' => null,
+            'status' => 'ativo',
+            'tipo' => 'kit',
+            'custos_adicionais' => 0,
+        ]);
+
+        // Salva os componentes do kit
+        foreach ($request->produtos as $produtoId => $dados) {
+            if (isset($dados['selecionado']) && $dados['selecionado'] && isset($dados['quantidade']) && $dados['quantidade'] > 0) {
+                \App\Models\ProdutoComponente::create([
+                    'kit_produto_id' => $kit->id,
+                    'componente_produto_id' => $produtoId,
+                    'quantidade' => $dados['quantidade'],
+                ]);
+            }
+        }
+
+        return redirect()->route('products.index')->with('success', 'Kit criado com sucesso!');
+    }
+
+    public function updateKit(Request $request, $id)
+    {
+        // Conversão correta dos valores monetários do formato brasileiro para americano
+        $request->merge([
+            'price' => str_replace(',', '.', str_replace('.', '', $request->price)),
+            'price_sale' => str_replace(',', '.', str_replace('.', '', $request->price_sale)),
+        ]);
+        $request->validate([
+            'name' => 'required|max:255',
+            'price' => 'required|numeric',
+            'price_sale' => 'required|numeric',
+            'produtos' => 'required|array',
+        ]);
+        $kit = Product::findOrFail($id);
+        $kit->update([
+            'name' => $request->name,
+            'price' => $request->price,
+            'price_sale' => $request->price_sale,
+        ]);
+        // Atualizar componentes do kit
+        \App\Models\ProdutoComponente::where('kit_produto_id', $kit->id)->delete();
+        foreach ($request->produtos as $produtoId => $dados) {
+            if (isset($dados['selecionado']) && $dados['selecionado'] && isset($dados['quantidade']) && $dados['quantidade'] > 0) {
+                \App\Models\ProdutoComponente::create([
+                    'kit_produto_id' => $kit->id,
+                    'componente_produto_id' => $produtoId,
+                    'quantidade' => $dados['quantidade'],
+                ]);
+            }
+        }
+        return redirect()->route('products.index')->with('success', 'Kit atualizado com sucesso!');
     }
 }
