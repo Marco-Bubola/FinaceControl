@@ -19,9 +19,15 @@ class Product extends Model
         'user_id',
         'product_code',
         'image',
-        'status',
-
+        'status', // ativo, inativo, descontinuado
+        'tipo', // simples, kit
+        'custos_adicionais', // decimal(10,2)
     ];
+    /**
+     * status: ativo, inativo, descontinuado
+     * tipo: simples, kit
+     * custos_adicionais: decimal(10,2)
+     */
     // Relacionamento com os itens de venda
     public function saleItems()
     {
