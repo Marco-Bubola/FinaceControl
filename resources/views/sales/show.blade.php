@@ -246,12 +246,13 @@
             </div>
             <div class="overflow-auto" style="max-height: 300px;">
                 <div class="list-group">
+                    {{-- Pagamentos avulsos --}}
                     @forelse($sale->payments as $payment)
                         <div class="list-group-item d-flex justify-content-between payment-list-item">
                             <div class="d-flex flex-wrap align-items-center">
                                 <span class="payment-date">
                                     <i class="bi bi-calendar-event"></i>
-                                    {{ \Carbon\Carbon::parse($payment->payment_date)->format('d/m') }}
+                                    {{ \Carbon\Carbon::parse($payment->payment_date)->format('d/m/Y') }}
                                 </span>
                                 <span class="payment-amount">
                                     <i class="bi bi-cash-coin"></i>
@@ -282,10 +283,80 @@
                             </div>
                         </div>
                     @empty
+                    @endforelse
+
+                    {{-- Parcelas --}}
+                    @if(isset($parcelas) && $parcelas->count())
+                        @foreach($parcelas as $parcela)
+                            <div class="list-group-item d-flex justify-content-between payment-list-item">
+                                <div class="d-flex flex-wrap align-items-center">
+                                    <span class="payment-date">
+                                        <i class="bi bi-list-ol"></i>
+                                        Parcela #{{ $parcela->numero_parcela }}
+                                    </span>
+                                    <span class="payment-amount">
+                                        <i class="bi bi-cash-coin"></i>
+                                        R$ {{ number_format($parcela->valor, 2, ',', '.') }}
+                                    </span>
+                                    <span class="payment-badge payment-method-badge">
+                                        <i class="bi bi-calendar-range"></i>
+                                        {{ \Carbon\Carbon::parse($parcela->data_vencimento)->format('d/m/Y') }}
+                                    </span>
+                                    @if($parcela->status == 'pendente')
+                                        <span class="badge bg-warning text-dark ms-2">Pendente</span>
+                                    @elseif($parcela->status == 'paga')
+                                        <span class="badge bg-success ms-2">Paga</span>
+                                    @elseif($parcela->status == 'vencida')
+                                        <span class="badge bg-danger ms-2">Vencida</span>
+                                    @endif
+                                </div>
+                                <div class="payment-actions d-flex">
+                                    @if($parcela->status == 'pendente')
+                                        <button class="btn btn-success btn-sm ms-2" data-bs-toggle="modal" data-bs-target="#modalPagarParcela{{ $parcela->id }}">
+                                            <i class="bi bi-cash-coin"></i> Registrar Pagamento
+                                        </button>
+                                        <!-- Modal -->
+                                        <div class="modal fade" id="modalPagarParcela{{ $parcela->id }}" tabindex="-1" aria-labelledby="modalPagarParcelaLabel{{ $parcela->id }}" aria-hidden="true">
+                                          <div class="modal-dialog modal-dialog-centered">
+                                            <div class="modal-content rounded-4 shadow-lg">
+                                              <div class="modal-header bg-success text-white rounded-top-4">
+                                                <h5 class="modal-title" id="modalPagarParcelaLabel{{ $parcela->id }}">
+                                                  <i class="bi bi-cash-coin me-2"></i>Registrar Pagamento da Parcela #{{ $parcela->numero_parcela }}
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                                              </div>
+                                              <form action="{{ route('parcelas.pagar', $parcela->id) }}" method="POST" class="needs-validation" novalidate>
+                                                @csrf
+                                                <div class="modal-body">
+                                                  <div class="mb-3">
+                                                    <label for="valor_pago_{{ $parcela->id }}" class="form-label">Valor Pago</label>
+                                                    <input type="number" step="0.01" class="form-control" id="valor_pago_{{ $parcela->id }}" name="valor_pago" value="{{ $parcela->valor }}" required>
+                                                  </div>
+                                                  <div class="mb-3">
+                                                    <label for="payment_date_{{ $parcela->id }}" class="form-label">Data do Pagamento</label>
+                                                    <input type="date" class="form-control" id="payment_date_{{ $parcela->id }}" name="payment_date" value="{{ date('Y-m-d') }}" required>
+                                                  </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                  <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                  <button type="submit" class="btn btn-success">Confirmar Pagamento</button>
+                                                </div>
+                                              </form>
+                                            </div>
+                                          </div>
+                                        </div>
+                                    @endif
+                                </div>
+                            </div>
+                        @endforeach
+                    @endif
+
+                    {{-- Mensagem de vazio se não houver nenhum pagamento nem parcela --}}
+                    @if($sale->payments->isEmpty() && (!$parcelas || !$parcelas->count()))
                         <div class="alert alert-info text-center mb-0">
                             Nenhum pagamento registrado para esta venda.
                         </div>
-                    @endforelse
+                    @endif
                 </div>
             </div>
         </div>
@@ -512,8 +583,6 @@
         </div>
     </div>
 </div>
-
-
 
     </div>
 
