@@ -131,14 +131,9 @@
     @foreach($clients as $client)
     <div class="col-md-2 mb-4">
         <div class="card h-100 custom-card position-relative">
-            @if($client->caminho_foto && str_starts_with($client->caminho_foto, 'bi-'))
-                <div class="d-flex justify-content-center align-items-center" style="height:120px;">
-                    <i class="bi {{ $client->caminho_foto }}" style="font-size:4rem; color:#6ea8fe;"></i>
-                </div>
-            @else
-                <img src="{{ $client->caminho_foto ? asset('storage/' . $client->caminho_foto) : asset('storage/products/product-placeholder.png') }}" class="card-img-top"
-                    alt="Imagem do Cliente">
-            @endif
+            <div class="d-flex justify-content-center align-items-center" style="height:120px;">
+                <img src="{{ $client->caminho_foto }}" alt="Avatar do Cliente" style="width:72px; height:72px; border-radius:50%; border:2px solid #6ea8fe; background:#fff;">
+            </div>
 
             <!-- Botões sobre a imagem -->
             <div style="position: absolute; top: 8px; right: 8px; display: flex; gap: 4px;">
