@@ -12,6 +12,7 @@ use Log;
 use SalePayment;
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use App\Models\VendaParcela;
 
 class SaleController extends Controller
 {
@@ -66,18 +67,24 @@ class SaleController extends Controller
         // Ordenar por status: "pendente" e outros primeiro, "pago" por último
         $sales->orderByRaw("CASE WHEN status = 'pago' THEN 1 ELSE 0 END");
 
-        // Controle do número de itens por página (valor padrão é 10)
-        $perPage = $request->input('per_page', 4);  // Pega o valor de 'per_page' ou usa 10 como padrão
+        // Controle do número de itens por página (valor padrão é 4)
+        $perPage = $request->input('per_page', 4);  // Pega o valor de 'per_page' ou usa 4 como padrão
 
-        // Paginando os resultados com a quantidade definida
-        $sales = $sales->with(['client', 'saleItems.product'])->paginate($perPage);
+        // Se perPage for -1, retorna todos os resultados sem paginação
+        if ($perPage == -1) {
+            $sales = $sales->with(['client', 'saleItems.product', 'parcelasVenda'])->get();
+            $isPaginated = false;
+        } else {
+            $sales = $sales->with(['client', 'saleItems.product', 'parcelasVenda'])->paginate($perPage);
+            $isPaginated = true;
+        }
 
         $products = Product::where('user_id', $userId)->get(); // Filtra os produtos associados ao usuário
 
         $clients = Client::where('user_id', $userId)->get(); // Filtra os clientes associados ao usuário
 
         // Passar vendas, clientes e produtos para a view
-        return view('sales.index', compact('sales', 'clients', 'products', 'perPage'));
+        return view('sales.index', compact('sales', 'clients', 'products', 'perPage', 'isPaginated'));
     }
 
 
@@ -176,12 +183,12 @@ class SaleController extends Controller
         $data = $request->validate([
             'client_id' => 'required|exists:clients,id',
             'products' => 'required|string', // Espera-se que 'products' seja uma string JSON
+            'tipo_pagamento' => 'required|in:a_vista,parcelado',
+            'parcelas' => 'nullable|integer|min:1',
         ]);
 
-        // Decodificando os dados dos produtos para um array
         $products = json_decode($data['products'], true);
 
-        // Validação dos produtos depois de decodificados
         foreach ($products as $product) {
             $this->validate($request, [
                 'products.*.product_id' => 'required|exists:products,id',
@@ -190,56 +197,69 @@ class SaleController extends Controller
             ]);
         }
 
-        // Inicializando o preço total
         $total_price = 0;
-
-        // Calcular o preço total com base nos produtos selecionados
         foreach ($products as $product) {
             if (isset($product['product_id']) && isset($product['quantity']) && $product['quantity'] > 0) {
                 $productModel = Product::find($product['product_id']);
-                // Verifica se o produto existe antes de acessar suas propriedades
                 if (!$productModel) {
                     return redirect()->route('sales.index')->with('error', 'Produto não encontrado.');
                 }
-
-                $item_price = $productModel->price_sale * $product['quantity']; // Preço total do item
+                $item_price = $productModel->price_sale * $product['quantity'];
                 $total_price += $item_price;
             }
         }
 
-        // Criar a venda com o preço total calculado
         $sale = Sale::create([
             'client_id' => $data['client_id'],
             'user_id' => auth()->id(),
-            'status' => 'pendente', 
-            'total_price' => $total_price, 
+            'status' => 'pendente',
+            'total_price' => $total_price,
+            'tipo_pagamento' => $data['tipo_pagamento'],
+            'parcelas' => $data['tipo_pagamento'] === 'parcelado' ? ($data['parcelas'] ?? 1) : 1,
         ]);
 
-        // Registrar os itens da venda
         foreach ($products as $product) {
             if (isset($product['product_id']) && isset($product['quantity']) && $product['quantity'] > 0) {
                 $productModel = Product::find($product['product_id']);
-                // Verifica se o produto existe antes de criar o SaleItem
                 if (!$productModel) {
                     return redirect()->route('sales.index')->with('error', 'Produto não encontrado ao registrar item.');
                 }
-
                 SaleItem::create([
                     'sale_id' => $sale->id,
                     'product_id' => $product['product_id'],
                     'quantity' => $product['quantity'],
-                    'price' => $productModel->price, // Preço unitário do produto
-                    'price_sale' => $product['price_sale'], // Preço de venda do produto
+                    'price' => $productModel->price,
+                    'price_sale' => $product['price_sale'],
                 ]);
-
-                // Atualiza o estoque do produto
-                $productModel->stock_quantity -= $product['quantity']; // Subtrai a quantidade do estoque
+                $productModel->stock_quantity -= $product['quantity'];
                 $productModel->save();
             }
         }
 
+        // Gerar parcelas se for parcelado
+        if ($sale->tipo_pagamento === 'parcelado' && $sale->parcelas > 1) {
+            $this->gerarParcelasVenda($sale);
+        }
+
         return redirect()->route('sales.index')->with('success', 'Venda registrada com sucesso!');
     }
+
+    private function gerarParcelasVenda($sale)
+    {
+        $valorParcela = round($sale->total_price / $sale->parcelas, 2);
+        $dataPrimeira = now();
+        for ($i = 1; $i <= $sale->parcelas; $i++) {
+            $dataVencimento = $dataPrimeira->copy()->addMonths($i - 1);
+            VendaParcela::create([
+                'sale_id' => $sale->id,
+                'numero_parcela' => $i,
+                'valor' => $valorParcela,
+                'data_vencimento' => $dataVencimento->format('Y-m-d'),
+                'status' => 'pendente',
+            ]);
+        }
+    }
+
     public function addPayment(Request $request, $saleId)
 {
     $sale = Sale::findOrFail($saleId);
@@ -287,9 +307,9 @@ class SaleController extends Controller
     public function show($id)
     {
         $sale = Sale::with(['saleItems.product', 'client', 'payments'])->findOrFail($id);
-        $products = Product::all(); // ou outra lógica para pegar os produtos
-
-        return view('sales.show', compact('sale', 'products'));
+        $products = Product::all();
+        $parcelas = VendaParcela::where('sale_id', $sale->id)->orderBy('numero_parcela')->get();
+        return view('sales.show', compact('sale', 'products', 'parcelas'));
     }
     public function updateSaleItem(Request $request, Sale $sale, SaleItem $item)
     {
@@ -507,5 +527,37 @@ class SaleController extends Controller
 
         // Retorna o PDF para download
         return $dompdf->stream("relatorio_venda_{$sale->client->name}.pdf");
+    }
+
+    public function pagarParcela(Request $request, $parcelaId)
+    {
+        $parcela = VendaParcela::findOrFail($parcelaId);
+        $request->validate([
+            'payment_date' => 'required|date',
+            'valor_pago' => 'required|numeric|min:0.01',
+        ]);
+        // Atualiza status da parcela
+        $parcela->status = 'paga';
+        $parcela->pago_em = $request->payment_date;
+        $parcela->save();
+        // Registra pagamento na tabela SalePayment
+        \App\Models\SalePayment::create([
+            'sale_id' => $parcela->sale_id,
+            'amount_paid' => $request->valor_pago,
+            'payment_method' => 'parcela',
+            'payment_date' => $request->payment_date,
+        ]);
+        // Atualiza o total pago na venda
+        $sale = $parcela->sale;
+        $totalPaid = \App\Models\SalePayment::where('sale_id', $sale->id)->sum('amount_paid');
+        $sale->amount_paid = $totalPaid;
+        // Atualiza status da venda se necessário
+        if ($totalPaid >= $sale->total_price) {
+            $sale->status = 'pago';
+        } else {
+            $sale->status = 'pendente';
+        }
+        $sale->save();
+        return back()->with('success', 'Parcela registrada como paga!');
     }
 }
