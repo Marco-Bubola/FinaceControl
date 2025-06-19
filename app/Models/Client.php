@@ -21,6 +21,7 @@ class Client extends Model
         'user_id',
         'created_at',
         'updated_at',
+        'caminho_foto', // Caminho para a foto do cliente
     ];
     // No modelo Client
     public function sales()
