@@ -15,9 +15,16 @@ class Sale extends Model
         'client_id',
         'user_id',
         'total_price',
-        'status',
+        'status', // pendente, orcamento, confirmada, concluida, cancelada
         'payment_method',
+        'tipo_pagamento', // a_vista, parcelado
+        'parcelas', // int
     ];
+    /**
+     * status: pendente, orcamento, confirmada, concluida, cancelada
+     * tipo_pagamento: a_vista, parcelado
+     * parcelas: int
+     */
 
     // Relacionamento com o Cliente
     public function client()
