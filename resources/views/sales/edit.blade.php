@@ -27,6 +27,32 @@
                     @method('PUT')
 
                     <input type="hidden" name="client_id" value="{{ $sale->client_id }}">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="tipo_pagamento{{ $sale->id }}" class="form-label"><i class="bi bi-credit-card-2-front"></i> Tipo de Pagamento</label>
+                            <select name="tipo_pagamento" id="tipo_pagamento{{ $sale->id }}" class="form-select" required>
+                                <option value="a_vista" {{ $sale->tipo_pagamento == 'a_vista' ? 'selected' : '' }}>À vista</option>
+                                <option value="parcelado" {{ $sale->tipo_pagamento == 'parcelado' ? 'selected' : '' }}>Parcelado</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4" id="parcelas-group-edit{{ $sale->id }}" style="display: {{ $sale->tipo_pagamento == 'parcelado' ? '' : 'none' }};">
+                            <label for="parcelas{{ $sale->id }}" class="form-label"><i class="bi bi-list-ol"></i> Parcelas</label>
+                            <input type="number" name="parcelas" id="parcelas{{ $sale->id }}" class="form-control" min="2" max="36" value="{{ $sale->parcelas ?? 2 }}">
+                        </div>
+                    </div>
+                    <script>
+                        document.addEventListener('DOMContentLoaded', function() {
+                            const tipoPagamento = document.getElementById('tipo_pagamento{{ $sale->id }}');
+                            const parcelasGroup = document.getElementById('parcelas-group-edit{{ $sale->id }}');
+                            tipoPagamento.addEventListener('change', function() {
+                                if (tipoPagamento.value === 'parcelado') {
+                                    parcelasGroup.style.display = '';
+                                } else {
+                                    parcelasGroup.style.display = 'none';
+                                }
+                            });
+                        });
+                    </script>
                     
                     <div class="row" style="max-height: 65vh; overflow-y: auto;">
                         @foreach($sale->saleItems as $item)
