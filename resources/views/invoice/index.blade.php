@@ -14,7 +14,7 @@
                 <div class="flex-grow-1">
                     <div class="fw-bold fs-5 text-dark mb-1 d-flex align-items-center gap-2">
                         {{ $bank->description }}
-                        <img class="ms-2" src="../assets/img/logos/mastercard.png" alt="logo"
+                        <img class="ms-2" src="{{ $bank->caminho_icone }}" alt="logo"
                             style="height: 32px; filter: drop-shadow(0 2px 6px rgba(13,110,253,0.10));">
                     </div>
                     <div class="text-secondary small d-flex flex-wrap gap-3">
