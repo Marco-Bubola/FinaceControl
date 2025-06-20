@@ -302,6 +302,15 @@
                             </div>
                         </div>
                     </div>
+                    <div class="mb-3">
+                        <label for="edit_cofrinho_id" class="form-label">Cofrinho</label>
+                        <select class="form-control choices-select" id="edit_cofrinho_id" name="cofrinho_id">
+                            <option value="">Nenhum</option>
+                            @foreach($cofrinhos as $cofrinho)
+                                <option value="{{ $cofrinho->id }}">{{ $cofrinho->nome }}</option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
@@ -361,6 +370,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Atualiza Choices.js
                 const found = choicesInstances.find(obj => obj.select === clientSelect);
                 if(found) found.instance.setChoiceByValue(clientId);
+            }
+            // Preencher cofrinho
+            const cofrinhoId = button.getAttribute('data-cofrinho_id');
+            if(cofrinhoId !== null) {
+                const cofrinhoSelect = document.getElementById('edit_cofrinho_id');
+                cofrinhoSelect.value = cofrinhoId;
+                const found = choicesInstances.find(obj => obj.select === cofrinhoSelect);
+                if(found) found.instance.setChoiceByValue(cofrinhoId);
             }
             // Repita para outros selects se necessário (category_id, type_id, etc)
         }
