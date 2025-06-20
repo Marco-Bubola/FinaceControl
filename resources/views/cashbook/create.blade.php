@@ -1,4 +1,3 @@
-
 <style>
 #addTransactionModal .modal-content {
     background: linear-gradient(135deg, #232526 0%, #414345 100%);
@@ -370,6 +369,21 @@
                                         <option value="">Nenhum cliente</option>
                                         @foreach($clients as $client)
                                             <option value="{{ $client->id }}">{{ $client->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="cofrinho_id" class="form-label">
+                                    <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" stroke="#f7971e" stroke-width="2" fill="none"/></svg>
+                                    Cofrinho
+                                </label>
+                                <div class="input-group">
+                                    <svg class="input-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.27 5.82 22 7 14.14l-5-4.87 6.91-1.01z" stroke="#f7971e" stroke-width="2" fill="none"/></svg>
+                                    <select class="form-control tom-select" id="cofrinho_id" name="cofrinho_id">
+                                        <option value="">Nenhum</option>
+                                        @foreach($cofrinhos as $cofrinho)
+                                            <option value="{{ $cofrinho->id }}">{{ $cofrinho->nome }}</option>
                                         @endforeach
                                     </select>
                                 </div>
