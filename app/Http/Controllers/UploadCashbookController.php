@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Smalot\PdfParser\Parser;
+use App\Models\Cofrinho;
 
 class UploadCashbookController extends Controller
 {
@@ -41,18 +42,22 @@ class UploadCashbookController extends Controller
         // Obter todos os clientes
         $clients = \App\Models\Client::all(['id', 'name']);
 
+        $cofrinhos = Cofrinho::where('user_id', auth()->id())->get();
+
         return response()->json([
             'success' => true,
             'transactions' => $transactions,
             'categories' => $categories,
             'segments' => $segments,
-            'clients' => $clients, // Inclua os clientes na resposta
+            'clients' => $clients,
+            'cofrinhos' => $cofrinhos,
         ]);
     }
 
     public function confirm(Request $request)
     {
         $transactions = $request->input('transactions');
+        $cofrinho_id = $request->input('cofrinho_id');
         $success = true;
         $duplicated = [];
         $inserted = [];
@@ -120,6 +125,7 @@ class UploadCashbookController extends Controller
                 $cashbook->category_id = $trans['category_id'];
                 $cashbook->type_id = $trans['type_id'];
                 $cashbook->is_pending = $trans['is_pending'] ?? 0;
+                $cashbook->cofrinho_id = $cofrinho_id ?? null;
 
                 if ($cashbook->save()) {
                     $inserted[] = [
