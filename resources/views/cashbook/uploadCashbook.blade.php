@@ -77,6 +77,16 @@
                                     aria-valuemax="100">0%</div>
                             </div>
 
+                            <div class="mb-3">
+                                <label for="upload_cofrinho_id" class="form-label">Cofrinho</label>
+                                <select class="form-control" id="upload_cofrinho_id" name="cofrinho_id">
+                                    <option value="">Nenhum</option>
+                                    @foreach($cofrinhos as $cofrinho)
+                                        <option value="{{ $cofrinho->id }}">{{ $cofrinho->nome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
                             <div class="form-group text-center mt-4 d-flex justify-content-center gap-3">
                                 <button type="button" class="btn btn-outline-secondary stylish-btn px-4 py-2 upload-animate" data-bs-dismiss="modal" id="cancelStep1">
                                     <i class="fa fa-times"></i> Cancelar
@@ -92,7 +102,15 @@
                     <div id="step2" class="step d-none">
                         <form id="confirmationForm" method="POST" action="{{ route('cashbook.confirm') }}">
                             @csrf
-
+                            <div class="mb-3">
+                                <label for="confirm_cofrinho_id" class="form-label">Cofrinho</label>
+                                <select class="form-control" id="confirm_cofrinho_id" name="cofrinho_id">
+                                    <option value="">Nenhum</option>
+                                    @foreach($cofrinhos as $cofrinho)
+                                        <option value="{{ $cofrinho->id }}">{{ $cofrinho->nome }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                             <div class="table-responsive stylish-table-responsive" style="max-height:55vh; min-height:350px; overflow-y:auto;">
                                 <table class="table table-striped table-bordered text-center stylish-table mb-0">
                                     <thead class="table-primary">
@@ -104,6 +122,7 @@
                                             <th><i class="fa fa-tags"></i> Categoria</th>
                                             <th><i class="fa fa-exchange-alt"></i> Tipo</th>
                                             <th><i class="fa fa-user"></i> Cliente</th>
+                                            <th><i class="fa fa-piggy-bank"></i> Cofrinho</th>
                                         </tr>
                                     </thead>
                                     <tbody id="transactionRows">
@@ -115,10 +134,16 @@
                                                 </button>
                                             </td>
                                             <td>
-                                                <input type="date" name="transactions[${index}][date]" value="${transaction.date}" class="form-control" required>
+                                                <div class="input-group">
+                                                    <span class="input-icon icon-calendar"><i class="fa fa-calendar-alt"></i></span>
+                                                    <input type="date" name="transactions[${index}][date]" value="${formattedDate}" class="form-control" required>
+                                                </div>
                                             </td>
                                             <td>
-                                                <input type="number" name="transactions[${index}][value]" value="${transaction.value}" class="form-control" step="0.01" required>
+                                                <div class="input-group">
+                                                    <span class="input-icon icon-money"><i class="fa fa-dollar-sign"></i></span>
+                                                    <input type="number" name="transactions[${index}][value]" value="${value}" class="form-control" step="0.01" required>
+                                                </div>
                                             </td>
                                             <td>
                                                 <input type="text" name="transactions[${index}][description]" value="${transaction.description}" class="form-control" required>
@@ -147,6 +172,19 @@
                                                         return `<option value="${client.id}" ${isSelected}>${client.name}</option>`;
                                                     }).join('')}
                                                 </select>
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <span class="input-icon icon-piggy"><i class="fa fa-piggy-bank"></i></span>
+                                                    <select name="transactions[${index}][cofrinho_id]" class="form-control stylish-select-icon">
+                                                        <option value="">Nenhum</option>
+                                                        ${data.cofrinhos.map(cofrinho => {
+                                                            const isSelected = cofrinho.id == transaction.cofrinho_id ? 'selected' : '';
+                                                            return `<option value="${cofrinho.id}" ${isSelected}>${cofrinho.nome}</option>`;
+                                                        }).join('')}
+                                                    </select>
+                                                    <span class="input-icon input-icon-select icon-piggy"><i class="fa fa-piggy-bank"></i></span>
+                                                </div>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -802,7 +840,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
 
                         // Converter a data para o formato YYYY-MM-DD para o campo de data
-                        const formattedDate = transaction.date.split('-').reverse().join('-');
+                        const parts = transaction.date.split('-');
+                        let formattedDate = transaction.date;
+                        if(parts.length === 3 && parts[2].length === 4) {
+                            formattedDate = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                        }
+                        const value = String(transaction.value).replace(',', '.').replace(/[^\d.-]/g, '');
 
                         transactionRows.innerHTML += `
                 <tr data-index="${index}">
@@ -814,13 +857,13 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                         <div class="input-group">
                             <span class="input-icon icon-calendar"><i class="fa fa-calendar-alt"></i></span>
-                            <input type="date" name="transactions[${index}][date]" value="${formattedDate}" class="form-control" style="width: 130px;" required>
+                            <input type="date" name="transactions[${index}][date]" value="${formattedDate}" class="form-control" required>
                         </div>
                     </td>
                     <td>
                         <div class="input-group">
                             <span class="input-icon icon-money"><i class="fa fa-dollar-sign"></i></span>
-                            <input type="number" name="transactions[${index}][value]" value="${transaction.value}" class="form-control" style="width: 100px;" step="0.01" required placeholder="Valor">
+                            <input type="number" name="transactions[${index}][value]" value="${value}" class="form-control" step="0.01" required>
                         </div>
                     </td>
                     <td>
@@ -866,6 +909,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                 }).join('')}
                             </select>
                             <span class="input-icon input-icon-select icon-user"><i class="fa fa-user"></i></span>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <span class="input-icon icon-piggy"><i class="fa fa-piggy-bank"></i></span>
+                            <select name="transactions[${index}][cofrinho_id]" class="form-control stylish-select-icon">
+                                <option value="">Nenhum</option>
+                                ${data.cofrinhos.map(cofrinho => {
+                                    const isSelected = cofrinho.id == transaction.cofrinho_id ? 'selected' : '';
+                                    return `<option value="${cofrinho.id}" ${isSelected}>${cofrinho.nome}</option>`;
+                                }).join('')}
+                            </select>
+                            <span class="input-icon input-icon-select icon-piggy"><i class="fa fa-piggy-bank"></i></span>
                         </div>
                     </td>
                 </tr>
