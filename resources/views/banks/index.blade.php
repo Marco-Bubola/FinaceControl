@@ -24,7 +24,7 @@
                                 class="card card-body border shadow-sm border-radius-lg d-flex align-items-center flex-row">
                                 <div class="d-flex flex-column align-items-center">
                                 <img class="w-45 me-3 mb-0 "
-                                src="../assets/img/logos/mastercard.png" alt="logo">
+                                src="{{ $bank->caminho_icone }}" alt="logo">
                                     <h6 class="mb-0 text-dark">{{ $bank->name }}</h6>
                                     <small class="text-muted">{{ $bank->description }}</small>
                                 </div>
