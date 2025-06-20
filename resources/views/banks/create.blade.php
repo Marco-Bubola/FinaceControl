@@ -198,6 +198,21 @@
     #addCardModal .flatpickr-weekday {
         color: #fd6e6a;
     }
+    #bank-icons-group .bank-icon-label {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #bank-icons-group .bank-icon-img {
+        border: 3px solid transparent;
+    }
+    #bank-icons-group input[type="radio"]:checked + .bank-icon-img {
+        border: 3px solid #fd6e6a;
+        box-shadow: 0 0 0 4px #fd6e6a33;
+    }
+    #bank-icons-group .bank-icon-img:hover {
+        border: 3px solid #22c1c3;
+    }
 </style>
 
 <div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
@@ -232,6 +247,21 @@
                             <div class="input-group">
                                 <svg class="input-icon" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="10" rx="3"/><rect x="6" y="11" width="4" height="2" rx="1"/><rect x="14" y="11" width="4" height="2" rx="1"/></svg>
                                 <input type="text" maxlength="19" class="form-control custom-input" id="description" name="description" required autocomplete="off" inputmode="numeric" pattern="[0-9\-]*" placeholder="0000-0000-0000-0000">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Seleção de ícone do banco/cartão -->
+                    <div class="row mb-4">
+                        <div class="col-12">
+                            <label class="form-label custom-label" style="color:#fd6e6a;font-size:1.1rem;">Escolha o ícone do banco/cartão</label>
+                            <div class="d-flex flex-wrap gap-3 justify-content-center" id="bank-icons-group">
+                                @foreach($bankIcons as $icon)
+                                    <label class="bank-icon-label" style="cursor:pointer;">
+                                        <input type="radio" name="caminho_icone" value="{{ $icon['icon'] }}" class="d-none" required>
+                                        <img src="{{ $icon['icon'] }}" alt="{{ $icon['name'] }}" title="{{ $icon['name'] }}" class="bank-icon-img" style="width:56px;height:56px;border-radius:12px;border:3px solid transparent;box-shadow:0 2px 8px #22c1c344;transition:all 0.2s;">
+                                        <div class="text-center mt-1" style="font-size:0.95rem;color:#fff;">{{ $icon['name'] }}</div>
+                                    </label>
+                                @endforeach
                             </div>
                         </div>
                     </div>
@@ -322,6 +352,20 @@
                     allowInput: true,
                     altInput: false,
                     disableMobile: true
+                });
+
+                const radios = document.querySelectorAll('input[name="caminho_icone"]');
+                radios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        document.querySelectorAll('.bank-icon-img').forEach(img => {
+                            img.style.border = '3px solid transparent';
+                            img.style.boxShadow = '0 2px 8px #22c1c344';
+                        });
+                        if(this.checked) {
+                            this.nextElementSibling.style.border = '3px solid #fd6e6a';
+                            this.nextElementSibling.style.boxShadow = '0 0 0 4px #fd6e6a33';
+                        }
+                    });
                 });
             });
             </script>
