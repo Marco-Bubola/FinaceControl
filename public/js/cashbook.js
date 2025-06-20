@@ -433,6 +433,23 @@ function loadEditModal(id) {
                     }
                 }
             }
+            // Preencher o select de cofrinho corretamente (Choices.js)
+            const cofrinhoSelect = document.getElementById('edit_cofrinho_id');
+            if (cofrinhoSelect) {
+                cofrinhoSelect.value = data.cashbook.cofrinho_id ?? '';
+                if (typeof Choices !== 'undefined' && cofrinhoSelect.choices) {
+                    cofrinhoSelect.choices.setChoiceByValue(String(data.cashbook.cofrinho_id ?? ''));
+                } else if (typeof Choices !== 'undefined' && window.Choices) {
+                    if (!cofrinhoSelect.choicesInstance) {
+                        cofrinhoSelect.choicesInstance = [...document.querySelectorAll('.choices-select')]
+                            .map(sel => sel.choices)
+                            .find(inst => inst && inst.passedElement.element === cofrinhoSelect);
+                    }
+                    if (cofrinhoSelect.choicesInstance) {
+                        cofrinhoSelect.choicesInstance.setChoiceByValue(String(data.cashbook.cofrinho_id ?? ''));
+                    }
+                }
+            }
         });
 }
 
