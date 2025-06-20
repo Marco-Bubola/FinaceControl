@@ -24,6 +24,7 @@ use App\Http\Controllers\ClienteResumoController;
 use App\Http\Controllers\DashboardCashbookController;
 use App\Http\Controllers\DashboardProductsController;
 use App\Http\Controllers\DashboardSalesController;
+use App\Http\Controllers\CofrinhoController;
 
 /*
 |----------------------------------------------------------------------
@@ -153,6 +154,13 @@ Route::get('/dashboard/invoices-daily-chart-data', [\App\Http\Controllers\Dashbo
 
 
     Route::get('/clients', [ClientController::class, 'index'])->name('clients.index');
+
+    Route::get('/cofrinho', [CofrinhoController::class, 'index'])->name('cofrinho.index');
+    Route::get('/cofrinho/create', [CofrinhoController::class, 'create'])->name('cofrinho.create');
+    Route::post('/cofrinho', [CofrinhoController::class, 'store'])->name('cofrinho.store');
+    Route::get('/cofrinho/{id}/edit', [CofrinhoController::class, 'edit'])->name('cofrinho.edit');
+    Route::put('/cofrinho/{id}', [CofrinhoController::class, 'update'])->name('cofrinho.update');
+    Route::delete('/cofrinho/{id}', [CofrinhoController::class, 'destroy'])->name('cofrinho.destroy');
 });
 
 Route::controller(EventController::class)->group(function () {
