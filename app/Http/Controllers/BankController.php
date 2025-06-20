@@ -16,6 +16,38 @@ class BankController extends Controller
         // Obtendo apenas os bancos do usuário logado
         $banks = Bank::where('user_id', auth()->id())->get();
 
+        // Lista de ícones dos principais bancos brasileiros
+        $bankIcons = [
+            [
+                'name' => 'Nubank',
+                'icon' => asset('assets/img/banks/nubank.svg'),
+            ],
+            [
+                'name' => 'Inter',
+                'icon' => asset('assets/img/banks/inter.png'),
+            ],
+            [
+                'name' => 'Santander',
+                'icon' => asset('assets/img/banks/santander.png'),
+            ],
+            [
+                'name' => 'Itaú',
+                'icon' => asset('assets/img/banks/itau.png'),
+            ],
+            [
+                'name' => 'Banco do Brasil',
+                'icon' => asset('assets/img/banks/bb.png'),
+            ],
+            [
+                'name' => 'Caixa',
+                'icon' => asset('assets/img/banks/caixa.png'),
+            ],
+            [
+                'name' => 'Bradesco',
+                'icon' => asset('assets/img/banks/bradesco.png'),
+            ],
+        ];
+
         // Obtendo o mês e o ano da requisição ou usando o mês e ano atual como padrão
         $month = $request->input('month', now()->month);
         $year = $request->input('year', now()->year);
@@ -114,14 +146,53 @@ class BankController extends Controller
             'totalMonth',
             'highestInvoice',
             'lowestInvoice',
-            'totalTransactions'
+            'totalTransactions',
+            'bankIcons'
         ));
     }
 
     // Método para mostrar o formulário de criação
     public function create()
     {
-        return view('banks.create');
+        // Lista de ícones dos principais bancos brasileiros
+        // Você pode trocar o caminho para SVGs ou classes FontAwesome conforme preferir
+        // Exemplo usando FontAwesome e imagens em public/assets/img/
+        // 'icon' pode ser uma classe ou caminho de imagem
+        
+        // Exemplo com imagens (ajuste o caminho conforme necessário)
+        // Se preferir FontAwesome, use 'icon' => 'fab fa-cc-mastercard', etc.
+        $bankIcons = [
+            [
+                'name' => 'Nubank',
+                'icon' => asset('assets/img/banks/nubank.png'),
+            ],
+            [
+                'name' => 'Inter',
+                'icon' => asset('assets/img/banks/inter.png'),
+            ],
+            [
+                'name' => 'Santander',
+                'icon' => asset('assets/img/banks/santander.png'),
+            ],
+            [
+                'name' => 'Itaú',
+                'icon' => asset('assets/img/banks/itau.png'),
+            ],
+            [
+                'name' => 'Banco do Brasil',
+                'icon' => asset('assets/img/banks/bb.png'),
+            ],
+            [
+                'name' => 'Caixa',
+                'icon' => asset('assets/img/banks/caixa.png'),
+            ],
+            [
+                'name' => 'Bradesco',
+                'icon' => asset('assets/img/banks/bradesco.png'),
+            ],
+            // Adicione outros bancos se quiser
+        ];
+        return view('banks.create', compact('bankIcons'));
     }
     public function store(Request $request)
     {
@@ -131,6 +202,7 @@ class BankController extends Controller
             'description' => 'required|string|max:255',
             'start_date' => 'required|date',  // A data precisa ser válida
             'end_date' => 'required|date',    // A data precisa ser válida
+            'caminho_icone' => 'required|string', // Ícone obrigatório
         ]);
 
         // Criando um novo banco/cartão
@@ -144,6 +216,7 @@ class BankController extends Controller
 
         // Atribui o ID do usuário logado
         $bank->user_id = auth()->id();
+        $bank->caminho_icone = $request->caminho_icone; // Salva o ícone escolhido
 
         // Salva os dados no banco
         $bank->save();
@@ -156,7 +229,37 @@ class BankController extends Controller
     public function edit($id)
     {
         $bank = Bank::findOrFail($id);
-        return view('banks.edit', compact('bank'));
+        $bankIcons = [
+            [
+                'name' => 'Nubank',
+                'icon' => asset('assets/img/banks/nubank.png'),
+            ],
+            [
+                'name' => 'Inter',
+                'icon' => asset('assets/img/banks/inter.png'),
+            ],
+            [
+                'name' => 'Santander',
+                'icon' => asset('assets/img/banks/santander.png'),
+            ],
+            [
+                'name' => 'Itaú',
+                'icon' => asset('assets/img/banks/itau.png'),
+            ],
+            [
+                'name' => 'Banco do Brasil',
+                'icon' => asset('assets/img/banks/bb.png'),
+            ],
+            [
+                'name' => 'Caixa',
+                'icon' => asset('assets/img/banks/caixa.png'),
+            ],
+            [
+                'name' => 'Bradesco',
+                'icon' => asset('assets/img/banks/bradesco.png'),
+            ],
+        ];
+        return view('banks.edit', compact('bank', 'bankIcons'));
     }
 
     // Método para atualizar um banco
@@ -167,6 +270,7 @@ class BankController extends Controller
             'description' => 'required|string|max:255',
             'start_date' => 'required|date',
             'end_date' => 'required|date',
+            'caminho_icone' => 'required|string',
         ]);
 
         $bank = Bank::findOrFail($id);
