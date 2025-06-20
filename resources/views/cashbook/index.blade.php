@@ -216,9 +216,9 @@
     </div>
 </div>
 
-@include('cashbook.uploadCashbook')
-@include('cashbook.create')
-@include('cashbook.edit')
+@include('cashbook.uploadCashbook', ['cofrinhos' => $cofrinhos])
+@include('cashbook.create', ['cofrinhos' => $cofrinhos])
+@include('cashbook.edit', ['cofrinhos' => $cofrinhos])
 @include('cashbook.delete')
 
 <script src="{{ asset('js/cashbook.js') }}"></script>
