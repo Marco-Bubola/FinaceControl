@@ -10,6 +10,7 @@ use App\Models\Type;
 use App\Models\Segment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Models\Cofrinho;
 
 class CashbookController extends Controller
 {
@@ -36,8 +37,9 @@ class CashbookController extends Controller
 $clients = Client::where('user_id', auth()->id())->get();
         $types = Type::all();
         $segments = Segment::all();
+        $cofrinhos = Cofrinho::where('user_id', auth()->id())->get();
 
-        return view('cashbook.index', compact('currentMonth', 'monthName', 'transactions', 'totals', 'clients', 'categories', 'types', 'segments'));
+        return view('cashbook.index', compact('currentMonth', 'monthName', 'transactions', 'totals', 'clients', 'categories', 'types', 'segments', 'cofrinhos'));
     }
 
     public function store(Request $request)
@@ -53,6 +55,7 @@ $clients = Client::where('user_id', auth()->id())->get();
             'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
             'note' => 'nullable|string|max:255',
             'segment_id' => 'nullable|exists:segment,id',
+            'cofrinho_id' => 'nullable|exists:cofrinhos,id',
         ]);
 
         $data = $request->all();
@@ -71,9 +74,7 @@ $clients = Client::where('user_id', auth()->id())->get();
     public function edit($id)
     {
         $cashbook = Cashbook::findOrFail($id);
-
-        // Certifique-se de que client_id está presente no array/objeto retornado
-        // Se você usa Eloquent, normalmente já vem, mas garanta que está assim:
+        $cofrinhos = Cofrinho::where('user_id', auth()->id())->get();
         return response()->json([
             'cashbook' => [
                 'id' => $cashbook->id,
@@ -85,9 +86,10 @@ $clients = Client::where('user_id', auth()->id())->get();
                 'type_id' => $cashbook->type_id,
                 'note' => $cashbook->note,
                 'segment_id' => $cashbook->segment_id,
-                'client_id' => $cashbook->client_id, // <-- ESSENCIAL
-                // ...outros campos se necessário...
-            ]
+                'client_id' => $cashbook->client_id,
+                'cofrinho_id' => $cashbook->cofrinho_id,
+            ],
+            'cofrinhos' => $cofrinhos,
         ]);
     }
 
@@ -104,6 +106,7 @@ $clients = Client::where('user_id', auth()->id())->get();
             'client_id' => 'nullable|exists:clients,id', // Permitir client_id como opcional
             'note' => 'nullable|string|max:255',
             'segment_id' => 'nullable|exists:segment,id',
+            'cofrinho_id' => 'nullable|exists:cofrinhos,id',
         ]);
 
         $data = $request->all();
