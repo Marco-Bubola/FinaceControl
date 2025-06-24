@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container-fluid ">
+<div class="bg-blue-500 text-white p-4">Teste Tailwind</div>
     <link rel="stylesheet" href="{{ asset('css/produtos.css') }}">
     <!-- Filtro e Pesquisa -->
     <div class="d-flex justify-content-between align-items-center">
