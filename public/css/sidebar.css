@@ -1,0 +1,615 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+#sidebar {
+display: flex;
+flex-direction: column;
+justify-content: flex-start;
+align-items: stretch;
+background-color: #ffffff;
+height: 100vh;
+overflow: hidden;
+border-radius: 0px 18px 18px 0px;
+position: relative;
+transition: all .5s;
+min-width: 82px !important; /* valor fixo para sidebar fechado */
+width: 82px !important;
+box-shadow: 0 4px 24px 0 rgba(79,70,229,0.08);
+}
+
+#sidebar_content {
+padding: 12px;
+flex: 1 1 auto;
+display: flex;
+flex-direction: column;
+min-height: 0;
+padding: 0 !important; /* Remove padding lateral */
+}
+
+#sidebar #user {
+display: flex;
+align-items: center;
+
+margin-bottom: 12px;
+margin-top: 12px;
+}
+
+#sidebar #user_avatar {
+width: 50px;
+height: 50px;
+object-fit: cover;
+border-radius: 20px;
+background: #f3f3f3;
+border: 1px solid #e3e9f7;
+}
+
+#sidebar #user_infos {
+display: flex;
+flex-direction: column;
+}
+
+#sidebar #user_infos span:last-child {
+color: #6b6b6b;
+font-size: 12px;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: hidden;
+  box-sizing: border-box;
+}
+
+#app, main, .main-content, .container, .wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+}
+
+/* Garante que filhos flex não causem overflow */
+#sidebar, .sidebar, #main-content, .main-content {
+  min-height: 0;
+  max-height: 100vh;
+  box-sizing: border-box;
+}
+
+#sidebar #user_infos .user-name {
+color: #222 !important;
+font-weight: 600;
+}
+
+#sidebar #side_items {
+display: flex;
+flex-direction: column;
+gap: 8px;
+list-style: none;
+overflow-y: auto;
+overflow-x: hidden;
+flex: 1 1 auto;
+min-height: 0;
+padding-right: 2px; /* Para não cortar a barra de rolagem */
+}
+
+/* Esconde a barra de rolagem vertical em todos os navegadores */
+#sidebar #side_items {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE e Edge */
+}
+
+#sidebar #side_items::-webkit-scrollbar {
+    display: none; /* Chrome, Safari e Opera */
+}
+
+#sidebar .side-item {
+border-radius: 8px;
+padding: 14px;
+cursor: pointer;
+}
+
+#sidebar .side-item.active {
+background-color: #4f46e5;
+}
+
+#sidebar .side-item:hover:not(.active),
+#sidebar #logout_btn:hover {
+background-color: #e3e9f7;
+}
+
+#sidebar .side-item a {
+text-decoration: none;
+display: flex;
+align-items: center;
+justify-content: center;
+color: #0a0a0a;
+}
+
+#sidebar .side-item.active a {
+color: #e3e9f7;
+}
+
+#sidebar .side-item a i {
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 1.5rem; /* Ícones maiores, mas não exagerados */
+transition: color 0.2s;
+}
+
+#sidebar #logout_btn i {
+font-size: 1.5rem;
+}
+
+#sidebar .side-item {
+border-radius: 12px;
+padding: 18px 18px 18px 14px;
+cursor: pointer;
+transition: background 0.2s, box-shadow 0.2s;
+box-shadow: 0 1px 4px 0 rgba(0,0,0,0.03);
+}
+
+#sidebar .side-item.active {
+background-color: #4f46e5;
+box-shadow: 0 2px 8px 0 rgba(79,70,229,0.10);
+}
+
+#sidebar .side-item:hover:not(.active),
+#sidebar #logout_btn:hover {
+background-color: #f1f5ff;
+color: #4f46e5;
+box-shadow: 0 2px 8px 0 rgba(79,70,229,0.08);
+}
+
+#sidebar .side-item a {
+text-decoration: none;
+display: flex;
+align-items: center;
+justify-content: flex-start;
+color: #222;
+gap: 18px;
+font-weight: 500;
+font-size: 1.08rem;
+}
+
+#sidebar .side-item.active a {
+color: #fff;
+}
+
+#sidebar #logout_btn {
+border: none;
+padding: 16px 18px;
+font-size: 1.08rem;
+display: flex;
+align-items: center;
+border-radius: 12px;
+text-align: start;
+cursor: pointer;
+background-color: transparent;
+color: #e53e3e;
+font-weight: 500;
+transition: background 0.2s, color 0.2s;
+}
+
+#sidebar #logout_btn:hover {
+background-color: #ffeaea;
+color: #c53030;
+}
+
+#sidebar .item-description {
+width: 0 !important;
+height: 0 !important;
+overflow: hidden;
+white-space: nowrap;
+text-overflow: ellipsis;
+font-size: 16px;
+transition: width .6s, color 0.2s;
+font-weight: 500;
+letter-spacing: 0.01em;
+}
+
+#sidebar.open-sidebar {
+min-width: 240px !important; /* valor fixo para sidebar aberto */
+width: 240px !important;
+}
+
+#sidebar.open-sidebar .item-description {
+width: 150px !important;
+height: auto !important;
+}
+
+#sidebar.open-sidebar .side-item a {
+justify-content: flex-start;
+gap: 14px;
+}
+
+#sidebar #user_avatar {
+width: 60px;
+height: 60px;
+border-radius: 24px;
+border: 2px solid #4f46e5;
+}
+
+#sidebar #user_infos .user-name {
+color: #222 !important;
+font-weight: 700;
+font-size: 1.1rem;
+}
+
+#sidebar #user_infos span:last-child {
+color: #6b6b6b;
+font-size: 13px;
+}
+
+#sidebar {
+box-shadow: 0 4px 24px 0 rgba(79,70,229,0.08);
+}
+
+#sidebar #logout {
+border-top: 1px solid #e3e9f7;
+padding: 8px 0 0 0;
+flex-shrink: 0;
+background: #fff;
+position: sticky;
+bottom: 0;
+z-index: 3;
+width: 100%;
+display: flex;
+justify-content: center;
+margin: 0 !important;
+}
+
+#sidebar #logout_btn {
+width: 100%;
+border: none;
+padding: 14px 18px;
+font-size: 1.08rem;
+display: flex;
+gap: 14px;
+align-items: center;
+border-radius: 4px !important;
+text-align: start;
+cursor: pointer;
+background-color: transparent;
+color: #e53e3e;
+font-weight: 500;
+margin-top: 0;
+transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+box-shadow: none;
+}
+
+#sidebar #logout_btn:hover {
+background-color: #ffeaea;
+color: #c53030;
+}
+
+#sidebar #logout_btn i {
+font-size: 1.5rem;
+min-width: 24px;
+text-align: center;
+}
+
+/* Itens do menu: bordas mais quadradas e efeito visual melhorado */
+.side-item,
+#logout_btn {
+    border-radius: 4px !important;
+    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+    box-shadow: none;
+}
+
+/* Item ativo: cor de fundo mais elegante e sombra leve */
+.side-item.active,
+#logout_btn.active {
+    background-color: #4338ca !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px 0 rgba(67,56,202,0.10);
+    border-radius: 4px !important;
+}
+
+/* Hover: destaque com cor e leve sombra */
+.side-item:hover:not(.active),
+#logout_btn:hover {
+    background-color: #e0e7ff !important;
+    color: #4338ca !important;
+    box-shadow: 0 2px 8px 0 rgba(67,56,202,0.08);
+    border-radius: 4px !important;
+}
+
+/* Corrige botão de logout para ocupar toda a largura e alinhar com o menu */
+#logout {
+    border-top: 1px solid #e3e9f7;
+    padding: 12px;
+    flex-shrink: 0;
+    background: #fff;
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0 !important;
+}
+#open_btn {
+position: absolute;
+top: 30px;
+right: -10px;
+background-color: #4f46e5;
+color: #e3e9f7;
+border-radius: 100%;
+width: 20px;
+height: 20px;
+border: none;
+cursor: pointer;
+}
+
+#open_btn_icon {
+transition: transform .3s ease;
+}
+
+.open-sidebar #open_btn_icon {
+transform: rotate(180deg);
+}
+
+/* Centraliza os ícones e remove qualquer margem/padding extra na esquerda quando sidebar está fechada */
+#sidebar:not(.open-sidebar) .side-item {
+    padding: 0 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    width: 100%;
+}
+
+#sidebar:not(.open-sidebar) .side-item a {
+    justify-content: center !important;
+    align-items: center;
+    gap: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    min-height: 56px;
+    height: 56px;
+    margin: 0 !important;
+    box-sizing: border-box;
+    /* Remove padding lateral herdado de .side-item */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#sidebar:not(.open-sidebar) .side-item a i {
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    display: block;
+    font-size: 1.7rem;
+    transition: color 0.2s;
+    /* Garante alinhamento à esquerda */
+    position: relative;
+    left: 0;
+}
+
+/* Fundo circular maior para ativo/hover */
+#sidebar:not(.open-sidebar) .side-item.active a i,
+#sidebar:not(.open-sidebar) .side-item:hover a i {
+    background: #4f46e5;
+    color: #fff !important;
+    border-radius: 50%;
+    padding: 12px !important;
+    font-size: 1.7rem;
+    box-shadow: 0 2px 8px 0 rgba(67,56,202,0.10);
+    transition: background 0.2s, color 0.2s;
+}
+
+/* Remove cor azul do ícone, só fundo fica azul */
+#sidebar:not(.open-sidebar) .side-item.active a i,
+#sidebar:not(.open-sidebar) .side-item:hover a i {
+    color: #fff !important;
+}
+
+/* Remove fundo dos itens, só o ícone recebe fundo */
+#sidebar:not(.open-sidebar) .side-item.active,
+#sidebar:not(.open-sidebar) .side-item:hover {
+    background: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none;
+}
+
+/* Logout centralizado e igual aos ícones */
+#sidebar:not(.open-sidebar) #logout {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 16px 0 12px 0;
+    background: #fff;
+    border-top: 1px solid #e3e9f7;
+    position: sticky;
+    bottom: 0;
+}
+
+#sidebar:not(.open-sidebar) #logout_btn {
+    border-radius: 50% !important;
+    border: none;
+    box-shadow: none;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: 56px;
+    height: 56px;
+    margin: 0 auto;
+    background: transparent;
+    display: flex;
+    color: #e53e3e;
+    transition: background 0.2s, color 0.2s;
+}
+
+#sidebar:not(.open-sidebar) #logout_btn i {
+    font-size: 1.7rem;
+    min-width: 0;
+    background: transparent;
+    color: #e53e3e;
+    transition: background 0.2s, color 0.2s;
+}
+
+#sidebar:not(.open-sidebar) #logout_btn:hover i {
+    background: #ffeaea;
+    color: #c53030;
+    border-radius: 50%;
+    padding: 12px;
+}
+
+/* Sidebar aberta: mantém estilo quadrado e espaçamento confortável */
+#sidebar.open-sidebar .side-item,
+#sidebar.open-sidebar #logout_btn {
+    border-radius: 6px !important;
+    margin-bottom: 2px;
+    margin-top: 2px;
+    padding: 0;
+}
+
+#sidebar.open-sidebar .side-item a,
+#sidebar.open-sidebar #logout_btn {
+    padding: 14px 18px;
+    font-size: 1.08rem;
+    gap: 14px;
+    align-items: center;
+}
+
+#sidebar.open-sidebar .side-item.active a,
+#sidebar.open-sidebar #logout_btn.active {
+    background: #4f46e5 !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+}
+
+#sidebar.open-sidebar .side-item.active a i,
+#sidebar.open-sidebar .side-item:hover a i {
+    color: #fff !important;
+}
+
+#sidebar.open-sidebar .side-item:hover a,
+#sidebar.open-sidebar #logout_btn:hover {
+    background: #e0e7ff !important;
+    color: #4338ca !important;
+}
+
+#sidebar.open-sidebar .side-item a i,
+#sidebar.open-sidebar #logout_btn i {
+    font-size: 1.5rem;
+    min-width: 24px;
+    text-align: center;
+    background: transparent;
+    padding: 0;
+}
+
+/* Corrige o espaçamento lateral dos ícones quando sidebar está fechada */
+#sidebar:not(.open-sidebar) .side-item {
+    /* ...existing code... */
+    width: 100%;
+}
+
+#sidebar:not(.open-sidebar) .side-item a {
+    /* ...existing code... */
+    width: 100%;
+    min-height: 56px;
+    height: 56px;
+    margin: 0 !important;
+    box-sizing: border-box;
+    /* Remove padding lateral herdado de .side-item */
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+#sidebar:not(.open-sidebar) .side-item a i {
+    margin: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 0;
+    padding-bottom: 0;
+    display: block;
+    font-size: 1.7rem;
+    transition: color 0.2s;
+    /* Garante alinhamento à esquerda */
+    position: relative;
+    left: 0;
+}
+
+/* Remove padding e gap herdados do .side-item padrão */
+#sidebar:not(.open-sidebar) .side-item,
+#sidebar:not(.open-sidebar) .side-item a {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    gap: 0 !important;
+}
+
+/* Corrige padding do #sidebar_content quando sidebar está fechada */
+#sidebar:not(.open-sidebar) #sidebar_content {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+}
+
+/* Corrige padding do #side_items quando sidebar está fechada */
+#sidebar:not(.open-sidebar) #side_items {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    gap: 0 !important;
+}
+
+/* Garante que o ícone não seja cortado e fique totalmente visível */
+#sidebar:not(.open-sidebar) .side-item a i {
+margin: 0 !important;
+padding: 12px !important;
+display: block;
+font-size: 1.7rem;
+transition: color 0.2s;
+position: static;
+left: 0;
+box-sizing: content-box;
+}
+
+/* Remove qualquer overflow oculto que possa cortar o ícone */
+#sidebar:not(.open-sidebar) .side-item,
+#sidebar:not(.open-sidebar) .side-item a {
+overflow: visible !important;
+}
+
+/* Ajuste para a área de rolagem dos ícones ocupar todo o espaço disponível entre o topo e o logout */
+#sidebar_content {
+    /* ...existing code... */
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    padding: 0 !important; /* Remove padding lateral */
+}
+
+#sidebar #user {
+    /* ...existing code... */
+    margin-bottom: 16px; /* Reduz o espaço abaixo do usuário */
+}
+
+#sidebar #side_items {
+    flex: 1 1 auto;
+    min-height: 0;
+    padding: 0 !important;
+    gap: 0 !important;
+    margin: 0 !important;
+}
+
+/* Garante que o logout fique sempre colado ao final da sidebar */
+#logout {
+    border-top: 1px solid #e3e9f7;
+    padding: 12px 0 0 0;
+    flex-shrink: 0;
+    background: #fff;
+    position: sticky;
+    bottom: 0;
+    z-index: 3;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin: 0 !important;
+}
