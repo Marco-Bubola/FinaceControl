@@ -15,34 +15,49 @@
 
     @else
         @if (\Request::is('rtl'))
-            @include('layouts.navbars.auth.sidebar')
-            <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg overflow-hidden">
-                <div class="container-fluid py-4">
+           
+            <div class="d-flex">
+                @include('layouts.navbars.auth.sidebar')
+                 {{-- Navbar sempre no topo --}}
+           
+                <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg overflow-hidden">
+                    <div class="container-fluid py-4">
+                     @include('layouts.navbars.auth.nav')    
                     @yield('content')
-                    @include('layouts.footers.auth.footer')
-                </div>
-            </main>
-
-        @elseif (\Request::is('profile'))
-            @include('layouts.navbars.auth.sidebar')
-            <div class="main-content position-relative bg-gray-100 max-height-vh-100 h-100">
-                @include('layouts.navbars.auth.nav')
-                @yield('content')
+                        @include('layouts.footers.auth.footer')
+                    </div>
+                </main>
             </div>
 
+        @elseif (\Request::is('profile'))
+           
+            <div class="d-flex">
+                @include('layouts.navbars.auth.sidebar')
+                 {{-- Navbar sempre no topo --}}
+            
+                <div class="main-content position-relative bg-gray-100 max-height-vh-100 h-100">
+                @include('layouts.navbars.auth.nav')    
+                @yield('content')
+                </div>
+            </div>
 
         @else
-            @include('layouts.navbars.auth.sidebar')
-            <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg 'overflow-hidden' : '') }}">
-                @include('layouts.navbars.auth.nav')
-                <div class="container-fluid ">
-                    @yield('content')
-                    @include('layouts.footers.auth.footer')
-                </div>
-            </main>
+            <div class="d-flex">
+                @include('layouts.navbars.auth.sidebar')
+                            {{-- Navbar sempre no topo --}}
+            
+
+                <main class="main-content position-relative max-height-vh-100 h-100 mt-1 border-radius-lg{{ \Request::is('rtl') ? ' overflow-hidden' : '' }}">
+                    <div class="container-fluid ">
+                        @include('layouts.navbars.auth.nav')
+                        @yield('content')
+                        @include('layouts.footers.auth.footer')
+                    </div>
+                </main>
+            </div>
+            @include('components.fixed-plugin')
         @endif
 
-        @include('components.fixed-plugin')
     @endif
 
 
