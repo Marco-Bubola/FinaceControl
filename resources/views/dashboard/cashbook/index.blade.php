@@ -239,6 +239,7 @@ body,
         flex-wrap: wrap;
         gap: 0.7rem;
     }
+
     .dashboard-calendar-flat,
     .dashboard-summary-card,
     .dashboard-lastmonth-card,
@@ -252,6 +253,7 @@ body,
         flex-direction: column;
         gap: 0.7rem;
     }
+
     .dashboard-calendar-flat,
     .dashboard-summary-card,
     .dashboard-lastmonth-card,
@@ -275,10 +277,11 @@ body,
     box-shadow: 0 2px 8px rgba(80, 80, 180, 0.09);
     padding: 0.7rem 1.2rem;
 }
+
 .day-details-card {
     background: linear-gradient(135deg, #f8fafc 60%, #e0e7ff 100%);
     border-radius: 1rem;
-    box-shadow: 0 4px 24px rgba(80,80,180,0.13), 0 1.5px 4px rgba(80,80,180,0.07);
+    box-shadow: 0 4px 24px rgba(80, 80, 180, 0.13), 0 1.5px 4px rgba(80, 80, 180, 0.07);
     padding: 1.2rem 1.3rem 1.2rem 1.3rem;
     margin-bottom: 1.2rem;
     transition: box-shadow 0.25s, transform 0.22s, background 0.25s;
@@ -286,11 +289,13 @@ body,
     position: relative;
     overflow: visible;
 }
+
 .day-details-card:hover {
-    box-shadow: 0 8px 32px rgba(80,80,180,0.18), 0 2px 8px rgba(80,80,180,0.13);
+    box-shadow: 0 8px 32px rgba(80, 80, 180, 0.18), 0 2px 8px rgba(80, 80, 180, 0.13);
     transform: translateY(-4px) scale(1.035);
     background: linear-gradient(135deg, #e0e7ff 60%, #f8fafc 100%);
 }
+
 .day-details-card .card-action-icon {
     position: absolute;
     top: 1.1rem;
@@ -301,10 +306,12 @@ body,
     transition: color 0.2s, opacity 0.2s;
     cursor: pointer;
 }
+
 .day-details-card:hover .card-action-icon {
     color: #6366f1;
     opacity: 1;
 }
+
 .day-details-card .category-title {
     font-size: 1.1rem;
     font-weight: 700;
@@ -315,14 +322,17 @@ body,
     align-items: center;
     gap: 0.5rem;
 }
+
 .day-details-card .category-icon {
     font-size: 2.1em;
     margin-right: 0.5rem;
     filter: drop-shadow(0 1px 2px #e0e7ff);
 }
+
 .day-details-card .fs-5 {
     font-size: 1.18rem !important;
 }
+
 .day-details-card .text-muted {
     margin-top: 0.2rem;
 }
@@ -337,145 +347,153 @@ body,
     margin: 0 1px;
     vertical-align: middle;
 }
-.calendar-dot-receita { background: #22c55e; border: 1px solid #16a34a; }
-.calendar-dot-despesa { background: #ef4444; border: 1px solid #b91c1c; }
-.calendar-dot-invoice { background: #2563eb; border: 1px solid #1e40af; }
+
+.calendar-dot-receita {
+    background: #22c55e;
+    border: 1px solid #16a34a;
+}
+
+.calendar-dot-despesa {
+    background: #ef4444;
+    border: 1px solid #b91c1c;
+}
+
+.calendar-dot-invoice {
+    background: #2563eb;
+    border: 1px solid #1e40af;
+}
 </style>
 
-<div class="container-fluid px-2">
-    <div class="dashboard-header mb-2">
-        <div class="dashboard-header-left">
-            <span class="dashboard-header-title">
-                <i class="fa-solid fa-gauge-high"></i> Dashboard Financeiro
-            </span>
-            <span class="dashboard-header-subtitle">
-                <i class="fa-regular fa-calendar-days"></i> Visão geral do caixa
-            </span>
+<div class="dashboard-header mb-2">
+    <div class="dashboard-header-left">
+        <span class="dashboard-header-title">
+            <i class="fa-solid fa-gauge-high"></i> Dashboard Financeiro
+        </span>
+        <span class="dashboard-header-subtitle">
+            <i class="fa-regular fa-calendar-days"></i> Visão geral do caixa
+        </span>
+    </div>
+    <button class="dashboard-header-action" onclick="window.location.href='{{ route('cashbook.create') }}'">
+        <i class="fa-solid fa-plus"></i> Nova Transação
+    </button>
+</div>
+
+<div class="dashboard-row-flex flex-wrap flex-md-nowrap">
+    <div class="dashboard-calendar-flat shadow-lg border-0 mb-2 me-md-3 p-2"
+        style="transition: box-shadow 0.2s; width: auto; min-width: unset; max-width: unset;">
+        <div class="calendar-label mb-1">
+            <i class="fa-regular fa-calendar-days"></i> Calendário
         </div>
-        <button class="dashboard-header-action" onclick="window.location.href='{{ route('cashbook.create') }}'">
-            <i class="fa-solid fa-plus"></i> Nova Transação
-        </button>
+        <div id="dashboardCalendar"></div>
     </div>
 
-    <div class="dashboard-row-flex flex-wrap flex-md-nowrap">
-        <div class="dashboard-calendar-flat shadow-lg border-0 mb-2 me-md-3 p-2"
-            style="transition: box-shadow 0.2s; width: auto; min-width: unset; max-width: unset;">
-            <div class="calendar-label mb-1">
-                <i class="fa-regular fa-calendar-days"></i> Calendário
+    <div class="flex-grow-1 ">
+        <div class="dashboard-summary-row">
+            <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
+                style="cursor:pointer;">
+                <span class="dashboard-summary-icon text-success"><i class="bi bi-arrow-up"></i></span>
+                <div class="dashboard-summary-label">Receitas</div>
+                <div class="dashboard-summary-value text-success">
+                    R$ {{ number_format($totalReceitas ?? 0, 2, ',', '.') }}
+                </div>
             </div>
-            <div id="dashboardCalendar"></div>
+            <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
+                style="cursor:pointer;">
+                <span class="dashboard-summary-icon text-danger"><i class="bi bi-arrow-down"></i></span>
+                <div class="dashboard-summary-label">Despesas</div>
+                <div class="dashboard-summary-value text-danger">
+                    R$ {{ number_format($totalDespesas ?? 0, 2, ',', '.') }}
+                </div>
+            </div>
+            <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
+                style="cursor:pointer;">
+                <span class="dashboard-summary-icon text-secondary"><i class="bi bi-bar-chart-line"></i></span>
+                <div class="dashboard-summary-label">Saldo Geral</div>
+                <div class="dashboard-summary-value {{ ($saldoTotal ?? 0) >= 0 ? 'text-success' : 'text-danger' }}">
+                    R$ {{ number_format($saldoTotal ?? 0, 2, ',', '.') }}
+                </div>
+            </div>
         </div>
-
-        <div class="flex-grow-1 ">
-            <div class="dashboard-summary-row">
-                <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
-                    style="cursor:pointer;">
-                    <span class="dashboard-summary-icon text-success"><i class="bi bi-arrow-up"></i></span>
-                    <div class="dashboard-summary-label">Receitas</div>
-                    <div class="dashboard-summary-value text-success">
-                        R$ {{ number_format($totalReceitas ?? 0, 2, ',', '.') }}
+        <div class="dashboard-lastmonth-card shadow-lg border-0 "
+            style=" padding: 0.7rem 0.7rem 0.7rem 0.7rem; transition: box-shadow 0.2s;">
+            <span class="dashboard-lastmonth-badge mb-2" style="font-size:0.95rem; padding:0.2rem 1rem;">
+                <i class="bi bi-calendar2-week me-1"></i>
+                <span id="nomeUltimoMes">{{ $nomeUltimoMes }}</span>
+            </span>
+            <div class="dashboard-lastmonth-values mt-1 d-flex flex-column flex-sm-row gap-2 justify-content-center">
+                <div class="dashboard-lastmonth-value">
+                    <div class="dashboard-lastmonth-label">Receitas</div>
+                    <div id="receitaUltimoMes" class="dashboard-lastmonth-amount text-success"
+                        style="font-size:0.98rem;">
+                        R$ {{ number_format($receitaUltimoMes ?? 0, 2, ',', '.') }}
                     </div>
                 </div>
-                <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
-                    style="cursor:pointer;">
-                    <span class="dashboard-summary-icon text-danger"><i class="bi bi-arrow-down"></i></span>
-                    <div class="dashboard-summary-label">Despesas</div>
-                    <div class="dashboard-summary-value text-danger">
-                        R$ {{ number_format($totalDespesas ?? 0, 2, ',', '.') }}
+                <div class="dashboard-lastmonth-value">
+                    <div class="dashboard-lastmonth-label">Despesas</div>
+                    <div id="despesaUltimoMes" class="dashboard-lastmonth-amount text-danger"
+                        style="font-size:0.98rem;">
+                        R$ {{ number_format($despesaUltimoMes ?? 0, 2, ',', '.') }}
                     </div>
                 </div>
-                <div class="dashboard-summary-card shadow-sm border-0 position-relative overflow-hidden"
-                    style="cursor:pointer;">
-                    <span class="dashboard-summary-icon text-secondary"><i class="bi bi-bar-chart-line"></i></span>
-                    <div class="dashboard-summary-label">Saldo Geral</div>
-                    <div class="dashboard-summary-value {{ ($saldoTotal ?? 0) >= 0 ? 'text-success' : 'text-danger' }}">
-                        R$ {{ number_format($saldoTotal ?? 0, 2, ',', '.') }}
-                    </div>
-                </div>
-            </div>
-            <div class="dashboard-lastmonth-card shadow-lg border-0 "
-                style=" padding: 0.7rem 0.7rem 0.7rem 0.7rem; transition: box-shadow 0.2s;">
-                <span class="dashboard-lastmonth-badge mb-2" style="font-size:0.95rem; padding:0.2rem 1rem;">
-                    <i class="bi bi-calendar2-week me-1"></i>
-                    <span id="nomeUltimoMes">{{ $nomeUltimoMes }}</span>
-                </span>
-                <div
-                    class="dashboard-lastmonth-values mt-1 d-flex flex-column flex-sm-row gap-2 justify-content-center">
-                    <div class="dashboard-lastmonth-value">
-                        <div class="dashboard-lastmonth-label">Receitas</div>
-                        <div id="receitaUltimoMes" class="dashboard-lastmonth-amount text-success"
-                            style="font-size:0.98rem;">
-                            R$ {{ number_format($receitaUltimoMes ?? 0, 2, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="dashboard-lastmonth-value">
-                        <div class="dashboard-lastmonth-label">Despesas</div>
-                        <div id="despesaUltimoMes" class="dashboard-lastmonth-amount text-danger"
-                            style="font-size:0.98rem;">
-                            R$ {{ number_format($despesaUltimoMes ?? 0, 2, ',', '.') }}
-                        </div>
-                    </div>
-                    <div class="dashboard-lastmonth-value">
-                        <div class="dashboard-lastmonth-label">Saldo</div>
-                        <div id="saldoUltimoMes"
-                            class="dashboard-lastmonth-amount {{ ($saldoUltimoMes ?? 0) >= 0 ? 'text-success' : 'text-danger' }}"
-                            style="font-size:0.98rem;">
-                            R$ {{ number_format($saldoUltimoMes ?? 0, 2, ',', '.') }}
-                        </div>
+                <div class="dashboard-lastmonth-value">
+                    <div class="dashboard-lastmonth-label">Saldo</div>
+                    <div id="saldoUltimoMes"
+                        class="dashboard-lastmonth-amount {{ ($saldoUltimoMes ?? 0) >= 0 ? 'text-success' : 'text-danger' }}"
+                        style="font-size:0.98rem;">
+                        R$ {{ number_format($saldoUltimoMes ?? 0, 2, ',', '.') }}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="dashboard-graph-card">
-            <div class="dashboard-section-title mb-1">
-                <i class="bi bi-bar-chart-fill me-2"></i>Receitas x Despesas
-                <form method="GET" class="d-inline-block float-end" id="formAno" onsubmit="return false;"
-                    style="float:right;">
-                    <select name="ano" id="anoSelect" class="form-select form-select-sm"
-                        style="width:auto;display:inline-block;">
+    </div>
+    <div class="dashboard-graph-card">
+        <div class="dashboard-section-title mb-1">
+            <i class="bi bi-bar-chart-fill me-2"></i>Receitas x Despesas
+            <form method="GET" class="d-inline-block float-end" id="formAno" onsubmit="return false;"
+                style="float:right;">
+                <select name="ano" id="anoSelect" class="form-select form-select-sm"
+                    style="width:auto;display:inline-block;">
+                    @for($y = date('Y'); $y >= (date('Y')-5); $y--)
+                    <option value="{{ $y }}" @if($ano==$y) selected @endif>{{ $y }}</option>
+                    @endfor
+                </select>
+            </form>
+        </div>
+        <div style="width:100%;">
+            <canvas id="cashbookChart" height="70"></canvas>
+        </div>
+        <div class="card dashboard-card h-100 mt-2">
+            <div class="card-header pb-0 pt-1 d-flex justify-content-between align-items-center">
+                <span class="dashboard-section-title"><i class="bi bi-calendar3-week me-2"></i>Diário
+                    Invoices</span>
+                <div>
+                    <select id="mesInvoicesSelect" class="form-select form-select-sm d-inline-block"
+                        style="width:auto;">
+                        @for($m = 1; $m <= 12; $m++) <option value="{{ $m }}" @if($mesInvoices==$m) selected @endif>
+                            {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
+                            </option>
+                            @endfor
+                    </select>
+                    <select id="anoInvoicesSelect" class="form-select form-select-sm d-inline-block"
+                        style="width:auto;">
                         @for($y = date('Y'); $y >= (date('Y')-5); $y--)
-                        <option value="{{ $y }}" @if($ano==$y) selected @endif>{{ $y }}</option>
+                        <option value="{{ $y }}" @if($anoInvoices==$y) selected @endif>{{ $y }}</option>
                         @endfor
                     </select>
-                </form>
-            </div>
-            <div style="width:100%;">
-                <canvas id="cashbookChart" height="70"></canvas>
-            </div>
-            <div class="card dashboard-card h-100 mt-2">
-                <div class="card-header pb-0 pt-1 d-flex justify-content-between align-items-center">
-                    <span class="dashboard-section-title"><i class="bi bi-calendar3-week me-2"></i>Diário
-                        Invoices</span>
-                    <div>
-                        <select id="mesInvoicesSelect" class="form-select form-select-sm d-inline-block"
-                            style="width:auto;">
-                            @for($m = 1; $m <= 12; $m++)
-                                <option value="{{ $m }}" @if($mesInvoices==$m) selected @endif>
-                                    {{ \Carbon\Carbon::create(null, $m, 1)->translatedFormat('F') }}
-                                </option>
-                            @endfor
-                        </select>
-                        <select id="anoInvoicesSelect" class="form-select form-select-sm d-inline-block"
-                            style="width:auto;">
-                            @for($y = date('Y'); $y >= (date('Y')-5); $y--)
-                                <option value="{{ $y }}" @if($anoInvoices==$y) selected @endif>{{ $y }}</option>
-                            @endfor
-                        </select>
-                    </div>
                 </div>
-                <div class="card-body p-1">
-                    <canvas id="invoicesDiarioChart" height="60"></canvas>
-                </div>
+            </div>
+            <div class="card-body p-1">
+                <canvas id="invoicesDiarioChart" height="60"></canvas>
             </div>
         </div>
     </div>
-    <div class="row ">
-      <div class="col-md-6">
-        <div id="dayDetailsContainer" class="mt-3"></div>
-      </div>
-    </div>
-
 </div>
+<div class="row ">
+    <div class="col-md-6">
+        <div id="dayDetailsContainer" class="mt-3"></div>
+    </div>
+</div>
+
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>

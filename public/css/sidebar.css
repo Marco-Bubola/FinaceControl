@@ -8,8 +8,6 @@ justify-content: flex-start;
 align-items: stretch;
 background-color: #ffffff;
 height: 100vh;
-overflow: hidden;
-border-radius: 0px 18px 18px 0px;
 position: relative;
 transition: all .5s;
 min-width: 82px !important; /* valor fixo para sidebar fechado */
@@ -26,7 +24,7 @@ min-height: 0;
 padding: 0 !important; /* Remove padding lateral */
 }
 
-#sidebar #user {
+#user {
 display: flex;
 align-items: center;
 
@@ -34,7 +32,7 @@ margin-bottom: 12px;
 margin-top: 12px;
 }
 
-#sidebar #user_avatar {
+#user_avatar {
 width: 50px;
 height: 50px;
 object-fit: cover;
@@ -43,12 +41,12 @@ background: #f3f3f3;
 border: 1px solid #e3e9f7;
 }
 
-#sidebar #user_infos {
+#user_infos {
 display: flex;
 flex-direction: column;
 }
 
-#sidebar #user_infos span:last-child {
+#user_infos span:last-child {
 color: #6b6b6b;
 font-size: 12px;
 }
@@ -74,12 +72,12 @@ html, body {
   box-sizing: border-box;
 }
 
-#sidebar #user_infos .user-name {
+#user_infos .user-name {
 color: #222 !important;
 font-weight: 600;
 }
 
-#sidebar #side_items {
+#side_items {
 display: flex;
 flex-direction: column;
 gap: 8px;
@@ -92,31 +90,31 @@ padding-right: 2px; /* Para não cortar a barra de rolagem */
 }
 
 /* Esconde a barra de rolagem vertical em todos os navegadores */
-#sidebar #side_items {
+#side_items {
     scrollbar-width: none; /* Firefox */
     -ms-overflow-style: none; /* IE e Edge */
 }
 
-#sidebar #side_items::-webkit-scrollbar {
+#side_items::-webkit-scrollbar {
     display: none; /* Chrome, Safari e Opera */
 }
 
-#sidebar .side-item {
+.side-item {
 border-radius: 8px;
 padding: 14px;
 cursor: pointer;
 }
 
-#sidebar .side-item.active {
+.side-item.active {
 background-color: #4f46e5;
 }
 
-#sidebar .side-item:hover:not(.active),
-#sidebar #logout_btn:hover {
+.side-item:hover:not(.active),
+#logout_btn:hover {
 background-color: #e3e9f7;
 }
 
-#sidebar .side-item a {
+.side-item a {
 text-decoration: none;
 display: flex;
 align-items: center;
@@ -124,11 +122,11 @@ justify-content: center;
 color: #0a0a0a;
 }
 
-#sidebar .side-item.active a {
+.side-item.active a {
 color: #e3e9f7;
 }
 
-#sidebar .side-item a i {
+.side-item a i {
 display: flex;
 align-items: center;
 justify-content: center;
@@ -136,11 +134,11 @@ font-size: 1.5rem; /* Ícones maiores, mas não exagerados */
 transition: color 0.2s;
 }
 
-#sidebar #logout_btn i {
+#logout_btn i {
 font-size: 1.5rem;
 }
 
-#sidebar .side-item {
+.side-item {
 border-radius: 12px;
 padding: 18px 18px 18px 14px;
 cursor: pointer;
@@ -148,19 +146,19 @@ transition: background 0.2s, box-shadow 0.2s;
 box-shadow: 0 1px 4px 0 rgba(0,0,0,0.03);
 }
 
-#sidebar .side-item.active {
+.side-item.active {
 background-color: #4f46e5;
 box-shadow: 0 2px 8px 0 rgba(79,70,229,0.10);
 }
 
-#sidebar .side-item:hover:not(.active),
-#sidebar #logout_btn:hover {
+.side-item:hover:not(.active),
+#logout_btn:hover {
 background-color: #f1f5ff;
 color: #4f46e5;
 box-shadow: 0 2px 8px 0 rgba(79,70,229,0.08);
 }
 
-#sidebar .side-item a {
+.side-item a {
 text-decoration: none;
 display: flex;
 align-items: center;
@@ -171,11 +169,11 @@ font-weight: 500;
 font-size: 1.08rem;
 }
 
-#sidebar .side-item.active a {
+.side-item.active a {
 color: #fff;
 }
 
-#sidebar #logout_btn {
+#logout_btn {
 border: none;
 padding: 16px 18px;
 font-size: 1.08rem;
@@ -190,12 +188,12 @@ font-weight: 500;
 transition: background 0.2s, color 0.2s;
 }
 
-#sidebar #logout_btn:hover {
+#logout_btn:hover {
 background-color: #ffeaea;
 color: #c53030;
 }
 
-#sidebar .item-description {
+.item-description {
 width: 0 !important;
 height: 0 !important;
 overflow: hidden;
@@ -222,20 +220,20 @@ justify-content: flex-start;
 gap: 14px;
 }
 
-#sidebar #user_avatar {
+#user_avatar {
 width: 60px;
 height: 60px;
 border-radius: 24px;
 border: 2px solid #4f46e5;
 }
 
-#sidebar #user_infos .user-name {
+#user_infos .user-name {
 color: #222 !important;
 font-weight: 700;
 font-size: 1.1rem;
 }
 
-#sidebar #user_infos span:last-child {
+#user_infos span:last-child {
 color: #6b6b6b;
 font-size: 13px;
 }
@@ -244,7 +242,7 @@ font-size: 13px;
 box-shadow: 0 4px 24px 0 rgba(79,70,229,0.08);
 }
 
-#sidebar #logout {
+#logout {
 border-top: 1px solid #e3e9f7;
 padding: 8px 0 0 0;
 flex-shrink: 0;
@@ -258,7 +256,7 @@ justify-content: center;
 margin: 0 !important;
 }
 
-#sidebar #logout_btn {
+#logout_btn {
 width: 100%;
 border: none;
 padding: 14px 18px;
@@ -277,12 +275,12 @@ transition: background 0.2s, color 0.2s, box-shadow 0.2s;
 box-shadow: none;
 }
 
-#sidebar #logout_btn:hover {
+#logout_btn:hover {
 background-color: #ffeaea;
 color: #c53030;
 }
 
-#sidebar #logout_btn i {
+#logout_btn i {
 font-size: 1.5rem;
 min-width: 24px;
 text-align: center;
@@ -560,20 +558,20 @@ transform: rotate(180deg);
 
 /* Garante que o ícone não seja cortado e fique totalmente visível */
 #sidebar:not(.open-sidebar) .side-item a i {
-margin: 0 !important;
-padding: 12px !important;
-display: block;
-font-size: 1.7rem;
-transition: color 0.2s;
-position: static;
-left: 0;
-box-sizing: content-box;
+    margin: 0 !important;
+    padding: 12px !important;
+    display: block;
+    font-size: 1.7rem;
+    transition: color 0.2s;
+    position: static;
+    left: 0;
+    box-sizing: content-box;
 }
 
 /* Remove qualquer overflow oculto que possa cortar o ícone */
 #sidebar:not(.open-sidebar) .side-item,
 #sidebar:not(.open-sidebar) .side-item a {
-overflow: visible !important;
+    overflow: visible !important;
 }
 
 /* Ajuste para a área de rolagem dos ícones ocupar todo o espaço disponível entre o topo e o logout */
@@ -586,12 +584,12 @@ overflow: visible !important;
     padding: 0 !important; /* Remove padding lateral */
 }
 
-#sidebar #user {
+#user {
     /* ...existing code... */
     margin-bottom: 16px; /* Reduz o espaço abaixo do usuário */
 }
 
-#sidebar #side_items {
+#side_items {
     flex: 1 1 auto;
     min-height: 0;
     padding: 0 !important;
@@ -612,4 +610,33 @@ overflow: visible !important;
     display: flex;
     justify-content: center;
     margin: 0 !important;
+}/* Dark mode: apenas cores da sidebar */
+.dark #sidebar {
+  background-color: #18181b !important;
+  border-color: #27272a !important;
+}
+.dark #logout {
+  background: #18181b !important;
+  border-top: 1px solid #27272a !important;
+}
+
+/* Dark mode: ícones brancos quando não ativos/nem hover */
+.dark #sidebar .side-item a i {
+  color: #fff !important;
+}
+
+/* Mantém o destaque para o ativo e hover */
+.dark #sidebar .side-item.active a i,
+.dark #sidebar .side-item:hover a i {
+  color: #fff !important;
+  /* Se quiser outra cor para o ativo/hover, ajuste aqui */
+}/* Dark mode: texto dos itens da sidebar branco */
+.dark #sidebar .side-item a,
+.dark #sidebar .side-item .item-description {
+  color: #fff !important;
+}/* Dark mode: informações do usuário brancas */
+.dark #sidebar #user_infos,
+.dark #sidebar #user_infos span,
+.dark #sidebar #user_infos .user-name {
+  color: #fff !important;
 }

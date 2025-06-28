@@ -132,7 +132,8 @@
     <div class="col-md-2 mb-4">
         <div class="card h-100 custom-card position-relative">
             <div class="d-flex justify-content-center align-items-center" style="height:120px;">
-                <img src="{{ $client->caminho_foto }}" alt="Avatar do Cliente" style="width:72px; height:72px; border-radius:50%; border:2px solid #6ea8fe; background:#fff;">
+                <img src="{{ $client->caminho_foto }}" alt="Avatar do Cliente"
+                    style="width:72px; height:72px; border-radius:50%; border:2px solid #6ea8fe; background:#fff;">
             </div>
 
             <!-- Botões sobre a imagem -->

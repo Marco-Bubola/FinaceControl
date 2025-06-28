@@ -1,5 +1,5 @@
-<nav id="sidebar">
-        <div id="sidebar_content">
+<nav id="sidebar" class="fixed top-0 left-0 z-50 h-screen w-64 flex flex-col bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 shadow-lg">
+    <div id="sidebar_content" class="flex-1 flex flex-col">
             <div id="user">
                 @if(Auth::check())
                     <img
@@ -133,7 +133,7 @@
                 </li>
             </ul>
     
-            <button id="open_btn">
+              <button id="open_btn">
                 <i id="open_btn_icon" class="fa-solid fa-chevron-right"></i>
             </button>
         </div>
