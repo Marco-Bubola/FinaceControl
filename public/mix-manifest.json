@@ -1,6 +1,6 @@
 {
-    "/js/app.js": "/js/app.js?id=ad6cf95028e3d9cf28b353e191c78695",
-    "/css/app.css": "/css/app.css?id=ee92ef573ee6600652b0e80ae1dd3440",
-    "/assets/css/soft-ui-dashboard.css": "/assets/css/soft-ui-dashboard.css?id=898b7546ce95e6bb6f1ef5111cce84c0",
-    "/assets/js/soft-ui-dashboard.min.js": "/assets/js/soft-ui-dashboard.min.js?id=8d3a899755f0cbbc3f72b6e9ec112ec6"
+    "/js/app.js": "/js/app.js",
+    "/css/app.css": "/css/app.css",
+    "/assets/css/soft-ui-dashboard.css": "/assets/css/soft-ui-dashboard.css",
+    "/assets/js/soft-ui-dashboard.min.js": "/assets/js/soft-ui-dashboard.min.js"
 }

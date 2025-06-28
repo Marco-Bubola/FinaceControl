@@ -4,89 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9acaa612a6b5535d10f94df835aa0f5",
+    "content-hash": "eae87b3f6506b8c069a61505968d7efd",
     "packages": [
-        {
-            "name": "blade-ui-kit/blade-icons",
-            "version": "1.8.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/driesvints/blade-icons.git",
-                "reference": "7b743f27476acb2ed04cb518213d78abe096e814"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/driesvints/blade-icons/zipball/7b743f27476acb2ed04cb518213d78abe096e814",
-                "reference": "7b743f27476acb2ed04cb518213d78abe096e814",
-                "shasum": ""
-            },
-            "require": {
-                "illuminate/contracts": "^8.0|^9.0|^10.0|^11.0|^12.0",
-                "illuminate/filesystem": "^8.0|^9.0|^10.0|^11.0|^12.0",
-                "illuminate/support": "^8.0|^9.0|^10.0|^11.0|^12.0",
-                "illuminate/view": "^8.0|^9.0|^10.0|^11.0|^12.0",
-                "php": "^7.4|^8.0",
-                "symfony/console": "^5.3|^6.0|^7.0",
-                "symfony/finder": "^5.3|^6.0|^7.0"
-            },
-            "require-dev": {
-                "mockery/mockery": "^1.5.1",
-                "orchestra/testbench": "^6.0|^7.0|^8.0|^9.0|^10.0",
-                "phpunit/phpunit": "^9.0|^10.5|^11.0"
-            },
-            "bin": [
-                "bin/blade-icons-generate"
-            ],
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "BladeUI\\Icons\\BladeIconsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "BladeUI\\Icons\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dries Vints",
-                    "homepage": "https://driesvints.com"
-                }
-            ],
-            "description": "A package to easily make use of icons in your Laravel Blade views.",
-            "homepage": "https://github.com/blade-ui-kit/blade-icons",
-            "keywords": [
-                "blade",
-                "icons",
-                "laravel",
-                "svg"
-            ],
-            "support": {
-                "issues": "https://github.com/blade-ui-kit/blade-icons/issues",
-                "source": "https://github.com/blade-ui-kit/blade-icons"
-            },
-            "funding": [
-                {
-                    "url": "https://github.com/sponsors/driesvints",
-                    "type": "github"
-                },
-                {
-                    "url": "https://www.paypal.com/paypalme/driesvints",
-                    "type": "paypal"
-                }
-            ],
-            "time": "2025-02-13T20:35:06+00:00"
-        },
         {
             "name": "brick/math",
             "version": "0.12.1",
@@ -6489,67 +6408,6 @@
                 }
             ],
             "time": "2024-04-18T09:29:19+00:00"
-        },
-        {
-            "name": "themesberg/flowbite-blade-icons",
-            "version": "v1.2.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/themesberg/flowbite-blade-icons.git",
-                "reference": "013102122aa7d3e1a606cbc4af0ec20d94fe0880"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/themesberg/flowbite-blade-icons/zipball/013102122aa7d3e1a606cbc4af0ec20d94fe0880",
-                "reference": "013102122aa7d3e1a606cbc4af0ec20d94fe0880",
-                "shasum": ""
-            },
-            "require": {
-                "blade-ui-kit/blade-icons": "^1.6",
-                "illuminate/support": "^9.0|^10.0|^11.0|^12.0",
-                "php": "~8.1.0|~8.2.0|~8.3.0|~8.4.0"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.13",
-                "orchestra/testbench": "^7.0|^8.0|^9.0",
-                "pestphp/pest": "^1.23|^2.0",
-                "phpunit/phpunit": "^9.0|^10.5|^11.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Themesberg\\FlowbiteBladeIcons\\FlowbiteBladeIconsServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Themesberg\\FlowbiteBladeIcons\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Dominique Thomas",
-                    "email": "domthomas@ncoo-dev.com"
-                }
-            ],
-            "description": "A package to easily make use of Flowbite Icons in your Laravel Blade views.",
-            "homepage": "https://github.com/themesberg/flowbite-blade-icons",
-            "keywords": [
-                "blade",
-                "flowbite",
-                "laravel"
-            ],
-            "support": {
-                "issues": "https://github.com/themesberg/flowbite-blade-icons/issues",
-                "source": "https://github.com/themesberg/flowbite-blade-icons/tree/v1.2.0"
-            },
-            "time": "2025-05-13T20:11:05+00:00"
         },
         {
             "name": "tijsverkoyen/css-to-inline-styles",

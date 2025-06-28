@@ -1,327 +1,783 @@
-{{-- resources/views/dashboard/index.blade.php --}}
 @extends('layouts.user_type.auth')
 
 @section('content')
 
+<div class="container-fluid py-4">
+    <div class="row mb-5">
+        <div class="col-12 text-center">
+            {{-- Modern Gradient Title --}}
+            <h1 class="fw-bold display-4 mb-2"
+                style="letter-spacing:-1px; background: linear-gradient(45deg, #2937f0, #9f1ae2); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Dashboard</h1>
+            <p class="text-muted mb-0" style="font-size:1.2rem;">Visão geral das suas finanças, produtos e vendas</p>
+        </div>
+    </div>
 
-<button data-modal-target="popup-modal" data-modal-toggle="popup-modal" class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="button">
-Toggle modal
-</button>
+    <div class="row g-4 justify-content-center">
+        {{-- Card Cashbook --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ url('dashboard/cashbook') }}" class="card-link-wrapper"
+                style="text-decoration:none; color:inherit;">
+                <div class="card shadow-lg border-0 h-100 quick-access-card card-clickable position-relative card-cashbook"
+                    style="border-radius: 15px; transition: all 0.3s ease;">
+                    <div class="card-body d-flex flex-column align-items-center p-4">
+                        <div class="w-100 mb-4">
+                            {{-- Header --}}
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle bg-gradient-success p-3" style="border-radius: 12px;">
+                                        <i class="fas fa-wallet text-white fa-2x"></i>
+                                    </div>
+                                    <h3 class="fw-bold text-success mb-0 ms-3" style="font-size: 1.8rem;">Cashbook</h3>
+                                </div>
+                                <div class="bg-success bg-opacity-10 px-3 py-2 rounded-pill">
+                                    <span class="text-success fw-bold">Total</span>
+                                </div>
+                            </div>
 
-<div id="popup-modal" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
-    <div class="relative p-4 w-full max-w-md max-h-full">
-        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
-            <button type="button" class="absolute top-3 end-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="popup-modal">
-                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-                </svg>
-                <span class="sr-only">Close modal</span>
-            </button>
-            <div class="p-4 md:p-5 text-center">
-                <svg class="mx-auto mb-4 text-gray-400 w-12 h-12 dark:text-gray-200" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
-                </svg>
-                <h3 class="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Are you sure you want to delete this product?</h3>
-                <button data-modal-hide="popup-modal" type="button" class="text-white bg-red-600 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 font-medium rounded-lg text-sm inline-flex items-center px-5 py-2.5 text-center">
-                    Yes, I'm sure
-                </button>
-                <button data-modal-hide="popup-modal" type="button" class="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">No, cancel</button>
-            </div>
+                            {{-- Chart Area --}}
+                            <div class="position-relative d-flex justify-content-center align-items-center"
+                                style="height: 220px;">
+                                <canvas id="cashbookChart" style="width: 100%; max-height: 220px;"></canvas>
+                                <div id="cashbookChartCenter"
+                                    class="position-absolute top-50 start-50 translate-middle text-success fw-bold text-center"
+                                    style="font-size: 1.8rem; pointer-events: none;">
+                                    R$ {{ number_format($totalCashbook ?? 0, 2, ',', '.') }}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Stats Area --}}
+                        <div class="w-100">
+                            <div class="row g-3 mb-3">
+                                <div class="col-4">
+                                    <div class="p-3 bg-light rounded-3 text-center card-stat-item hover-effect">
+                                        <i class="fas fa-exchange-alt text-primary mb-2"></i>
+                                        <h6 class="mb-1 small text-muted">Movimentações</h6>
+                                        <span
+                                            class="fw-bold fs-5 text-dark">{{ \App\Models\Cashbook::where('user_id', Auth::id())->count() }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-success bg-opacity-10 rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-arrow-up text-success mb-2"></i>
+                                        <h6 class="mb-1 small text-muted">Receitas</h6>
+                                        <span class="fw-bold text-success fs-5">
+                                            R$
+                                            {{ number_format(\App\Models\Cashbook::where('user_id', Auth::id())->where('type_id', 1)->sum('value'), 2, ',', '.') }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-danger bg-opacity-10 rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-arrow-down text-danger mb-2"></i>
+                                        <h6 class="mb-1 small text-muted">Despesas</h6>
+                                        <span class="fw-bold text-danger fs-5">
+                                            R$
+                                            {{ number_format(\App\Models\Cashbook::where('user_id', Auth::id())->where('type_id', 2)->sum('value'), 2, ',', '.') }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-light rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-calendar-day text-info me-2"></i>
+                                        <h6 class="mb-1 small text-muted">Última Mov.:</h6>
+                                        @if($ultimaMovimentacaoCashbook)
+                                        <span class="fw-bold text-dark">
+                                            {{ \Carbon\Carbon::parse($ultimaMovimentacaoCashbook->date)->format('d/m/Y') }}
+                                            <span
+                                                class="{{ $ultimaMovimentacaoCashbook->type_id == 1 ? 'text-success' : 'text-danger' }}">
+                                                R$ {{ number_format($ultimaMovimentacaoCashbook->value, 2, ',', '.') }}
+                                            </span>
+                                        </span>
+                                        @else
+                                        <span class="text-muted small">Nenhuma movimentação</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="p-3 bg-light rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-calendar-week text-secondary me-2"></i>
+                                        <h6 class="mb-1 small text-muted">Média diária:</h6>
+                                        <span class="fw-bold text-dark">
+                                            R$ {{
+                                                \App\Models\Cashbook::where('user_id', Auth::id())
+                                                ->selectRaw('SUM(value)/GREATEST(DATEDIFF(MAX(date), MIN(date)),1) as media')
+                                                ->value('media') ? number_format(\App\Models\Cashbook::where('user_id', Auth::id())
+                                                ->selectRaw('SUM(value)/GREATEST(DATEDIFF(MAX(date), MIN(date)),1) as media')
+                                                ->value('media'), 2, ',', '.') : '0,00'
+                                            }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        {{-- Card Produtos --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ url('dashboard/products') }}" class="card-link-wrapper"
+                style="text-decoration:none; color:inherit;">
+                <div class="card shadow-lg border-0 h-100 quick-access-card card-clickable position-relative card-products"
+                    style="border-radius: 15px; transition: all 0.3s ease;">
+                    <div class="card-body d-flex flex-column align-items-center p-4">
+                        <div class="w-100 mb-4">
+                            {{-- Header --}}
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle bg-gradient-info p-3" style="border-radius: 12px;">
+                                        <i class="fas fa-box text-white fa-2x"></i>
+                                    </div>
+                                    <h3 class="fw-bold text-info mb-0 ms-3" style="font-size: 1.8rem;">Produtos</h3>
+                                </div>
+                                <div class="bg-info bg-opacity-10 px-3 py-2 rounded-pill">
+                                    <span class="text-info fw-bold">Estoque</span>
+                                </div>
+                            </div>
+
+                            {{-- Chart Area (Lucro Previsto) --}}
+                            <div class="position-relative d-flex justify-content-center align-items-center"
+                                style="height: 220px;">
+                                <canvas id="produtosChart" style="width: 100%; max-height: 220px;"></canvas>
+                                <div id="produtosChartCenter"
+                                    class="position-absolute top-50 start-50 translate-middle text-info fw-bold text-center"
+                                    style="font-size: 1.5rem; pointer-events: none;">
+                                    {{-- Lucro total será preenchido via JS --}}
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- Stats Area --}}
+                        <div class="w-100">
+                            <div class="row g-3 mb-3">
+                                <div class="col-4">
+                                    <div class="p-3 bg-light rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-boxes text-info mb-2"></i>
+                                        <h6 class="mb-1 small text-muted">Total de produtos</h6>
+                                        <span class="fw-bold fs-5 text-dark">{{ $totalProdutos ?? 0 }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-warning bg-opacity-10 rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-warehouse text-warning mb-2"></i>
+                                        <h6 class="mb-1 small text-muted">Em estoque</h6>
+                                        <span class="fw-bold fs-5 text-dark">{{ $totalProdutosEstoque ?? 0 }}</span>
+                                    </div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="p-3 bg-secondary bg-opacity-10 rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-boxes-stacked text-secondary mb-2"></i>
+                                        <h6 class="mb-1 small text-muted">Sem estoque</h6>
+                                        <span class="fw-bold fs-5 text-danger">
+                                            {{ \App\Models\Product::where('user_id', Auth::id())->where('stock_quantity', 0)->count() }}
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-success bg-opacity-10 rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-box-open text-primary me-2"></i>
+                                        <h6 class="mb-1 small text-muted">Maior estoque</h6>
+                                        @if($produtoMaiorEstoque)
+                                        <span class="fw-bold text-end">
+                                            {{ $produtoMaiorEstoque->name }}
+                                            <span
+                                                class="text-info d-block">({{ $produtoMaiorEstoque->stock_quantity }})</span>
+                                        </span>
+                                        @else
+                                        <span class="text-muted">Nenhum produto</span>
+                                        @endif
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="p-3 bg-danger bg-opacity-10 rounded-3 card-stat-item hover-effect">
+                                        <i class="fas fa-star text-warning me-2"></i>
+                                        <h6 class="mb-1 small text-muted">Mais vendido</h6>
+                                        <span class="fw-bold text-success text-end">
+                                            {{ $produtoMaisVendido ? $produtoMaisVendido->name : 'N/A' }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        {{-- Card Vendas --}}
+        <div class="col-lg-4 col-md-6">
+            <a href="{{ url('dashboard/sales') }}" class="card-link-wrapper"
+                style="text-decoration:none; color:inherit;">
+                <div class="card shadow-lg border-0 h-100 quick-access-card card-clickable position-relative card-sales"
+                    style="border-radius: 15px; transition: all 0.3s ease;">
+                    <div class="card-body d-flex flex-column align-items-center p-4">
+                        <div class="w-100 mb-4">
+                            {{-- Header --}}
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="d-flex align-items-center">
+                                    <div class="icon-circle bg-gradient-warning p-3" style="border-radius: 12px;">
+                                        <i class="fas fa-shopping-cart text-white fa-2x"></i>
+                                    </div>
+                                    <h3 class="fw-bold text-warning mb-0 ms-3" style="font-size: 1.8rem;">Vendas</h3>
+                                </div>
+                                <div class="bg-warning bg-opacity-10 px-3 py-2 rounded-pill">
+                                    <span class="text-warning fw-bold">Faturamento</span>
+                                </div>
+                            </div>
+
+
+
+                            {{-- Chart Area --}}
+                            <div class="position-relative d-flex justify-content-center align-items-center"
+                                style="height: 220px;">
+                                <canvas id="vendasChart" style="width: 100%; max-height: 220px;"></canvas>
+                                <div id="vendasChartCenter"
+                                    class="position-absolute top-50 start-50 translate-middle text-warning fw-bold"
+                                    style="font-size: 1.8rem; pointer-events: none;">
+                                    R$ {{ number_format($totalFaturamento ?? 0, 2, ',', '.') }}
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        {{-- Stats Area --}}
+                        <div class="w-100">
+                            <div class="row g-3">
+                                <!-- Card 1: Valor faltante -->
+                                <div class="col-4">
+                                    <div class="card">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-file-invoice-dollar text-danger me-2"></i>Valor
+                                                faltante</span>
+                                            <span class="fw-bold text-danger">
+                                                R$ {{ number_format($totalFaltante ?? 0, 2, ',', '.') }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 2: Qtd. vendas -->
+                                <div class="col-4">
+                                    <div class="card">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-list-ol text-primary me-2"></i>Qtd. vendas</span>
+                                            <span class="fw-bold text-dark">
+                                                {{ \App\Models\Sale::where('user_id', Auth::id())->count() }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Card 4: Clientes -->
+                                <div class="col-4">
+                                    <div class="card">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-user-friends text-primary me-2"></i>Clientes</span>
+                                            <span class="fw-bold text-dark">{{ $totalClientes ?? 0 }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 5: Pendentes -->
+                                <div class="col-4">
+                                    <div class="card">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-user-check text-secondary me-2"></i>Pendentes</span>
+                                            <span title="Com vendas pendentes">
+                                                <i class="fas fa-clock text-danger"></i>
+                                                {{ $clientesComSalesPendentes ?? 0 }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Card 3: Última venda -->
+                                <div class="col-4">
+                                    <div class="card">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <span><i class="fas fa-calendar-day text-info me-2"></i>Última venda</span>
+                                            @if($ultimaVenda)
+                                            <span>
+                                                {{ \Carbon\Carbon::parse($ultimaVenda->created_at)->format('d/m') }}
+                                                <span class="text-success">
+                                                    R$ {{ number_format($ultimaVenda->total_price, 2, ',', '.') }}
+                                                </span>
+                                            </span>
+                                            @else
+                                            <span class="text-muted">Nenhuma venda</span>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
         </div>
     </div>
 </div>
 
+<style>
+:root {
+    --primary-bg: #1a2238;
+    --secondary-bg: #28304a;
+    --accent: #e94560;
+    --card-bg: #232b43;
+    --text-main: #f5f6fa;
+    --text-muted: #a0a4b8;
+    --border-radius: 18px;
+    --shadow: 0 4px 32px rgba(20, 30, 60, 0.18);
+    --spacing: 1.5rem;
+    --font-main: 'Segoe UI', 'Roboto', Arial, sans-serif;
+}
 
+body {
+    background: var(--primary-bg);
+    color: var(--text-main);
+    font-family: var(--font-main);
+    margin: 0;
+    padding: 0;
+}
 
-<div class="max-w-sm w-full bg-white rounded-lg shadow-sm dark:bg-gray-800 p-4 md:p-6">
-  <div class="flex justify-between">
-    <div>
-      <h5 class="leading-none text-3xl font-bold text-gray-900 dark:text-white pb-2">32.4k</h5>
-      <p class="text-base font-normal text-gray-500 dark:text-gray-400">Users this week</p>
-    </div>
-    <div
-      class="flex items-center px-2.5 py-0.5 text-base font-semibold text-green-500 dark:text-green-500 text-center">
-      12%
-      <svg class="w-3 h-3 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 14">
-        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13V1m0 0L1 5m4-4 4 4"/>
-      </svg>
-    </div>
-  </div>
-  <div id="area-chart"></div>
-  <div class="grid grid-cols-1 items-center border-gray-200 border-t dark:border-gray-700 justify-between">
-    <div class="flex justify-between items-center pt-5">
-      <!-- Button -->
-      <button
-        id="dropdownDefaultButton"
-        data-dropdown-toggle="lastDaysdropdown"
-        data-dropdown-placement="bottom"
-        class="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 text-center inline-flex items-center dark:hover:text-white"
-        type="button">
-        Last 7 days
-        <svg class="w-2.5 m-2.5 ms-1.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 4 4 4-4"/>
-        </svg>
-      </button>
-      <!-- Dropdown menu -->
-      <div id="lastDaysdropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700">
-          <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownDefaultButton">
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Yesterday</a>
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Today</a>
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 7 days</a>
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 30 days</a>
-            </li>
-            <li>
-              <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Last 90 days</a>
-            </li>
-          </ul>
-      </div>
-      <a
-        href="#"
-        class="uppercase text-sm font-semibold inline-flex items-center rounded-lg text-blue-600 hover:text-blue-700 dark:hover:text-blue-500  hover:bg-gray-100 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700 px-3 py-2">
-        Users Report
-        <svg class="w-2.5 h-2.5 ms-1.5 rtl:rotate-180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-      </a>
-    </div>
-  </div>
-</div>
-<style>#chart {
-  max-width: 650px;
-  margin: 35px auto;
+.container-fluid {
+    padding: var(--spacing);
+}
+
+.card {
+    background: var(--card-bg);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow);
+    border: none;
+    color: var(--text-main);
+    margin-bottom: var(--spacing);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 8px 40px rgba(233, 69, 96, 0.18);
+}
+
+.card-body {
+    padding: 2rem 1.5rem 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+
+}
+
+.card-body .mb-3 {
+    width: 100%;
+}
+
+.cashbook-stats-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch;
+    width: 100%;
+    gap: 1.2rem;
+}
+
+.cashbook-stat-col {
+    flex: 1 1 0;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    padding: 0.7rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 0;
+}
+
+.cashbook-extra-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 1.2rem;
+}
+
+.cashbook-extra-col {
+    flex: 1 1 0;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 10px;
+    padding: 0.5rem 0.7rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 0;
+    font-size: 0.98em;
+}
+
+@media (max-width: 991.98px) {
+    .cashbook-stats-row {
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+
+    .cashbook-stat-col {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.7rem 1rem;
+    }
+
+    .cashbook-stat-col span {
+        margin: 0 0.3rem;
+    }
+
+    .cashbook-extra-row {
+        flex-direction: column;
+        gap: 0.7rem;
+    }
+
+    .cashbook-extra-col {
+        width: 100%;
+        align-items: flex-start;
+        padding: 0.7rem 1rem;
+    }
+}
+
+.produtos-header-flex,
+.vendas-header-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+}
+
+.produtos-header-left,
+.vendas-header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.produtos-header-center,
+.vendas-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0;
+    gap: 0.1rem;
+}
+
+.produtos-header-right,
+.vendas-header-right {
+    width: 48px;
+    min-width: 48px;
+}
+
+.cashbook-header-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 1.2rem;
+}
+
+.cashbook-header-left {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+.cashbook-header-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0;
+    gap: 0.1rem;
+}
+
+.cashbook-header-right {
+    width: 48px;
+    min-width: 48px;
+    /* Espaço para balancear o centro */
+}
+
+.card-body .d-flex.align-items-center.mb-2 {
+    justify-content: flex-start;
+    gap: 0.7rem;
+}
+
+.card-body h3 {
+    margin-bottom: 0;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--accent);
+}
+
+.card-link-wrapper {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    border-radius: var(--border-radius);
+    transition: box-shadow 0.2s;
+}
+
+.card-link-wrapper:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+.icon-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--secondary-bg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    margin-bottom: 0.2rem;
+    margin-right: 0.7rem;
+}
+
+.icon-circle i {
+    font-size: 2rem;
+    color: var(--accent);
+}
+
+.display-6,
+.fw-bold.display-6 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 0.5rem 0;
+}
+
+h1.display-5 {
+    color: var(--accent);
+    font-weight: 800;
+    letter-spacing: -1.5px;
+}
+
+h3 {
+    color: var(--text-main);
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.2rem;
+}
+
+.text-muted {
+    color: var(--text-muted) !important;
+}
+
+.list-group-item {
+    background: transparent;
+    border: none;
+    padding: .7rem 0;
+    color: var(--text-main);
+}
+
+.list-group-item .fw-bold {
+    color: var(--accent);
+}
+
+@media (max-width: 991.98px) {
+    .card-body {
+        min-height: 300px;
+        padding: 1.2rem 0.7rem 1rem 0.7rem;
+    }
+
+    .icon-circle {
+        width: 36px;
+        height: 36px;
+        font-size: 1.2rem;
+    }
+
+    .display-6,
+    .fw-bold.display-6 {
+        font-size: 1.3rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .card-body {
+        min-height: 180px;
+        padding: 1rem;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-body:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .icon-circle {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+        border-radius: 50%;
+        background: linear-gradient(45deg, var(--accent), rgba(var(--accent-rgb), 0.8));
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .icon-circle:hover {
+        transform: scale(1.1);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+    }
 }
 </style>
- @push('scripts')
-<script>
-  var options = {
-  chart: {
-    height: 280,
-    type: "area"
-  },
-  dataLabels: {
-    enabled: false
-  },
-  series: [
-    {
-      name: "Series 1",
-      data: [45, 52, 38, 45, 19, 23, 2]
-    }
-  ],
-  fill: {
-    type: "gradient",
-    gradient: {
-      shadeIntensity: 1,
-      opacityFrom: 0.7,
-      opacityTo: 0.9,
-      stops: [0, 90, 100]
-    }
-  },
-  xaxis: {
-    categories: [
-      "01 Jan",
-      "02 Jan",
-      "03 Jan",
-      "04 Jan",
-      "05 Jan",
-      "06 Jan",
-      "07 Jan"
-    ]
-  }
-};
 
-var chart = new ApexCharts(document.querySelector("#chart"), options);
-
-chart.render();
-
-
-</script>
-@endpush
-  {{-- RESUMOS --}}
-  <section class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-    {{-- Card Cashbook --}}
-    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col justify-between border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center space-x-4">
-        <div class="p-3 bg-green-100 dark:bg-green-900 rounded-full shadow">
-          <i class="fas fa-wallet text-green-600 dark:text-green-400 text-2xl"></i>
-        </div>
-        <h2 class="text-xl font-bold text-green-700 dark:text-green-400">Cashbook</h2>
-      </div>
-      <div class="mt-6 text-center">
-        <span class="text-4xl font-extrabold text-green-700 dark:text-green-400 drop-shadow">
-          R$ {{ number_format($totalCashbook ?? 0, 2, ',', '.') }}
-        </span>
-        <div class="mt-4 flex justify-center space-x-8 text-sm">
-          <div class="space-y-1">
-            <p class="text-gray-400 dark:text-gray-400">Receitas</p>
-            <p class="text-green-600 dark:text-green-400 font-semibold">
-              R$ {{ number_format($totalReceitas ?? 0, 2, ',', '.') }}
-            </p>
-          </div>
-          <div class="space-y-1">
-            <p class="text-gray-400 dark:text-gray-400">Despesas</p>
-            <p class="text-red-600 dark:text-red-400 font-semibold">
-              R$ {{ number_format($totalDespesas ?? 0, 2, ',', '.') }}
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6 space-y-2 text-sm text-gray-500 dark:text-gray-300">
-        <div class="flex justify-between">
-          <span>Média diária</span>
-          <span class="font-medium text-gray-700 dark:text-gray-100">
-            R$ {{ $mediaDiariaCashbook ? number_format($mediaDiariaCashbook, 2, ',', '.') : '0,00' }}
-          </span>
-        </div>
-        <div class="flex justify-between">
-          <span>Última movimentação</span>
-          @if($ultimaMovimentacaoCashbook)
-            <div class="text-right">
-              <p class="font-medium">{{ \Carbon\Carbon::parse($ultimaMovimentacaoCashbook->date)->format('d/m/Y') }}</p>
-              <p class="{{ $ultimaMovimentacaoCashbook->type_id == 1 ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400' }} font-bold">
-                R$ {{ number_format($ultimaMovimentacaoCashbook->value, 2, ',', '.') }}
-              </p>
-            </div>
-          @else
-            <span>—</span>
-          @endif
-        </div>
-      </div>
-      <a href="{{ url('dashboard/cashbook') }}"
-         class="mt-6 inline-block text-sm font-semibold text-green-700 dark:text-green-400 hover:text-green-900 dark:hover:text-green-200 transition">
-        Ver detalhes &rarr;
-      </a>
-    </div>
-
-    {{-- Card Produtos --}}
-    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col justify-between border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center space-x-4">
-        <div class="p-3 bg-blue-100 dark:bg-blue-900 rounded-full shadow">
-          <i class="fas fa-box text-blue-600 dark:text-blue-400 text-2xl"></i>
-        </div>
-        <h2 class="text-xl font-bold text-blue-700 dark:text-blue-400">Produtos</h2>
-      </div>
-      <div class="mt-6 text-center">
-        <span class="text-4xl font-extrabold text-blue-700 dark:text-blue-400 drop-shadow">{{ $totalProdutos ?? 0 }}</span>
-        <div class="mt-4 flex justify-center space-x-8 text-sm">
-          <div class="space-y-1">
-            <p class="text-gray-400 dark:text-gray-400">Em estoque</p>
-            <p class="text-blue-600 dark:text-blue-400 font-semibold">{{ $totalProdutosEstoque ?? 0 }}</p>
-          </div>
-          <div class="space-y-1">
-            <p class="text-gray-400 dark:text-gray-400">Sem estoque</p>
-            <p class="text-red-600 dark:text-red-400 font-semibold">{{ $totalProdutosSemEstoque ?? 0 }}</p>
-          </div>
-        </div>
-      </div>
-      <div class="mt-6 space-y-2 text-sm text-gray-500 dark:text-gray-300">
-        <div class="flex justify-between">
-          <span>Maior estoque</span>
-          <span class="font-medium text-blue-700 dark:text-blue-400">
-            {{ $produtoMaiorEstoque->name ?? '—' }}
-          </span>
-        </div>
-        <div class="flex justify-between">
-          <span>Mais vendido</span>
-          <span class="font-medium text-green-700 dark:text-green-400">
-            {{ $produtoMaisVendido->name ?? '—' }}
-          </span>
-        </div>
-      </div>
-      <a href="{{ url('dashboard/products') }}"
-         class="mt-6 inline-block text-sm font-semibold text-blue-700 dark:text-blue-400 hover:text-blue-900 dark:hover:text-blue-200 transition">
-        Ver detalhes &rarr;
-      </a>
-    </div>
-
-    {{-- Card Vendas --}}
-    <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 flex flex-col justify-between border border-gray-200 dark:border-gray-700">
-      <div class="flex items-center space-x-4">
-        <div class="p-3 bg-yellow-100 dark:bg-yellow-900 rounded-full shadow">
-          <i class="fas fa-shopping-cart text-yellow-600 dark:text-yellow-400 text-2xl"></i>
-        </div>
-        <h2 class="text-xl font-bold text-yellow-700 dark:text-yellow-400">Vendas</h2>
-      </div>
-      <div class="mt-6 text-center">
-        <span class="text-4xl font-extrabold text-yellow-700 dark:text-yellow-400 drop-shadow">
-          R$ {{ number_format($totalFaturamento ?? 0, 2, ',', '.') }}
-        </span>
-      </div>
-      <div class="mt-6 space-y-1 text-sm text-gray-500 dark:text-gray-300">
-        <div class="flex justify-between">
-          <span>Valor faltante</span>
-          <span class="font-semibold text-red-600 dark:text-red-400">
-            R$ {{ number_format($totalFaltante ?? 0, 2, ',', '.') }}
-          </span>
-        </div>
-        <div class="flex justify-between">
-          <span>Clientes</span>
-          <span class="font-semibold text-blue-700 dark:text-blue-400">{{ $totalClientes ?? 0 }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>Pendentes</span>
-          <span class="font-semibold text-yellow-700 dark:text-yellow-400">{{ $clientesComSalesPendentes ?? 0 }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>Última venda</span>
-          @if($ultimaVenda)
-            <span class="font-medium text-green-700 dark:text-green-400">
-              {{ \Carbon\Carbon::parse($ultimaVenda->created_at)->format('d/m') }} –
-              R$ {{ number_format($ultimaVenda->total_price, 2, ',', '.') }}
-            </span>
-          @else
-            <span>—</span>
-          @endif
-        </div>
-      </div>
-      <a href="{{ url('dashboard/sales') }}"
-         class="mt-6 inline-block text-sm font-semibold text-yellow-700 dark:text-yellow-400 hover:text-yellow-900 dark:hover:text-yellow-200 transition">
-        Ver detalhes &rarr;
-      </a>
-    </div>
-  </section>
-
-  {{-- ATALHOS RÁPIDOS --}}
-  <section>
-
-
-    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-4">Atalhos rápidos</h2>
-    <div class="grid gap-4 grid-cols-7">
-      @php
-      $shortcuts = [
-        ['url'=>'banks','icon'=>'fas fa-university','label'=>'Bancos','color'=>'indigo'],
-        ['url'=>'clients','icon'=>'fas fa-users','label'=>'Clientes','color'=>'pink'],
-        ['url'=>'cofrinho','icon'=>'fas fa-piggy-bank','label'=>'Cofrinho','color'=>'green'],
-        ['url'=>'dashboard/products','icon'=>'fas fa-boxes','label'=>'Produtos','color'=>'blue'],
-        ['url'=>'dashboard/cashbook','icon'=>'fas fa-wallet','label'=>'Cashbook','color'=>'emerald'],
-        ['url'=>'dashboard/sales','icon'=>'fas fa-shopping-cart','label'=>'Vendas','color'=>'yellow'],
-        ['url'=>'profile','icon'=>'fas fa-user','label'=>'Perfil','color'=>'gray'],
-      ];
-      @endphp
-
-      @foreach($shortcuts as $item)
-      <a href="{{ url($item['url']) }}"
-
-
-
-         class="flowbite-btn flex flex-col items-center p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:bg-{{ $item['color'] }}-50 dark:hover:bg-{{ $item['color'] }}-900 transition">
-        <div class="p-3 bg-{{ $item['color'] }}-100 dark:bg-{{ $item['color'] }}-900 rounded-full mb-2">
-          <i class="{{ $item['icon'] }} text-2xl text-{{ $item['color'] }}-600 dark:text-{{ $item['color'] }}-400"></i>
-        </div>
-
-        <span class="text-{{ $item['color'] }}-700 dark:text-{{ $item['color'] }}-400 font-medium">{{ $item['label'] }}</span>
-      </a>
-      @endforeach
-    </div>
-  </section>
-
-@endsection
 
 @push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Cashbook Chart
+    new Chart(document.getElementById('cashbookChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Receitas', 'Despesas'],
+            datasets: [{
+                data: [{
+                        {
+                            \
+                            App\ Models\ Cashbook::where('user_id', Auth::id()) - > where(
+                                'type_id', 1) - > sum('value')
+                        }
+                    },
+                    {
+                        {
+                            \
+                            App\ Models\ Cashbook::where('user_id', Auth::id()) - > where(
+                                'type_id', 2) - > sum('value')
+                        }
+                    }
+                ],
+                backgroundColor: ['#28a745', '#dc3545'],
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    enabled: true
+                }
+            },
+            cutout: '75%'
+        }
+    });
+
+    // Produtos Chart (lucro possível)
+    const vendaTotal = ({
+        {
+            \
+            App\ Models\ Product::where('user_id', Auth::id()) - > sum(DB::raw(
+                'price_sale * stock_quantity'))
+        }
+    });
+    const custoTotal = ({
+        {
+            \
+            App\ Models\ Product::where('user_id', Auth::id()) - > sum(DB::raw(
+                'price * stock_quantity'))
+        }
+    });
+    const lucroPossivel = vendaTotal - custoTotal;
+
+    document.getElementById('produtosChartCenter').innerHTML =
+        '<div style="font-size:1.1rem;color:#6c757d;">Lucro Previsto</div>' +
+        '<div style="font-size:1.3rem;color:#28a745;">R$ ' + lucroPossivel.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2
+        }) + '</div>';
+
+    new Chart(document.getElementById('produtosChart'), {
+        type: 'doughnut',
+        data: {
+            labels: [' ', 'Custo Estoque', 'Venda Total'],
+            datasets: [{
+                data: [, custoTotal, vendaTotal],
+                backgroundColor: ['#6c757d', '#17a2b8'],
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'bottom'
+                },
+                tooltip: {
+                    enabled: true
+                }
+            },
+            cutout: '75%'
+        }
+    });
+
+    // Vendas Chart (faturamento x faltante)
+    const valorRecebido = ({
+        {
+            $totalFaturamento ?? 0
+        }
+    } - {
+        {
+            $totalFaltante ?? 0
+        }
+    });
+    document.getElementById('vendasChartCenter').innerHTML =
+        '<div style="font-size:1.1rem;color:#6c757d;">Recebido</div>' +
+        '<div style="font-size:1.3rem;color:#28a745;">R$ ' + valorRecebido.toLocaleString('pt-BR', {
+            minimumFractionDigits: 2
+        }) + '</div>';
+
+    new Chart(document.getElementById('vendasChart'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Faturado', 'Faltante'],
+            datasets: [{
+                data: [{
+                        {
+                            $totalFaturamento ?? 0
+                        }
+                    },
+                    {
+                        {
+                            $totalFaltante ?? 0
+                        }
+                    }
+                ],
+                backgroundColor: ['#ffc107', '#dc3545'],
+            }]
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: false,
+                    position: 'bottom'
+                },
+                tooltip: {
+                    enabled: true
+                }
+            },
+            cutout: '75%'
+        }
+    });
+});
+</script>
 @endpush
+
+@endsection

@@ -18,7 +18,6 @@
         "laravel/ui": "^4.6",
         "smalot/pdfparser": "^2.11",
         "spatie/laravel-permission": "^6.20",
-        "themesberg/flowbite-blade-icons": "^1.2",
         "twbs/bootstrap": "^5.3"
     },
     "require-dev": {

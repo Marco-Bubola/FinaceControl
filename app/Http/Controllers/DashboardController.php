@@ -24,7 +24,6 @@ class DashboardController extends Controller
         // Produtos
         $totalProdutos = Product::where('user_id', $userId)->count();
         $totalProdutosEstoque = Product::where('user_id', $userId)->sum('stock_quantity');
-        $totalProdutosSemEstoque = Product::where('user_id', $userId)->where('stock_quantity', 0)->count();
 
         // Clientes
         $totalClientes = Client::where('user_id', $userId)->count();
@@ -50,11 +49,6 @@ class DashboardController extends Controller
             ->orderByDesc('date')
             ->first();
 
-        // Média diária do cashbook
-        $mediaDiariaCashbook = Cashbook::where('user_id', $userId)
-            ->selectRaw('SUM(value)/GREATEST(DATEDIFF(MAX(date), MIN(date)),1) as media')
-            ->value('media');
-
         // Card Produtos: produto com maior estoque
         $produtoMaiorEstoque = Product::where('user_id', $userId)
             ->orderByDesc('stock_quantity')
@@ -75,17 +69,13 @@ class DashboardController extends Controller
 
         return view('dashboard.index', compact(
             'totalCashbook',
-            'totalReceitas',
-            'totalDespesas',
             'totalProdutos',
             'totalProdutosEstoque',
-            'totalProdutosSemEstoque',
             'totalClientes',
             'clientesComSalesPendentes',
             'totalFaturamento',
             'totalFaltante',
             'ultimaMovimentacaoCashbook',
-            'mediaDiariaCashbook',
             'produtoMaiorEstoque',
             'ultimaVenda',
             'produtoMaisVendido'
